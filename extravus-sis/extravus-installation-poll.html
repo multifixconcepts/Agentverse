@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extravus Installation Poll</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #333; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem 0; text-align: center; }
+        .logo { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .tagline { font-size: 1.2rem; opacity: 0.9; }
+        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .poll-card { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .poll-title { font-size: 1.8rem; color: #2c3e50; margin-bottom: 1.5rem; text-align: center; }
+        .form-group { margin-bottom: 2rem; }
+        .form-label { font-weight: bold; color: #495057; margin-bottom: 1rem; display: block; font-size: 1.1rem; }
+        .radio-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .radio-option { display: flex; align-items: center; background: #f8f9fa; padding: 0.75rem 1rem; border-radius: 8px; border: 2px solid transparent; cursor: pointer; transition: all 0.3s; }
+        .radio-option:hover { background: #e9ecef; border-color: #667eea; }
+        .radio-option input[type="radio"] { margin-right: 0.5rem; }
+        .radio-option.selected { background: #e3f2fd; border-color: #667eea; color: #1565c0; }
+        .number-input { width: 100px; padding: 0.75rem; border: 2px solid #dee2e6; border-radius: 6px; font-size: 1rem; }
+        .number-input:focus { outline: none; border-color: #667eea; }
+        .submit-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%; transition: transform 0.2s; }
+        .submit-btn:hover { transform: translateY(-2px); }
+        .stats-section { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .stats-title { font-size: 1.5rem; color: #2c3e50; margin-bottom: 1.5rem; text-align: center; }
+        .stat-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #eee; }
+        .stat-item:last-child { border-bottom: none; }
+        .stat-label { font-weight: 500; }
+        .stat-value { font-weight: bold; color: #667eea; }
+        .disclaimer { text-align: center; color: #6c757d; font-size: 0.9rem; margin-top: 1.5rem; }
+        .footer { text-align: center; padding: 2rem; color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Extravus</div>
+        <div class="tagline">Student Information System</div>
+    </div>
+
+    <div class="container">
+        <div class="poll-card">
+            <h1 class="poll-title">Installation Poll</h1>
+            
+            <form id="installationPoll">
+                <div class="form-group">
+                    <label class="form-label">Environment</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="environment" value="testing">
+                            Testing
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="environment" value="production">
+                            Production
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Usage</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="usage" value="primary">
+                            Primary
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="usage" value="secondary">
+                            Secondary
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="usage" value="superior">
+                            Superior
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="usage" value="other">
+                            Other
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">School Type</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="school_type" value="private">
+                            Private
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="school_type" value="public">
+                            Public
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="school_type" value="nonprofit">
+                            Non-profit
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="school_type" value="organization">
+                            Organization
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Number of Students</label>
+                    <input type="number" class="number-input" name="students" min="0" placeholder="0">
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Poll Response</button>
+            </form>
+
+            <div class="disclaimer">
+                Poll answers are anonymous. Consult installation statistics online.
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2 class="stats-title">Current Installation Statistics</h2>
+            
+            <div class="stat-item">
+                <span class="stat-label">Total Installations</span>
+                <span class="stat-value">1,247</span>
+            </div>
+            
+            <div class="stat-item">
+                <span class="stat-label">Production Environments</span>
+                <span class="stat-value">68%</span>
+            </div>
+            
+            <div class="stat-item">
+                <span class="stat-label">Public Schools</span>
+                <span class="stat-value">45%</span>
+            </div>
+            
+            <div class="stat-item">
+                <span class="stat-label">Private Schools</span>
+                <span class="stat-value">32%</span>
+            </div>
+            
+            <div class="stat-item">
+                <span class="stat-label">Average Students per Installation</span>
+                <span class="stat-value">485</span>
+            </div>
+            
+            <div class="stat-item">
+                <span class="stat-label">Total Students Managed</span>
+                <span class="stat-value">604,795</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 Extravus Student Information System. All rights reserved.</p>
+        <p>Visit <a href="https://www.extravus.com" style="color: #667eea;">www.extravus.com</a> for more information.</p>
+    </div>
+
+    <script>
+        // Handle radio button selection styling
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Remove selected class from all options in this group
+                document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                    r.closest('.radio-option').classList.remove('selected');
+                });
+                // Add selected class to chosen option
+                this.closest('.radio-option').classList.add('selected');
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('installationPoll').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Simulate submission
+            const submitBtn = document.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                submitBtn.textContent = 'Thank You! ✓';
+                submitBtn.style.background = '#28a745';
+                
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.style.cssText = `
+                    background: #d4edda;
+                    color: #155724;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    margin-top: 1rem;
+                    text-align: center;
+                    font-weight: bold;
+                `;
+                successMsg.textContent = 'Your response has been recorded anonymously. Thank you for contributing to Extravus statistics!';
+                
+                this.appendChild(successMsg);
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    submitBtn.style.background = '';
+                    successMsg.remove();
+                    this.reset();
+                    document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+                }, 3000);
+            }, 1500);
+        });
+
+        // Animate stats on page load
+        window.addEventListener('load', function() {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach((stat, index) => {
+                setTimeout(() => {
+                    stat.style.transform = 'scale(1.1)';
+                    stat.style.transition = 'transform 0.3s';
+                    setTimeout(() => {
+                        stat.style.transform = 'scale(1)';
+                    }, 300);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extravus Currency Update</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .success { background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #28a745; }
+        .info { background: #e3f2fd; color: #1565c0; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #007bff; }
+        .btn { background: #007bff; color: white; padding: 1rem 2rem; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin: 0.5rem; font-size: 1.1rem; }
+        .btn:hover { background: #0056b3; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #1e7e34; }
+        h1 { color: #2c3e50; text-align: center; }
+        .currency-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+        .currency-item { background: #f8f9fa; padding: 0.75rem; border-radius: 6px; border-left: 3px solid #007bff; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Extravus Currency System Updated!</h1>
+        
+        <div class="success">
+            ✅ <strong>Currency Input Modified:</strong> Text input replaced with dropdown selection containing 24 major world currencies
+        </div>
+        
+        <div class="info">
+            🌐 <strong>Access Configuration:</strong> Login to Extravus → School Setup → Configuration → School Tab<br>
+            📍 <strong>Direct URL:</strong> <a href="http://localhost:8084/Modules.php?modname=School_Setup/Configuration.php" target="_blank">Configuration Page</a>
+        </div>
+        
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="http://localhost:8084" class="btn btn-success" target="_blank">🚀 Login to Extravus</a>
+            <a href="http://localhost:8084/Modules.php?modname=School_Setup/Configuration.php" class="btn" target="_blank">⚙️ Configuration</a>
+        </div>
+        
+        <h3>💱 Available Currency Options:</h3>
+        <div class="currency-grid">
+            <div class="currency-item">$ - US Dollar</div>
+            <div class="currency-item">€ - Euro</div>
+            <div class="currency-item">£ - British Pound</div>
+            <div class="currency-item">¥ - Japanese Yen</div>
+            <div class="currency-item">₹ - Indian Rupee</div>
+            <div class="currency-item">₦ - Nigerian Naira</div>
+            <div class="currency-item">R - South African Rand</div>
+            <div class="currency-item">₽ - Russian Ruble</div>
+            <div class="currency-item">¢ - Cent</div>
+            <div class="currency-item">₩ - South Korean Won</div>
+            <div class="currency-item">₪ - Israeli Shekel</div>
+            <div class="currency-item">₨ - Pakistani Rupee</div>
+            <div class="currency-item">₡ - Costa Rican Colón</div>
+            <div class="currency-item">₫ - Vietnamese Dong</div>
+            <div class="currency-item">₱ - Philippine Peso</div>
+            <div class="currency-item">₲ - Paraguayan Guaraní</div>
+            <div class="currency-item">₴ - Ukrainian Hryvnia</div>
+            <div class="currency-item">₵ - Ghanaian Cedi</div>
+            <div class="currency-item">₸ - Kazakhstani Tenge</div>
+            <div class="currency-item">₺ - Turkish Lira</div>
+            <div class="currency-item">₼ - Azerbaijani Manat</div>
+            <div class="currency-item">₾ - Georgian Lari</div>
+            <div class="currency-item">₿ - Bitcoin</div>
+        </div>
+        
+        <h3>🔧 What was Changed:</h3>
+        <ul>
+            <li>✅ Replaced TextInput with SelectInput for currency selection</li>
+            <li>✅ Added comprehensive currency options array with 24 major currencies</li>
+            <li>✅ Maintained existing functionality for thousands and decimal separators</li>
+            <li>✅ Preserved all other configuration options</li>
+            <li>✅ Updated School Setup → Configuration → School tab</li>
+        </ul>
+        
+        <div class="info">
+            <strong>🎯 How to Use:</strong><br>
+            1. Login to Extravus with admin/admin<br>
+            2. Navigate to School Setup → Configuration<br>
+            3. Click on the "School" tab<br>
+            4. Find the "Currency Symbol" dropdown<br>
+            5. Select your preferred currency from the list<br>
+            6. Click "Submit" to save changes
+        </div>
+        
+        <div class="success">
+            <strong>💡 Benefits:</strong><br>
+            • Easy currency selection without typing symbols<br>
+            • Standardized currency symbols across the system<br>
+            • Support for major world currencies<br>
+            • Prevents currency symbol input errors<br>
+            • Better user experience for international schools
+        </div>
+    </div>
+</body>
+</html>

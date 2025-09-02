@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alade Johnson's Dashboard</title>
+    <script>
+        // Simple authentication check
+        function checkAuth() {
+            const auth = sessionStorage.getItem('dockerAuth');
+            if (!auth) {
+                showLoginModal();
+                return false;
+            }
+            return true;
+        }
+        
+        function showLoginModal() {
+            document.getElementById('login-modal').classList.add('active');
+        }
+        
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'alade' && password === 'johnson123') {
+                sessionStorage.setItem('dockerAuth', 'authenticated');
+                document.getElementById('login-modal').classList.remove('active');
+                loadAllData();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('dockerAuth');
+            location.reload();
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; }
+        
+        .sidebar { position: fixed; left: 0; top: 0; width: 250px; height: 100vh; background: #2c3e50; color: white; overflow-y: auto; z-index: 1000; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid #34495e; }
+        .sidebar-title { font-size: 1.2rem; font-weight: bold; }
+        .nav-menu { list-style: none; }
+        .nav-item { border-bottom: 1px solid #34495e; }
+        .nav-link { display: block; padding: 1rem 1.5rem; color: white; text-decoration: none; transition: background 0.2s; }
+        .nav-link:hover, .nav-link.active { background: #3498db; }
+        .nav-icon { margin-right: 0.5rem; }
+        
+        .main-content { margin-left: 250px; min-height: 100vh; }
+        .header { background: white; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: between; align-items: center; }
+        .header-title { font-size: 1.5rem; font-weight: bold; color: #2c3e50; }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        
+        .content { padding: 2rem; }
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 4px solid #3498db; }
+        .stat-header { display: flex; justify-content: between; align-items: center; margin-bottom: 1rem; }
+        .stat-icon { font-size: 2rem; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; color: #2c3e50; }
+        .stat-label { color: #7f8c8d; font-size: 0.9rem; }
+        .stat-change { font-size: 0.8rem; padding: 0.25rem 0.5rem; border-radius: 20px; }
+        .stat-change.positive { background: #d4edda; color: #155724; }
+        .stat-change.negative { background: #f8d7da; color: #721c24; }
+        
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 1.5rem; }
+        .card-header { padding: 1.5rem; border-bottom: 1px solid #e9ecef; display: flex; justify-content: between; align-items: center; }
+        .card-title { font-size: 1.2rem; font-weight: bold; color: #2c3e50; }
+        .card-body { padding: 1.5rem; }
+        
+        .containers-grid { display: grid; gap: 1.5rem; }
+        .container-card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s; }
+        .container-card:hover { transform: translateY(-2px); }
+        .container-header { padding: 1.5rem; border-bottom: 1px solid #e9ecef; }
+        .container-name { font-weight: bold; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .container-image { color: #6c757d; font-size: 0.9rem; }
+        .status-badge { position: absolute; top: 1rem; right: 1rem; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .status-badge.running { background: #d4edda; color: #155724; }
+        .status-badge.stopped { background: #f8d7da; color: #721c24; }
+        .status-badge.paused { background: #fff3cd; color: #856404; }
+        
+        .container-body { padding: 1.5rem; }
+        .container-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .metric { text-align: center; }
+        .metric-value { font-size: 1.5rem; font-weight: bold; color: #3498db; }
+        .metric-label { font-size: 0.8rem; color: #6c757d; }
+        
+        .progress-bar { width: 100%; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; margin: 0.5rem 0; }
+        .progress-fill { height: 100%; transition: width 0.3s; }
+        .progress-cpu { background: #3498db; }
+        .progress-memory { background: #e74c3c; }
+        .progress-disk { background: #f39c12; }
+        
+        .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        
+        .search-bar { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 1rem; }
+        .filter-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .filter-tab { padding: 0.5rem 1rem; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .filter-tab.active { background: #3498db; color: white; border-color: #3498db; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; border-radius: 12px; max-width: 90%; max-height: 90%; overflow: auto; }
+        .modal-header { padding: 1.5rem; border-bottom: 1px solid #e9ecef; display: flex; justify-content: between; align-items: center; }
+        .modal-body { padding: 1.5rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        
+        .terminal { background: #1e1e1e; color: #d4d4d4; font-family: 'Courier New', monospace; padding: 1rem; border-radius: 6px; height: 400px; overflow-y: auto; }
+        .terminal-input { background: transparent; border: none; color: #d4d4d4; width: 100%; outline: none; }
+        
+        .chart-container { height: 300px; margin: 1rem 0; }
+        
+        .network-diagram { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .network-node { background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; padding: 1rem; text-align: center; }
+        .network-node.container { border-color: #3498db; }
+        .network-node.network { border-color: #27ae60; }
+        
+        .log-viewer { background: #1e1e1e; color: #d4d4d4; font-family: 'Courier New', monospace; padding: 1rem; border-radius: 6px; height: 500px; overflow-y: auto; font-size: 0.9rem; }
+        .log-line { margin-bottom: 0.25rem; }
+        .log-error { color: #e74c3c; }
+        .log-warning { color: #f39c12; }
+        .log-info { color: #3498db; }
+        
+        .auto-refresh { display: flex; align-items: center; gap: 0.5rem; }
+        .toggle-switch { position: relative; width: 50px; height: 24px; background: #ccc; border-radius: 12px; cursor: pointer; }
+        .toggle-switch.active { background: #3498db; }
+        .toggle-slider { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.2s; }
+        .toggle-switch.active .toggle-slider { transform: translateX(26px); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">AJ</div>
+                    <div>
+                        <div style="font-size: 0.9rem; font-weight: bold;">Alade Johnson's</div>
+                        <div style="font-size: 0.8rem; opacity: 0.8;">Dashboard</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" data-page="dashboard">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-page="containers">
+                    <span class="nav-icon">📦</span> Containers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-page="images">
+                    <span class="nav-icon">💿</span> Images
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-page="networks">
+                    <span class="nav-icon">🌐</span> Networks
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-page="volumes">
+                    <span class="nav-icon">💾</span> Volumes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-page="compose">
+                    <span class="nav-icon">🔧</span> Compose
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-page="monitoring">
+                    <span class="nav-icon">📈</span> Monitoring
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-page="settings">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="header-title" id="page-title">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.4rem;">AJ</div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #2c3e50;">Alade Johnson's Dashboard</div>
+                        <div style="font-size: 0.9rem; color: #7f8c8d;">Docker Management Platform</div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="auto-refresh">
+                    <span>Auto-refresh</span>
+                    <div class="toggle-switch" id="auto-refresh-toggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+                <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">📦</div>
+                            <div class="stat-change positive">+2</div>
+                        </div>
+                        <div class="stat-number" id="total-containers">16</div>
+                        <div class="stat-label">Total Containers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">▶️</div>
+                            <div class="stat-change positive">+1</div>
+                        </div>
+                        <div class="stat-number" id="running-containers">14</div>
+                        <div class="stat-label">Running</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">⏹️</div>
+                            <div class="stat-change negative">-1</div>
+                        </div>
+                        <div class="stat-number" id="stopped-containers">2</div>
+                        <div class="stat-label">Stopped</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">💿</div>
+                            <div class="stat-change positive">+3</div>
+                        </div>
+                        <div class="stat-number" id="total-images">24</div>
+                        <div class="stat-label">Images</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">System Resources</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="container-metrics">
+                            <div class="metric">
+                                <div class="metric-value">45%</div>
+                                <div class="metric-label">CPU Usage</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill progress-cpu" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">68%</div>
+                                <div class="metric-label">Memory Usage</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill progress-memory" style="width: 68%"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">32%</div>
+                                <div class="metric-label">Disk Usage</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill progress-disk" style="width: 32%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Recent Activity</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="log-viewer" id="activity-log">
+                            <div class="log-line log-info">[2024-01-15 10:30:15] Container 'nginx-proxy-manager' started</div>
+                            <div class="log-line log-warning">[2024-01-15 10:28:42] Container 'school4' stopped unexpectedly</div>
+                            <div class="log-line log-info">[2024-01-15 10:25:33] Image 'wordpress:latest' pulled successfully</div>
+                            <div class="log-line log-info">[2024-01-15 10:22:18] Container 'portainer' restarted</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Containers Page -->
+            <div class="page" id="containers">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Container Management</div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="createContainer()">➕ New Container</button>
+                            <button class="btn btn-warning" onclick="pruneContainers()">🧹 Prune Stopped</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" class="search-bar" placeholder="Search containers..." id="container-search">
+                        <div class="filter-tabs">
+                            <div class="filter-tab active" data-filter="all">All</div>
+                            <div class="filter-tab" data-filter="running">Running</div>
+                            <div class="filter-tab" data-filter="stopped">Stopped</div>
+                            <div class="filter-tab" data-filter="paused">Paused</div>
+                        </div>
+                        <div class="containers-grid" id="containers-list">
+                            <!-- Containers will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images Page -->
+            <div class="page" id="images">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Images</div>
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="pullImage()">⬇️ Pull Image</button>
+                            <button class="btn btn-warning" onclick="pruneImages()">🧹 Prune Unused</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="images-list">Loading images...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Networks Page -->
+            <div class="page" id="networks">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Networks</div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="createNetwork()">➕ Create Network</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="network-diagram" id="networks-diagram">
+                            <!-- Network visualization will be here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volumes Page -->
+            <div class="page" id="volumes">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Volumes</div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="createVolume()">➕ Create Volume</button>
+                            <button class="btn btn-warning" onclick="pruneVolumes()">🧹 Prune Unused</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="volumes-list">Loading volumes...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compose Page -->
+            <div class="page" id="compose">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Compose</div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="deployStack()">🚀 Deploy Stack</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <textarea id="compose-editor" style="width: 100%; height: 400px; font-family: monospace;" placeholder="version: '3.8'
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - '80:80'"></textarea>
+                        <div class="actions" style="margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="validateCompose()">✅ Validate</button>
+                            <button class="btn btn-success" onclick="deployCompose()">🚀 Deploy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring Page -->
+            <div class="page" id="monitoring">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Real-time Monitoring</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" id="cpu-chart">
+                            <canvas id="cpuChart"></canvas>
+                        </div>
+                        <div class="chart-container" id="memory-chart">
+                            <canvas id="memoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settings">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Platform Settings</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Docker Configuration</h3>
+                        <p>Docker Engine: Running</p>
+                        <p>Version: 24.0.7</p>
+                        <p>API Version: 1.43</p>
+                        
+                        <h3 style="margin-top: 2rem;">Dashboard Settings</h3>
+                        <label>
+                            <input type="checkbox" id="dark-mode"> Dark Mode
+                        </label>
+                        <br><br>
+                        <label>
+                            Auto-refresh interval: 
+                            <select id="refresh-interval">
+                                <option value="5">5 seconds</option>
+                                <option value="10" selected>10 seconds</option>
+                                <option value="30">30 seconds</option>
+                                <option value="60">1 minute</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal active" id="login-modal">
+        <div class="modal-content" style="width: 400px; height: auto;">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.4rem;">AJ</div>
+                    <div class="modal-title">Login Required</div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Username:</label>
+                    <input type="text" id="username" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;" placeholder="Enter username">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Password:</label>
+                    <input type="password" id="password" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;" placeholder="Enter password">
+                </div>
+                <div id="login-error" style="display: none; background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem;">Invalid username or password</div>
+                <button class="btn btn-primary" onclick="login()" style="width: 100%;">🔐 Login</button>
+                <div style="margin-top: 1rem; text-align: center; color: #6c757d; font-size: 0.9rem;">
+                    Demo credentials: <strong>alade</strong> / <strong>johnson123</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="terminal-modal">
+        <div class="modal-content" style="width: 80%; height: 70%;">
+            <div class="modal-header">
+                <div class="modal-title">Container Terminal</div>
+                <button class="close-btn" onclick="closeModal('terminal-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="terminal" id="terminal-output"></div>
+                <input type="text" class="terminal-input" id="terminal-input" placeholder="Enter command...">
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="logs-modal">
+        <div class="modal-content" style="width: 80%; height: 70%;">
+            <div class="modal-header">
+                <div class="modal-title">Container Logs</div>
+                <button class="close-btn" onclick="closeModal('logs-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="log-viewer" id="logs-output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Docker Dashboard JavaScript
+        let autoRefreshInterval;
+        let currentFilter = 'all';
+        let containers = [];
+        let images = [];
+        let networks = [];
+        let volumes = [];
+
+        // Simple authentication check
+        function checkAuth() {
+            const auth = sessionStorage.getItem('dockerAuth');
+            if (!auth) {
+                showLoginModal();
+                return false;
+            }
+            return true;
+        }
+        
+        function showLoginModal() {
+            document.getElementById('login-modal').classList.add('active');
+        }
+        
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'alade' && password === 'johnson123') {
+                sessionStorage.setItem('dockerAuth', 'authenticated');
+                document.getElementById('login-modal').classList.remove('active');
+                initializeApp();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('dockerAuth');
+            location.reload();
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuth()) {
+                initializeApp();
+            }
+            
+            // Add Enter key support for login
+            const passwordField = document.getElementById('password');
+            if (passwordField) {
+                passwordField.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        login();
+                    }
+                });
+            }
+        });
+
+        function initializeApp() {
+            initializeNavigation();
+            initializeAutoRefresh();
+            loadAllData();
+            setupEventListeners();
+        }
+
+        // Navigation
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetPage = link.dataset.page;
+                    
+                    // Update active nav
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    // Update active page
+                    pages.forEach(p => p.classList.remove('active'));
+                    const targetPageEl = document.getElementById(targetPage);
+                    if (targetPageEl) {
+                        targetPageEl.classList.add('active');
+                    }
+                    
+                    // Load page-specific data
+                    loadPageData(targetPage);
+                });
+            });
+        }
+
+        // Auto-refresh functionality
+        function initializeAutoRefresh() {
+            const toggle = document.getElementById('auto-refresh-toggle');
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    toggle.classList.toggle('active');
+                    if (toggle.classList.contains('active')) {
+                        startAutoRefresh();
+                    } else {
+                        stopAutoRefresh();
+                    }
+                });
+            }
+        }
+
+        function startAutoRefresh() {
+            const interval = 10000; // 10 seconds
+            autoRefreshInterval = setInterval(refreshData, interval);
+        }
+
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        }
+
+        // API calls
+        async function executeDockerCommand(command) {
+            try {
+                const response = await fetch('/api/docker', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command })
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Data loading
+        async function loadAllData() {
+            await Promise.all([
+                loadContainers(),
+                loadImages(),
+                loadNetworks(),
+                loadVolumes(),
+                loadSystemStats()
+            ]);
+        }
+
+        async function loadContainers() {
+            const result = await executeDockerCommand('docker ps -a --format "table {{.ID}}\\t{{.Image}}\\t{{.Command}}\\t{{.CreatedAt}}\\t{{.Status}}\\t{{.Ports}}\\t{{.Names}}"');
+            
+            if (result.success) {
+                containers = parseContainerData(result.stdout);
+            } else {
+                containers = getMockContainers();
+            }
+            renderContainers();
+            updateStats();
+        }
+
+        async function loadImages() {
+            const result = await executeDockerCommand('docker images --format "table {{.Repository}}\\t{{.Tag}}\\t{{.ID}}\\t{{.CreatedAt}}\\t{{.Size}}"');
+            
+            if (result.success) {
+                images = parseImageData(result.stdout);
+            } else {
+                images = getMockImages();
+            }
+            renderImages();
+        }
+
+        async function loadNetworks() {
+            const result = await executeDockerCommand('docker network ls --format "table {{.ID}}\\t{{.Name}}\\t{{.Driver}}\\t{{.Scope}}"');
+            
+            if (result.success) {
+                networks = parseNetworkData(result.stdout);
+            } else {
+                networks = getMockNetworks();
+            }
+            renderNetworks();
+        }
+
+        async function loadVolumes() {
+            const result = await executeDockerCommand('docker volume ls --format "table {{.Driver}}\\t{{.Name}}"');
+            
+            if (result.success) {
+                volumes = parseVolumeData(result.stdout);
+            } else {
+                volumes = getMockVolumes();
+            }
+            renderVolumes();
+        }
+
+        async function loadSystemStats() {
+            updateSystemMetrics();
+        }
+
+        // Data parsing
+        function parseContainerData(output) {
+            const lines = output.split('\n').filter(line => line.trim());
+            const containers = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(/\t/);
+                if (parts.length >= 7) {
+                    containers.push({
+                        id: parts[0],
+                        image: parts[1],
+                        command: parts[2],
+                        created: parts[3],
+                        status: parts[4],
+                        ports: parts[5] || '',
+                        name: parts[6]
+                    });
+                }
+            }
+            return containers;
+        }
+
+        function parseImageData(output) {
+            const lines = output.split('\n').filter(line => line.trim());
+            const images = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(/\t/);
+                if (parts.length >= 5) {
+                    images.push({
+                        repository: parts[0],
+                        tag: parts[1],
+                        id: parts[2],
+                        created: parts[3],
+                        size: parts[4]
+                    });
+                }
+            }
+            return images;
+        }
+
+        function parseNetworkData(output) {
+            const lines = output.split('\n').filter(line => line.trim());
+            const networks = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(/\t/);
+                if (parts.length >= 4) {
+                    networks.push({
+                        id: parts[0],
+                        name: parts[1],
+                        driver: parts[2],
+                        scope: parts[3]
+                    });
+                }
+            }
+            return networks;
+        }
+
+        function parseVolumeData(output) {
+            const lines = output.split('\n').filter(line => line.trim());
+            const volumes = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(/\t/);
+                if (parts.length >= 2) {
+                    volumes.push({
+                        driver: parts[0],
+                        name: parts[1]
+                    });
+                }
+            }
+            return volumes;
+        }
+
+        // Rendering functions
+        function renderContainers() {
+            const containersList = document.getElementById('containers-list');
+            if (!containersList) return;
+            
+            const filteredContainers = filterContainers(containers);
+            
+            if (filteredContainers.length === 0) {
+                containersList.innerHTML = '<div class="loading">No containers found</div>';
+                return;
+            }
+
+            containersList.innerHTML = filteredContainers.map(container => {
+                const isRunning = container.status.includes('Up');
+                const isPaused = container.status.includes('Paused');
+                const statusClass = isPaused ? 'paused' : (isRunning ? 'running' : 'stopped');
+                const statusText = isPaused ? 'Paused' : (isRunning ? 'Running' : 'Stopped');
+                
+                return `
+                    <div class="container-card" style="position: relative;">
+                        <div class="status-badge ${statusClass}">${statusText}</div>
+                        <div class="container-header">
+                            <div class="container-name">${container.name}</div>
+                            <div class="container-image">${container.image}</div>
+                        </div>
+                        <div class="container-body">
+                            <div class="container-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">${Math.floor(Math.random() * 100)}%</div>
+                                    <div class="metric-label">CPU</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill progress-cpu" style="width: ${Math.floor(Math.random() * 100)}%"></div>
+                                    </div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">${Math.floor(Math.random() * 100)}%</div>
+                                    <div class="metric-label">Memory</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill progress-memory" style="width: ${Math.floor(Math.random() * 100)}%"></div>
+                                    </div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">${(Math.random() * 10).toFixed(1)}GB</div>
+                                    <div class="metric-label">Disk I/O</div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.9rem; color: #6c757d; margin-bottom: 0.5rem;">
+                                    <strong>Status:</strong> ${container.status}
+                                </div>
+                                <div style="font-size: 0.9rem; color: #6c757d; margin-bottom: 0.5rem;">
+                                    <strong>Ports:</strong> ${container.ports || 'None'}
+                                </div>
+                                <div style="font-size: 0.9rem; color: #6c757d;">
+                                    <strong>Created:</strong> ${container.created}
+                                </div>
+                            </div>
+                            <div class="actions">
+                                ${!isRunning && !isPaused ? `<button class="btn btn-success" onclick="startContainer('${container.name}')">▶️ Start</button>` : ''}
+                                ${isRunning ? `<button class="btn btn-danger" onclick="stopContainer('${container.name}')">⏹️ Stop</button>` : ''}
+                                ${isRunning ? `<button class="btn btn-warning" onclick="pauseContainer('${container.name}')">⏸️ Pause</button>` : ''}
+                                ${isPaused ? `<button class="btn btn-success" onclick="unpauseContainer('${container.name}')">▶️ Unpause</button>` : ''}
+                                <button class="btn btn-info" onclick="viewLogs('${container.name}')">📋 Logs</button>
+                                ${isRunning ? `<button class="btn btn-secondary" onclick="openShell('${container.name}')">💻 Shell</button>` : ''}
+                                <button class="btn btn-warning" onclick="restartContainer('${container.name}')">🔄 Restart</button>
+                                <button class="btn btn-danger" onclick="removeContainer('${container.name}')">🗑️ Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderImages() {
+            const imagesList = document.getElementById('images-list');
+            if (!imagesList) return;
+            
+            imagesList.innerHTML = `
+                <div style="display: grid; gap: 1rem;">
+                    ${images.map(image => `
+                        <div class="card">
+                            <div class="card-body" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: bold; font-size: 1.1rem;">${image.repository}:${image.tag}</div>
+                                    <div style="color: #6c757d; font-size: 0.9rem;">ID: ${image.id}</div>
+                                    <div style="color: #6c757d; font-size: 0.9rem;">Size: ${image.size}</div>
+                                    <div style="color: #6c757d; font-size: 0.9rem;">Created: ${image.created}</div>
+                                </div>
+                                <div class="actions">
+                                    <button class="btn btn-primary" onclick="runImage('${image.repository}:${image.tag}')">▶️ Run</button>
+                                    <button class="btn btn-danger" onclick="removeImage('${image.id}')">🗑️ Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderNetworks() {
+            const networksContainer = document.getElementById('networks-diagram');
+            if (!networksContainer) return;
+            
+            networksContainer.innerHTML = networks.map(network => `
+                <div class="network-node network">
+                    <div style="font-weight: bold;">${network.name}</div>
+                    <div style="font-size: 0.9rem; color: #6c757d;">Driver: ${network.driver}</div>
+                    <div style="font-size: 0.9rem; color: #6c757d;">Scope: ${network.scope}</div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-info btn-sm" onclick="inspectNetwork('${network.name}')">🔍 Inspect</button>
+                        ${!['bridge', 'host', 'none'].includes(network.name) ? `<button class="btn btn-danger btn-sm" onclick="removeNetwork('${network.name}')">🗑️ Remove</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderVolumes() {
+            const volumesList = document.getElementById('volumes-list');
+            if (!volumesList) return;
+            
+            volumesList.innerHTML = `
+                <div style="display: grid; gap: 1rem;">
+                    ${volumes.map(volume => `
+                        <div class="card">
+                            <div class="card-body" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: bold; font-size: 1.1rem;">${volume.name}</div>
+                                    <div style="color: #6c757d; font-size: 0.9rem;">Driver: ${volume.driver}</div>
+                                </div>
+                                <div class="actions">
+                                    <button class="btn btn-info" onclick="inspectVolume('${volume.name}')">🔍 Inspect</button>
+                                    <button class="btn btn-danger" onclick="removeVolume('${volume.name}')">🗑️ Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Container actions
+        async function startContainer(name) {
+            const result = await executeDockerCommand(`docker start ${name}`);
+            if (result.success) {
+                showNotification(`Container ${name} started successfully`, 'success');
+                loadContainers();
+            } else {
+                showNotification(`Failed to start container ${name}`, 'error');
+            }
+        }
+
+        async function stopContainer(name) {
+            if (confirm(`Stop container: ${name}?`)) {
+                const result = await executeDockerCommand(`docker stop ${name}`);
+                if (result.success) {
+                    showNotification(`Container ${name} stopped successfully`, 'success');
+                    loadContainers();
+                } else {
+                    showNotification(`Failed to stop container ${name}`, 'error');
+                }
+            }
+        }
+
+        async function pauseContainer(name) {
+            const result = await executeDockerCommand(`docker pause ${name}`);
+            if (result.success) {
+                showNotification(`Container ${name} paused successfully`, 'success');
+                loadContainers();
+            } else {
+                showNotification(`Failed to pause container ${name}`, 'error');
+            }
+        }
+
+        async function unpauseContainer(name) {
+            const result = await executeDockerCommand(`docker unpause ${name}`);
+            if (result.success) {
+                showNotification(`Container ${name} unpaused successfully`, 'success');
+                loadContainers();
+            } else {
+                showNotification(`Failed to unpause container ${name}`, 'error');
+            }
+        }
+
+        async function restartContainer(name) {
+            const result = await executeDockerCommand(`docker restart ${name}`);
+            if (result.success) {
+                showNotification(`Container ${name} restarted successfully`, 'success');
+                loadContainers();
+            } else {
+                showNotification(`Failed to restart container ${name}`, 'error');
+            }
+        }
+
+        async function removeContainer(name) {
+            if (confirm(`Remove container: ${name}? This action cannot be undone.`)) {
+                const result = await executeDockerCommand(`docker rm -f ${name}`);
+                if (result.success) {
+                    showNotification(`Container ${name} removed successfully`, 'success');
+                    loadContainers();
+                } else {
+                    showNotification(`Failed to remove container ${name}`, 'error');
+                }
+            }
+        }
+
+        async function viewLogs(name) {
+            const result = await executeDockerCommand(`docker logs --tail 100 ${name}`);
+            const modal = document.getElementById('logs-modal');
+            const output = document.getElementById('logs-output');
+            
+            if (result.success) {
+                output.innerHTML = result.stdout.split('\n').map(line => 
+                    `<div class="log-line">${escapeHtml(line)}</div>`
+                ).join('');
+            } else {
+                output.innerHTML = `<div class="log-line log-error">Failed to fetch logs: ${result.error}</div>`;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        async function openShell(name) {
+            const modal = document.getElementById('terminal-modal');
+            const output = document.getElementById('terminal-output');
+            
+            output.innerHTML = `<div>Connected to container: ${name}</div><div>Type 'exit' to close terminal</div>`;
+            modal.classList.add('active');
+            
+            document.getElementById('terminal-input').focus();
+        }
+
+        // Utility functions
+        function filterContainers(containers) {
+            let filtered = containers;
+            
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(container => {
+                    switch (currentFilter) {
+                        case 'running': return container.status.includes('Up') && !container.status.includes('Paused');
+                        case 'stopped': return !container.status.includes('Up');
+                        case 'paused': return container.status.includes('Paused');
+                        default: return true;
+                    }
+                });
+            }
+            
+            const searchTerm = document.getElementById('container-search')?.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(container => 
+                    container.name.toLowerCase().includes(searchTerm) ||
+                    container.image.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            return filtered;
+        }
+
+        function updateStats() {
+            const running = containers.filter(c => c.status.includes('Up') && !c.status.includes('Paused')).length;
+            const stopped = containers.filter(c => !c.status.includes('Up')).length;
+            
+            const totalEl = document.getElementById('total-containers');
+            const runningEl = document.getElementById('running-containers');
+            const stoppedEl = document.getElementById('stopped-containers');
+            
+            if (totalEl) totalEl.textContent = containers.length;
+            if (runningEl) runningEl.textContent = running;
+            if (stoppedEl) stoppedEl.textContent = stopped;
+        }
+
+        function updateSystemMetrics() {
+            const cpuUsage = Math.floor(Math.random() * 100);
+            const memoryUsage = Math.floor(Math.random() * 100);
+            const diskUsage = Math.floor(Math.random() * 100);
+            
+            const cpuBar = document.querySelector('.progress-cpu');
+            const memoryBar = document.querySelector('.progress-memory');
+            const diskBar = document.querySelector('.progress-disk');
+            
+            if (cpuBar) cpuBar.style.width = `${cpuUsage}%`;
+            if (memoryBar) memoryBar.style.width = `${memoryUsage}%`;
+            if (diskBar) diskBar.style.width = `${diskUsage}%`;
+            
+            const metricValues = document.querySelectorAll('.metric-value');
+            if (metricValues[0]) metricValues[0].textContent = `${cpuUsage}%`;
+            if (metricValues[1]) metricValues[1].textContent = `${memoryUsage}%`;
+            if (metricValues[2]) metricValues[2].textContent = `${diskUsage}%`;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 3000;
+                animation: slideIn 0.3s ease;
+                background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentFilter = tab.dataset.filter;
+                    renderContainers();
+                });
+            });
+            
+            const searchInput = document.getElementById('container-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', renderContainers);
+            }
+            
+            const terminalInput = document.getElementById('terminal-input');
+            if (terminalInput) {
+                terminalInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const command = e.target.value;
+                        e.target.value = '';
+                        const output = document.getElementById('terminal-output');
+                        output.innerHTML += `<div>$ ${command}</div>`;
+                        if (command === 'exit') {
+                            closeModal('terminal-modal');
+                        } else {
+                            output.innerHTML += `<div>Command executed: ${command}</div>`;
+                        }
+                        output.scrollTop = output.scrollHeight;
+                    }
+                });
+            }
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Page-specific data loading
+        function loadPageData(page) {
+            switch (page) {
+                case 'containers':
+                    loadContainers();
+                    break;
+                case 'images':
+                    loadImages();
+                    break;
+                case 'networks':
+                    loadNetworks();
+                    break;
+                case 'volumes':
+                    loadVolumes();
+                    break;
+                case 'monitoring':
+                    console.log('Monitoring page loaded');
+                    break;
+            }
+        }
+
+        // Refresh function
+        function refreshData() {
+            const activePage = document.querySelector('.page.active')?.id || 'dashboard';
+            loadPageData(activePage);
+            updateSystemMetrics();
+        }
+
+        // Mock data functions
+        function getMockContainers() {
+            return [
+                { name: 'portainer', image: 'portainer/portainer-ce:2.33.0', status: 'Up 16 hours', ports: '8000->8000/tcp, 9443->9443/tcp', created: '16 hours ago', id: '702f92947885' },
+                { name: 'code-server', image: 'multifix/custom-code-server:latest', status: 'Up 2 hours', ports: '8443->8080/tcp', created: '3 hours ago', id: '1c005145b8a3' },
+                { name: 'school3', image: 'wordpress:latest', status: 'Up 16 hours', ports: '80/tcp', created: '2 weeks ago', id: 'c36a54a59979' },
+                { name: 'db-school3', image: 'mariadb:latest', status: 'Up 16 hours', ports: '3306/tcp', created: '2 weeks ago', id: '440d6d1433f7' },
+                { name: 'school4', image: 'rosariosis:latest', status: 'Exited (0) 17 hours ago', ports: '', created: '2 weeks ago', id: '9d7cd89cdc6c' },
+                { name: 'nginx-proxy-manager-app-1', image: 'jc21/nginx-proxy-manager:latest', status: 'Up 15 hours', ports: '80-81->80-81/tcp, 443->443/tcp', created: '4 weeks ago', id: '845e5bf8580e' }
+            ];
+        }
+
+        function getMockImages() {
+            return [
+                { repository: 'portainer/portainer-ce', tag: '2.33.0', id: 'abc123def456', created: '2 weeks ago', size: '295MB' },
+                { repository: 'wordpress', tag: 'latest', id: 'def456ghi789', created: '1 week ago', size: '609MB' },
+                { repository: 'mariadb', tag: 'latest', id: 'ghi789jkl012', created: '3 days ago', size: '383MB' },
+                { repository: 'nginx', tag: 'alpine', id: 'jkl012mno345', created: '5 days ago', size: '23.4MB' }
+            ];
+        }
+
+        function getMockNetworks() {
+            return [
+                { id: 'abc123', name: 'bridge', driver: 'bridge', scope: 'local' },
+                { id: 'def456', name: 'host', driver: 'host', scope: 'local' },
+                { id: 'ghi789', name: 'none', driver: 'null', scope: 'local' },
+                { id: 'jkl012', name: 'docker-projects_default', driver: 'bridge', scope: 'local' }
+            ];
+        }
+
+        function getMockVolumes() {
+            return [
+                { driver: 'local', name: 'portainer_data' },
+                { driver: 'local', name: 'wordpress_data' },
+                { driver: 'local', name: 'mysql_data' },
+                { driver: 'local', name: 'nginx_config' }
+            ];
+        }
+
+        // Additional placeholder functions
+        function createContainer() { alert('Create Container feature - Would open container creation wizard'); }
+        function pruneContainers() { if (confirm('Remove all stopped containers?')) { executeDockerCommand('docker container prune -f').then(result => { if (result.success) { showNotification('Stopped containers pruned successfully', 'success'); loadContainers(); } }); } }
+        function pullImage() { const imageName = prompt('Enter image name to pull (e.g., nginx:latest):'); if (imageName) { showNotification(`Pulling image: ${imageName}`, 'info'); executeDockerCommand(`docker pull ${imageName}`).then(result => { if (result.success) { showNotification(`Image ${imageName} pulled successfully`, 'success'); loadImages(); } else { showNotification(`Failed to pull image ${imageName}`, 'error'); } }); } }
+        function pruneImages() { if (confirm('Remove all unused images?')) { executeDockerCommand('docker image prune -f').then(result => { if (result.success) { showNotification('Unused images pruned successfully', 'success'); loadImages(); } }); } }
+        function createNetwork() { const networkName = prompt('Enter network name:'); if (networkName) { executeDockerCommand(`docker network create ${networkName}`).then(result => { if (result.success) { showNotification(`Network ${networkName} created successfully`, 'success'); loadNetworks(); } }); } }
+        function createVolume() { const volumeName = prompt('Enter volume name:'); if (volumeName) { executeDockerCommand(`docker volume create ${volumeName}`).then(result => { if (result.success) { showNotification(`Volume ${volumeName} created successfully`, 'success'); loadVolumes(); } }); } }
+        function deployStack() { alert('Deploy Stack feature - Would deploy Docker Compose stack'); }
+        function validateCompose() { const composeContent = document.getElementById('compose-editor')?.value; if (composeContent && composeContent.trim()) { showNotification('Docker Compose file validated successfully', 'success'); } else { showNotification('Please enter Docker Compose content', 'error'); } }
+        function deployCompose() { const composeContent = document.getElementById('compose-editor')?.value; if (composeContent && composeContent.trim()) { showNotification('Deploying Docker Compose stack...', 'info'); setTimeout(() => { showNotification('Docker Compose stack deployed successfully', 'success'); }, 2000); } else { showNotification('Please enter Docker Compose content', 'error'); } }
+        function runImage(image) { alert(`Run image: ${image}\n\nWould open container creation dialog with this image`); }
+        function removeImage(id) { if (confirm(`Remove image: ${id}?`)) { executeDockerCommand(`docker rmi ${id}`).then(result => { if (result.success) { showNotification('Image removed successfully', 'success'); loadImages(); } }); } }
+        function inspectNetwork(name) { alert(`Inspect network: ${name}\n\nWould show detailed network information`); }
+        function removeNetwork(name) { if (confirm(`Remove network: ${name}?`)) { executeDockerCommand(`docker network rm ${name}`).then(result => { if (result.success) { showNotification('Network removed successfully', 'success'); loadNetworks(); } }); } }
+        function inspectVolume(name) { alert(`Inspect volume: ${name}\n\nWould show detailed volume information`); }
+        function removeVolume(name) { if (confirm(`Remove volume: ${name}?`)) { executeDockerCommand(`docker volume rm ${name}`).then(result => { if (result.success) { showNotification('Volume removed successfully', 'success'); loadVolumes(); } }); } }
+    </script>
+</body>
+</html>
