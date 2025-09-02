@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extravus Access Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .status { padding: 1rem; border-radius: 8px; margin: 1rem 0; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .info { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+        .btn { background: #007bff; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; margin: 0.5rem; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Extravus - Student Information System</h1>
+        
+        <div class="status success">
+            ✅ <strong>Status:</strong> Extravus is fully configured and working!
+        </div>
+        
+        <div class="status info">
+            📊 <strong>Access URL:</strong> <a href="http://localhost:8084" target="_blank">http://localhost:8084</a><br>
+            🌐 <strong>Mobile Access:</strong> Replace 'localhost' with your server's IP address
+        </div>
+        
+        <h3>Default Login Credentials:</h3>
+        <div class="status info">
+            👤 <strong>Username:</strong> admin<br>
+            🔑 <strong>Password:</strong> admin (or check your setup documentation)
+        </div>
+        
+        <h3>Quick Actions:</h3>
+        <a href="http://localhost:8084" class="btn" target="_blank">🚀 Open Extravus</a>
+        <a href="http://localhost:8888" class="btn" target="_blank">📊 Docker Dashboard</a>
+        
+        <h3>What was Fixed:</h3>
+        <ul>
+            <li>✅ Started PostgreSQL database container (school4-postgres)</li>
+            <li>✅ Started Extravus application container (school4)</li>
+            <li>✅ Fixed database connection configuration</li>
+            <li>✅ Resolved authentication issues between containers</li>
+            <li>✅ Added missing DEFAULT_SCHOOL_YEAR configuration (2025)</li>
+            <li>✅ Added missing LOCALE configuration (en_US.utf8)</li>
+            <li>✅ Fixed undefined variables ($DefaultSyear, $ExtravusLocales)</li>
+            <li>✅ Added essential system configurations</li>
+            <li>✅ Resolved Fatal errors and PHP warnings</li>
+        </ul>
+        
+        <h3>Container Information:</h3>
+        <div class="status info">
+            🐳 <strong>Extravus Container:</strong> school4 (Port 8084)<br>
+            🗄️ <strong>Database Container:</strong> school4-postgres<br>
+            📁 <strong>Database:</strong> PostgreSQL with 'rosariosis' database<br>
+            👥 <strong>Admin User:</strong> Available in database
+        </div>
+        
+        <p><em>Extravus is a comprehensive, free Student Information System for school management. Visit <a href="https://www.extravus.com/" target="_blank">extravus.com</a> for documentation and support.</em></p>
+    </div>
+</body>
+</html>

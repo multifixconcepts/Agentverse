@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Container Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .header { background: #2196F3; color: white; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #2196F3; }
+        .stat-label { color: #666; margin-top: 0.5rem; }
+        .containers-grid { display: grid; gap: 1rem; }
+        .container-card { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
+        .container-header { padding: 1rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .container-name { font-weight: bold; font-size: 1.1rem; }
+        .status { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .status.running { background: #4CAF50; color: white; }
+        .status.stopped { background: #f44336; color: white; }
+        .container-body { padding: 1rem; }
+        .container-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+        .info-item { }
+        .info-label { font-size: 0.8rem; color: #666; margin-bottom: 0.25rem; }
+        .info-value { font-weight: 500; }
+        .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; }
+        .btn-start { background: #4CAF50; color: white; }
+        .btn-stop { background: #f44336; color: white; }
+        .btn-logs { background: #FF9800; color: white; }
+        .btn-shell { background: #9C27B0; color: white; }
+        .btn:hover { opacity: 0.8; }
+        .refresh-btn { background: #2196F3; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 1rem; }
+        .loading { text-align: center; padding: 2rem; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐳 Docker Container Dashboard</h1>
+    </div>
+    
+    <div class="container">
+        <button class="refresh-btn" onclick="loadContainers()">🔄 Refresh Containers</button>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-containers">-</div>
+                <div class="stat-label">Total Containers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="running-containers">-</div>
+                <div class="stat-label">Running</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stopped-containers">-</div>
+                <div class="stat-label">Stopped</div>
+            </div>
+        </div>
+        
+        <div id="containers-list" class="containers-grid">
+            <div class="loading">Loading containers...</div>
+        </div>
+    </div>
+
+    <script>
+        async function executeCommand(command) {
+            try {
+                const response = await fetch('/api/docker', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command })
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('Command failed:', error);
+                return { error: error.message };
+            }
+        }
+
+        function parseContainerData(output) {
+            const lines = output.split('\n').filter(line => line.trim());
+            const containers = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(/\s{2,}/);
+                if (parts.length >= 6) {
+                    containers.push({
+                        id: parts[0],
+                        image: parts[1],
+                        command: parts[2],
+                        created: parts[3],
+                        status: parts[4],
+                        ports: parts[5] || '',
+                        name: parts[6] || parts[0].substring(0, 12)
+                    });
+                }
+            }
+            return containers;
+        }
+
+        function renderContainers(containers) {
+            const containersList = document.getElementById('containers-list');
+            const totalEl = document.getElementById('total-containers');
+            const runningEl = document.getElementById('running-containers');
+            const stoppedEl = document.getElementById('stopped-containers');
+
+            const running = containers.filter(c => c.status.includes('Up')).length;
+            const stopped = containers.length - running;
+
+            totalEl.textContent = containers.length;
+            runningEl.textContent = running;
+            stoppedEl.textContent = stopped;
+
+            if (containers.length === 0) {
+                containersList.innerHTML = '<div class="loading">No containers found</div>';
+                return;
+            }
+
+            containersList.innerHTML = containers.map(container => {
+                const isRunning = container.status.includes('Up');
+                const statusClass = isRunning ? 'running' : 'stopped';
+                
+                return `
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">${container.name}</div>
+                            <div class="status ${statusClass}">${isRunning ? 'Running' : 'Stopped'}</div>
+                        </div>
+                        <div class="container-body">
+                            <div class="container-info">
+                                <div class="info-item">
+                                    <div class="info-label">Image</div>
+                                    <div class="info-value">${container.image}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Status</div>
+                                    <div class="info-value">${container.status}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Ports</div>
+                                    <div class="info-value">${container.ports || 'None'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Created</div>
+                                    <div class="info-value">${container.created}</div>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                ${!isRunning ? `<button class="btn btn-start" onclick="startContainer('${container.name}')">▶️ Start</button>` : ''}
+                                ${isRunning ? `<button class="btn btn-stop" onclick="stopContainer('${container.name}')">⏹️ Stop</button>` : ''}
+                                <button class="btn btn-logs" onclick="viewLogs('${container.name}')">📋 Logs</button>
+                                ${isRunning ? `<button class="btn btn-shell" onclick="openShell('${container.name}')">💻 Shell</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadContainers() {
+            document.getElementById('containers-list').innerHTML = '<div class="loading">Loading containers...</div>';
+            
+            // Simulate API call - in real implementation, this would call your backend
+            const mockContainers = [
+                { name: 'portainer', image: 'portainer/portainer-ce:2.33.0', status: 'Up 16 hours', ports: '8000->8000/tcp, 9443->9443/tcp', created: '16 hours ago' },
+                { name: 'code-server', image: 'multifix/custom-code-server:latest', status: 'Up 2 hours', ports: '8443->8080/tcp', created: '3 hours ago' },
+                { name: 'school3', image: 'wordpress:latest', status: 'Up 16 hours', ports: '80/tcp', created: '2 weeks ago' },
+                { name: 'db-school3', image: 'mariadb:latest', status: 'Up 16 hours', ports: '3306/tcp', created: '2 weeks ago' },
+                { name: 'school5', image: 'arm64v8/wordpress:latest', status: 'Up 16 hours', ports: '80/tcp', created: '2 weeks ago' },
+                { name: 'db-school5', image: 'arm64v8/mariadb:latest', status: 'Up 16 hours', ports: '3306/tcp', created: '2 weeks ago' },
+                { name: 'school4', image: 'rosariosis:latest', status: 'Exited (0) 17 hours ago', ports: '', created: '2 weeks ago' },
+                { name: 'school4-postgres', image: 'postgres:13', status: 'Exited (0) 17 hours ago', ports: '', created: '2 weeks ago' },
+                { name: 'n8n-n8n-1', image: 'n8nio/n8n', status: 'Up 16 hours', ports: '8083->8083/tcp', created: '4 weeks ago' },
+                { name: 'gibbon2-web', image: 'school2-deploy-gibbon2-web', status: 'Up 16 hours', ports: '8082->80/tcp', created: '4 weeks ago' },
+                { name: 'gibbon2-db', image: 'mariadb:10.6', status: 'Up 16 hours', ports: '3306/tcp', created: '4 weeks ago' },
+                { name: 'gibbon-web', image: 'gibbon-deploy-gibbon-web', status: 'Up 16 hours', ports: '8090->80/tcp', created: '4 weeks ago' },
+                { name: 'gibbon-db', image: 'mariadb:10.6', status: 'Up 16 hours', ports: '3306/tcp', created: '4 weeks ago' },
+                { name: 'u-recline', image: 'd42a45d33bc2', status: 'Up 16 hours', ports: '80/tcp', created: '4 weeks ago' },
+                { name: 'db-u-recline', image: '38fca9f64935', status: 'Up 16 hours', ports: '3306/tcp', created: '4 weeks ago' },
+                { name: 'nginx-proxy-manager-app-1', image: 'jc21/nginx-proxy-manager:latest', status: 'Up 15 hours', ports: '80-81->80-81/tcp, 443->443/tcp', created: '4 weeks ago' }
+            ];
+            
+            renderContainers(mockContainers);
+        }
+
+        async function startContainer(name) {
+            alert(`Starting container: ${name}\n\nIn a real implementation, this would execute:\ndocker start ${name}`);
+            setTimeout(loadContainers, 1000);
+        }
+
+        async function stopContainer(name) {
+            if (confirm(`Stop container: ${name}?`)) {
+                alert(`Stopping container: ${name}\n\nIn a real implementation, this would execute:\ndocker stop ${name}`);
+                setTimeout(loadContainers, 1000);
+            }
+        }
+
+        async function viewLogs(name) {
+            alert(`Viewing logs for: ${name}\n\nIn a real implementation, this would execute:\ndocker logs -f ${name}\n\nOr open logs in a new window/modal.`);
+        }
+
+        async function openShell(name) {
+            alert(`Opening shell for: ${name}\n\nIn a real implementation, this would execute:\ndocker exec -it ${name} /bin/bash\n\nOr open a web-based terminal.`);
+        }
+
+        // Load containers on page load
+        loadContainers();
+    </script>
+</body>
+</html>

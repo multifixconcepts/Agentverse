@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extravus Continental Currency System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 1rem; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .success { background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #28a745; }
+        .continent { background: #f8f9fa; margin: 1rem 0; padding: 1rem; border-radius: 8px; border-left: 4px solid #007bff; }
+        .continent h4 { margin: 0 0 0.5rem 0; color: #495057; }
+        .currency-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.5rem; }
+        .currency { background: white; padding: 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 1rem; }
+        .btn { background: #28a745; color: white; padding: 1rem 2rem; border: none; border-radius: 6px; text-decoration: none; display: inline-block; margin: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Extravus Continental Currency System</h1>
+        
+        <div class="success">
+            ✅ <strong>Updated:</strong> 50+ world currencies organized by continent with proper symbols and ISO codes
+        </div>
+        
+        <div style="text-align: center; margin: 1rem 0;">
+            <a href="http://localhost:8084/Modules.php?modname=School_Setup/Configuration.php" class="btn">⚙️ Access Configuration</a>
+        </div>
+        
+        <div class="continent">
+            <h4>🇺🇸 North America</h4>
+            <div class="currency-grid">
+                <div class="currency">$ - US Dollar (USD)</div>
+                <div class="currency">C$ - Canadian Dollar (CAD)</div>
+                <div class="currency">MX$ - Mexican Peso (MXN)</div>
+            </div>
+        </div>
+        
+        <div class="continent">
+            <h4>🇪🇺 Europe</h4>
+            <div class="currency-grid">
+                <div class="currency">€ - Euro (EUR)</div>
+                <div class="currency">£ - British Pound (GBP)</div>
+                <div class="currency">₽ - Russian Ruble (RUB)</div>
+                <div class="currency">₴ - Ukrainian Hryvnia (UAH)</div>
+                <div class="currency">₺ - Turkish Lira (TRY)</div>
+                <div class="currency">zł - Polish Złoty (PLN)</div>
+                <div class="currency">Kč - Czech Koruna (CZK)</div>
+                <div class="currency">Ft - Hungarian Forint (HUF)</div>
+                <div class="currency">kr - Norwegian Krone (NOK)</div>
+            </div>
+        </div>
+        
+        <div class="continent">
+            <h4>🇯🇵 Asia</h4>
+            <div class="currency-grid">
+                <div class="currency">¥ - Japanese Yen (JPY)</div>
+                <div class="currency">¥ - Chinese Yuan (CNY)</div>
+                <div class="currency">₹ - Indian Rupee (INR)</div>
+                <div class="currency">₩ - South Korean Won (KRW)</div>
+                <div class="currency">₪ - Israeli Shekel (ILS)</div>
+                <div class="currency">₨ - Pakistani Rupee (PKR)</div>
+                <div class="currency">₫ - Vietnamese Dong (VND)</div>
+                <div class="currency">₱ - Philippine Peso (PHP)</div>
+                <div class="currency">Rp - Indonesian Rupiah (IDR)</div>
+                <div class="currency">RM - Malaysian Ringgit (MYR)</div>
+                <div class="currency">S$ - Singapore Dollar (SGD)</div>
+                <div class="currency">฿ - Thai Baht (THB)</div>
+                <div class="currency">₼ - Azerbaijani Manat (AZN)</div>
+                <div class="currency">₾ - Georgian Lari (GEL)</div>
+                <div class="currency">₸ - Kazakhstani Tenge (KZT)</div>
+            </div>
+        </div>
+        
+        <div class="continent">
+            <h4>🌍 Africa</h4>
+            <div class="currency-grid">
+                <div class="currency">₦ - Nigerian Naira (NGN)</div>
+                <div class="currency">R - South African Rand (ZAR)</div>
+                <div class="currency">₵ - Ghanaian Cedi (GHS)</div>
+                <div class="currency">E£ - Egyptian Pound (EGP)</div>
+                <div class="currency">Br - Ethiopian Birr (ETB)</div>
+                <div class="currency">KSh - Kenyan Shilling (KES)</div>
+                <div class="currency">USh - Ugandan Shilling (UGX)</div>
+                <div class="currency">TSh - Tanzanian Shilling (TZS)</div>
+            </div>
+        </div>
+        
+        <div class="continent">
+            <h4>🇧🇷 South America</h4>
+            <div class="currency-grid">
+                <div class="currency">R$ - Brazilian Real (BRL)</div>
+                <div class="currency">$ - Argentine Peso (ARS)</div>
+                <div class="currency">$ - Chilean Peso (CLP)</div>
+                <div class="currency">$ - Colombian Peso (COP)</div>
+                <div class="currency">S/ - Peruvian Sol (PEN)</div>
+                <div class="currency">$U - Uruguayan Peso (UYU)</div>
+                <div class="currency">Bs - Venezuelan Bolívar (VES)</div>
+                <div class="currency">₲ - Paraguayan Guaraní (PYG)</div>
+            </div>
+        </div>
+        
+        <div class="continent">
+            <h4>🇦🇺 Oceania</h4>
+            <div class="currency-grid">
+                <div class="currency">A$ - Australian Dollar (AUD)</div>
+                <div class="currency">NZ$ - New Zealand Dollar (NZD)</div>
+            </div>
+        </div>
+        
+        <div class="continent">
+            <h4>🕌 Middle East</h4>
+            <div class="currency-grid">
+                <div class="currency">﷼ - Saudi Riyal (SAR)</div>
+                <div class="currency">د.إ - UAE Dirham (AED)</div>
+                <div class="currency">د.ك - Kuwaiti Dinar (KWD)</div>
+                <div class="currency">ر.ق - Qatari Riyal (QAR)</div>
+            </div>
+        </div>
+        
+        <div class="continent">
+            <h4>💻 Digital</h4>
+            <div class="currency-grid">
+                <div class="currency">₿ - Bitcoin (BTC)</div>
+                <div class="currency">Ξ - Ethereum (ETH)</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

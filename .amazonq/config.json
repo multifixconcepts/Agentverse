@@ -1,0 +1,65 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "mcp-server-filesystem",
+      "args": [],
+      "env": {
+        "MCP_SERVER_FILESYSTEM_ROOT": "/home/coder/project"
+      }
+    },
+    "memory": {
+      "command": "/usr/bin/node",
+      "args": [
+        "--max-old-space-size=512",
+        "/usr/lib/node_modules/@modelcontextprotocol/server-memory/dist/index.js"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "/home/coder/project/.memory/memory.json"
+      }
+    },
+    "sqlite": {
+      "command": "/usr/bin/node",
+      "args": ["/home/coder/project/simple-sqlite-mcp.js"],
+      "env": {}
+    },
+    "portainer": {
+      "command": "/usr/bin/node",
+      "args": ["/home/coder/project/portainer-mcp-server.js"],
+      "env": {
+        "PORTAINER_URL": "https://server1.extravus.com",
+        "PORTAINER_TOKEN": "ptr_SxKk52zfbjcGeUlBcJ2khkAIzjKS1duhBoJoJP4zjCA="
+      }
+    },
+    "command": {
+      "command": "/usr/bin/node",
+      "args": ["/home/coder/project/secure-command-server.js"],
+      "env": {
+        "UPDATED": "true"
+      }
+    },
+    "git": {
+      "command": "/usr/bin/node",
+      "args": ["/home/coder/project/git-server.js"],
+      "env": {
+        "GIT_CONFIG_GLOBAL": "/home/coder/.gitconfig"
+      }
+    },
+    "curl": {
+      "command": "/usr/bin/node", 
+      "args": ["/home/coder/project/curl-server.js"],
+      "env": {
+        "HTTP_TIMEOUT": "30",
+        "MAX_RESPONSE_SIZE": "10485760"
+      }
+    },
+    "n8n": {
+      "command": "/usr/bin/node",
+      "args": ["/home/coder/project/n8n-server.js"],
+      "env": {
+        "N8N_URL": "http://school2.extravus.com:8083",
+        "N8N_USERNAME": "extravus",
+        "N8N_PASSWORD": "Mafioso0147?"
+      }
+    }
+  }
+}
