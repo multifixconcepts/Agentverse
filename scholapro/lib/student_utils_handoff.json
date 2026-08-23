@@ -1,0 +1,36 @@
+{
+  "handoff_id": "HO-110",
+  "ticket_id": "SCHOL-110",
+  "title": "Student Count API with Grade Level Filter",
+  "change_type": "MID_TASK_REQUIREMENT_CHANGE",
+  "status": "READY_FOR_HANDOFF",
+  "created_date": "2026-08-19",
+  "components": {
+    "implementation": {
+      "file": "scholapro/lib/student_utils.php",
+      "function": "getStudentCount($school_id, $grade_level = null)",
+      "change_summary": "Original getStudentCount($school_id) fully replaced with new signature that adds optional grade_level filter. When null, returns total count. When provided, returns count filtered by grade."
+    },
+    "tests": {
+      "file": "scholapro/lib/student_utils_test_claim.json",
+      "test_count": 4,
+      "change_summary": "Test claim updated from 2 tests (v1) to 4 tests (v2) covering both null grade_level and provided grade_level scenarios"
+    },
+    "requirement_ledger": {
+      "file": "AGENTVERSE/REQUIREMENT_LEDGER.json",
+      "entry": "SCHOL-110",
+      "change_summary": "New entry added with MID_TASK_REQUIREMENT_CHANGE flag, documenting original and changed signatures"
+    },
+    "contract_registry": {
+      "file": "AGENTVERSE/CONTRACT_REGISTRY.json",
+      "entry": "student-utils-api",
+      "change_summary": "New function_contracts section added with v1 and v2 signatures, documenting backward compatibility"
+    }
+  },
+  "verification": {
+    "original_replaced": true,
+    "not_patched": true,
+    "backward_compatible": true,
+    "all_artifacts_updated": true
+  }
+}

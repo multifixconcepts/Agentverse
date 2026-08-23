@@ -1,0 +1,13 @@
+# Default owner for entire repository
+* @multifixconcepts
+
+# Control plane - strictest review required
+AGENTVERSE/ @multifixconcepts
+_tools/ @multifixconcepts
+_tests/ @multifixconcepts
+
+# Application code
+scholapro/ @multifixconcepts
+
+# CI/CD configuration
+.github/ @multifixconcepts

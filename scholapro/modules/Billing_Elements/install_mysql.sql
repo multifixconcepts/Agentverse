@@ -1,0 +1,71 @@
+-- Billing Elements module: MySQL (MariaDB) install script
+-- Executed on module activation (Modules.php > School > Configuration > Modules).
+-- Idempotent: safe to re-run (CREATE TABLE IF NOT EXISTS).
+
+SET default_storage_engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS billing_elements_categories (
+	ID int(11) NOT NULL AUTO_INCREMENT,
+	SCHOOL_ID int(11) NOT NULL,
+	SYEAR decimal(4,0) NOT NULL,
+	TITLE varchar(255) NOT NULL,
+	SORT_ORDER int(11) NOT NULL DEFAULT 0,
+	CREATED_AT timestamp NULL DEFAULT current_timestamp(),
+	UPDATED_AT timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+	PRIMARY KEY (ID),
+	KEY SCHOOL_ID (SCHOOL_ID),
+	KEY SYEAR (SYEAR)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS billing_elements (
+	ID int(11) NOT NULL AUTO_INCREMENT,
+	SCHOOL_ID int(11) NOT NULL,
+	SYEAR decimal(4,0) NOT NULL,
+	CATEGORY_ID int(11) NOT NULL,
+	TITLE varchar(255) NOT NULL,
+	AMOUNT decimal(14,2) NOT NULL,
+	REFERENCE varchar(50) DEFAULT NULL,
+	DESCRIPTION text DEFAULT NULL,
+	GRADE_LEVELS varchar(255) DEFAULT NULL,
+	COURSE_PERIOD_ID int(11) DEFAULT NULL,
+	ROLLOVER varchar(1) NOT NULL DEFAULT 'Y',
+	CREATED_AT timestamp NULL DEFAULT current_timestamp(),
+	UPDATED_AT timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+	PRIMARY KEY (ID),
+	KEY SCHOOL_ID (SCHOOL_ID),
+	KEY SYEAR (SYEAR),
+	KEY CATEGORY_ID (CATEGORY_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS student_billing_elements (
+	ID int(11) NOT NULL AUTO_INCREMENT,
+	SYEAR decimal(4,0) NOT NULL,
+	SCHOOL_ID int(11) NOT NULL,
+	STUDENT_ID int(11) NOT NULL,
+	ELEMENT_ID int(11) NOT NULL,
+	FEE_ID int(11) DEFAULT NULL,
+	COMMENT text DEFAULT NULL,
+	CREATED_AT timestamp NULL DEFAULT current_timestamp(),
+	UPDATED_AT timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+	PRIMARY KEY (ID),
+	KEY SYEAR (SYEAR),
+	KEY SCHOOL_ID (SCHOOL_ID),
+	KEY STUDENT_ID (STUDENT_ID),
+	KEY ELEMENT_ID (ELEMENT_ID),
+	KEY FEE_ID (FEE_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS billing_monthly_elements (
+	ID int(11) NOT NULL AUTO_INCREMENT,
+	SCHOOL_ID int(11) NOT NULL,
+	SYEAR decimal(4,0) NOT NULL,
+	ELEMENT_ID int(11) NOT NULL,
+	DUE_DAY int(11) NOT NULL DEFAULT 5,
+	GRADE_LEVELS varchar(255) DEFAULT NULL,
+	CREATED_AT timestamp NULL DEFAULT current_timestamp(),
+	UPDATED_AT timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+	PRIMARY KEY (ID),
+	KEY SCHOOL_ID (SCHOOL_ID),
+	KEY SYEAR (SYEAR),
+	KEY ELEMENT_ID (ELEMENT_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

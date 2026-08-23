@@ -1,0 +1,262 @@
+name: AgentVerse CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-syntax:
+    name: lint-and-syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: PHP Lint
+        run: |
+          find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' \
+            -print0 | xargs -0 -n1 php -l 2>&1 | tee /tmp/php-lint.txt
+          if grep -q "Parse error\|Fatal error" /tmp/php-lint.txt; then
+            echo "::error::PHP syntax errors found"
+            exit 1
+          fi
+
+      - name: Upload Lint Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: /tmp/php-lint.txt
+
+  regression-tests:
+    name: regression-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Control Plane Regression Tests
+        run: |
+          chmod +x _tests/control-plane-regression.sh
+          bash _tests/control-plane-regression.sh 2>&1 | tee /tmp/regression-results.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-results
+          path: /tmp/regression-results.txt
+
+  adversarial-tests:
+    name: adversarial-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Run Adversarial Tests
+        run: |
+          chmod +x _tests/scenario8-adversarial.sh
+          bash _tests/scenario8-adversarial.sh 2>&1 | tee /tmp/adversarial-results.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: adversarial-results
+          path: /tmp/adversarial-results.txt
+
+  remediation-tests:
+    name: remediation-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Run Remediation Tests
+        run: |
+          chmod +x _tests/remediation-tests.sh
+          bash _tests/remediation-tests.sh 2>&1 | tee /tmp/remediation-results.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: remediation-results
+          path: /tmp/remediation-results.txt
+
+  verify-release-set:
+    name: verify-release-set
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify Release Set
+        run: |
+          chmod +x _tools/verify-release-set.sh
+          RESULT=$(_tools/verify-release-set.sh --all-released 2>&1)
+          echo "$RESULT" | tee /tmp/release-set-results.txt
+          VERDICT=$(echo "$RESULT" | python3 -c "import sys, json; print(json.load(sys.stdin).get('verdict', 'DENY'))" 2>/dev/null || echo "DENY")
+          if [ "$VERDICT" != "ALLOW" ]; then
+            echo "::error::Release set verification failed"
+            exit 1
+          fi
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-set-results
+          path: /tmp/release-set-results.txt
+
+  doctor-check:
+    name: doctor-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Run Doctor
+        run: |
+          chmod +x _tools/doctor.sh
+          _tools/doctor.sh 2>&1 | tee /tmp/doctor-output.txt
+          if grep -q "BLOCKED" /tmp/doctor-output.txt; then
+            echo "::error::Doctor check returned BLOCKED"
+            exit 1
+          fi
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: doctor-results
+          path: /tmp/doctor-output.txt
+
+  secret-scan:
+    name: secret-scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan Changed Files
+        run: |
+          if [ -f _tools/scan-secrets.sh ]; then
+            chmod +x _tools/scan-secrets.sh
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '*.php' '*.json' '*.yml' '*.yaml' '*.md' '*.env*' '*.sh' '*.xml')
+            else
+              CHANGED=$(git diff --name-only HEAD~1 HEAD -- '*.php' '*.json' '*.yml' '*.yaml' '*.md' '*.env*' '*.sh' '*.xml' 2>/dev/null || git ls-files)
+            fi
+            echo "$CHANGED" | xargs -r _tools/scan-secrets.sh 2>&1 | tee /tmp/secret-scan.txt
+            if grep -q "HIGH" /tmp/secret-scan.txt; then
+              echo "::error::HIGH severity secrets detected"
+              exit 1
+            fi
+          else
+            echo "scan-secrets.sh not found"
+            exit 1
+          fi
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: secret-scan-results
+          path: /tmp/secret-scan.txt
+
+  state-consistency:
+    name: state-consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify State Consistency
+        run: |
+          if [ -f AGENTVERSE/CURRENT_STATE.json ]; then
+            node -e "JSON.parse(require('fs').readFileSync('AGENTVERSE/CURRENT_STATE.json','utf8'))"
+            if [ $? -ne 0 ]; then
+              echo "::error::CURRENT_STATE.json is not valid JSON"
+              exit 1
+            fi
+            echo "CURRENT_STATE.json is valid"
+          else
+            echo "::error::CURRENT_STATE.json not found"
+            exit 1
+          fi
+
+          if [ -f AGENTVERSE/ORG_CHECKSUM.json ]; then
+            node -e "JSON.parse(require('fs').readFileSync('AGENTVERSE/ORG_CHECKSUM.json','utf8'))"
+            if [ $? -ne 0 ]; then
+              echo "::error::ORG_CHECKSUM.json is not valid JSON"
+              exit 1
+            fi
+            echo "ORG_CHECKSUM.json is valid"
+          fi
+
+      - name: Verify ORG_CHECKSUM Integrity
+        run: |
+          if [ -f _tools/verify-state-consistency.sh ]; then
+            chmod +x _tools/verify-state-consistency.sh
+            _tools/verify-state-consistency.sh 2>&1 | tee /tmp/consistency-results.txt
+          else
+            echo "verify-state-consistency.sh not found, skipping"
+            echo "SKIPPED" > /tmp/consistency-results.txt
+          fi
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: consistency-results
+          path: /tmp/consistency-results.txt

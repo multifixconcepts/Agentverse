@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Binaries
+_tools/jq
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+dist/
+build/
+*.tmp
+
+# Test artifacts
+/tmp/
+*.coverage
+
+# PHP
+*.phar
+composer.lock

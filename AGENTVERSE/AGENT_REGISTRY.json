@@ -1,0 +1,1338 @@
+{
+  "org": "Agentverse",
+  "version": "2.0",
+  "generated": "2026-08-23T01:46:03.373Z",
+  "total_agents": 70,
+  "units": {
+    "Summoner": {
+      "count": 1,
+      "members": [
+        "summoner"
+      ]
+    },
+    "Council of Architects": {
+      "count": 3,
+      "members": [
+        "chief-architect",
+        "system-architect",
+        "data-architect"
+      ]
+    },
+    "Agent Foundry": {
+      "count": 3,
+      "members": [
+        "agent-forge",
+        "agent-reviewer",
+        "agent-versioner"
+      ]
+    },
+    "Knowledge Commons": {
+      "count": 3,
+      "members": [
+        "knowledge-curator",
+        "memory-steward",
+        "search-librarian"
+      ]
+    },
+    "Quality Guardians": {
+      "count": 3,
+      "members": [
+        "quality-guardian",
+        "standards-gatekeeper",
+        "release-custodian"
+      ]
+    },
+    "Tooling Council": {
+      "count": 3,
+      "members": [
+        "toolsmith",
+        "mcp-specialist",
+        "workflow-engineer"
+      ]
+    },
+    "Documentation Guild": {
+      "count": 3,
+      "members": [
+        "docs-lead",
+        "api-docs-writer",
+        "runbook-writer"
+      ]
+    },
+    "Feature Division": {
+      "count": 11,
+      "members": [
+        "feature-division-council",
+        "feature-planner",
+        "frontend-engineer",
+        "backend-engineer",
+        "fullstack-engineer",
+        "api-engineer",
+        "db-engineer",
+        "ui-ux-engineer",
+        "feature-tester",
+        "migration-engineer",
+        "release-engineer"
+      ]
+    },
+    "Integration Division": {
+      "count": 8,
+      "members": [
+        "integration-division-council",
+        "mcp-engineer",
+        "webhook-engineer",
+        "n8n-orchestrator",
+        "docker-ops",
+        "portainer-ops",
+        "dns-ops",
+        "secure-connector"
+      ]
+    },
+    "Quality Division": {
+      "count": 9,
+      "members": [
+        "quality-division-council",
+        "test-architect",
+        "unit-test-engineer",
+        "integration-test-engineer",
+        "e2e-test-engineer",
+        "perf-test-engineer",
+        "security-tester",
+        "a11y-tester",
+        "regression-gate"
+      ]
+    },
+    "Security Division": {
+      "count": 8,
+      "members": [
+        "security-division-council",
+        "threat-modeler",
+        "vuln-scanner",
+        "secrets-auditor",
+        "network-hardener",
+        "container-hardener",
+        "auth-engineer",
+        "incident-responder"
+      ]
+    },
+    "Data Division": {
+      "count": 8,
+      "members": [
+        "data-division-council",
+        "sql-optimizer",
+        "db-admin",
+        "backup-engineer",
+        "etl-engineer",
+        "analytics-engineer",
+        "report-builder",
+        "data-quality-steward"
+      ]
+    },
+    "Platform Division": {
+      "count": 7,
+      "members": [
+        "platform-division-council",
+        "sre",
+        "ci-cd-engineer",
+        "monitoring-specialist",
+        "host-ops-specialist",
+        "nginx-specialist",
+        "disaster-recovery"
+      ]
+    }
+  },
+  "agents": [
+    {
+      "id": "summoner",
+      "name": "Summoner",
+      "role": "Orchestrator & sole entry point",
+      "unit": "Summoner",
+      "unit_type": "command",
+      "tier": "read-write",
+      "escalates_to": "Council of Architects",
+      "description": "Classifies incoming requests, delegates to the owning division/council, enforces the delegation & review-gate flow, and escalates. The only agent end-users talk to.",
+      "responsibilities": [
+        "Triage and classify every incoming request or ticket",
+        "Delegate to the correct division via the cohesion matrix",
+        "Enforce the review-gate chain and capture gate verdicts",
+        "Escalate blockers to councils; keep a single task ledger",
+        "Record decisions into the Knowledge Base"
+      ],
+      "file": ".opencode/agents/summoner.md"
+    },
+    {
+      "id": "chief-architect",
+      "name": "Chief Architect",
+      "role": "Architecture authority",
+      "unit": "Council of Architects",
+      "unit_type": "council",
+      "tier": "read",
+      "escalates_to": "Council of Architects",
+      "description": "Owns system architecture decisions, technology selection, and cross-cutting design integrity. Final sign-off on architecture gate.",
+      "responsibilities": [
+        "Approve or reject architecture gate on feature plans",
+        "Own technology selection and system-wide patterns",
+        "Resolve cross-division design conflicts",
+        "Maintain the architecture decision record"
+      ],
+      "file": ".opencode/agents/chief-architect.md"
+    },
+    {
+      "id": "system-architect",
+      "name": "System Architect",
+      "role": "System design & interfaces",
+      "unit": "Council of Architects",
+      "unit_type": "council",
+      "tier": "read",
+      "escalates_to": "chief-architect",
+      "description": "Designs system topology, module boundaries, and integration interfaces; reviews plans for structural soundness.",
+      "responsibilities": [
+        "Define module boundaries and interface contracts",
+        "Review integration points between divisions",
+        "Validate scalability and runtime model",
+        "Advise Feature Division on structural changes"
+      ],
+      "file": ".opencode/agents/system-architect.md"
+    },
+    {
+      "id": "data-architect",
+      "name": "Data Architect",
+      "role": "Data model & storage design",
+      "unit": "Council of Architects",
+      "unit_type": "council",
+      "tier": "read",
+      "escalates_to": "chief-architect",
+      "description": "Owns data models, schema evolution, and storage strategy across the Data Division and application.",
+      "responsibilities": [
+        "Review schema changes and migrations",
+        "Own data model standards and naming",
+        "Advise on SQL/backup/ETL design",
+        "Sign off data-related architecture decisions"
+      ],
+      "file": ".opencode/agents/data-architect.md"
+    },
+    {
+      "id": "agent-forge",
+      "name": "Agent Forge",
+      "role": "Agent & skill authoring",
+      "unit": "Agent Foundry",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "Council of Architects",
+      "description": "Authors, refines, and publishes agent definitions and skills. Keeps the roster executable in OpenCode.",
+      "responsibilities": [
+        "Author and refine agent prompts/skills",
+        "Ensure every roster entry maps to a working OpenCode agent",
+        "Tune descriptions so delegation routing is reliable",
+        "Version agent definitions with the registry"
+      ],
+      "file": ".opencode/agents/agent-forge.md"
+    },
+    {
+      "id": "agent-reviewer",
+      "name": "Agent Reviewer",
+      "role": "Agent definition QA",
+      "unit": "Agent Foundry",
+      "unit_type": "council",
+      "tier": "read",
+      "escalates_to": "agent-forge",
+      "description": "Reviews agent definitions and skills for clarity, safety, and reliability before publication.",
+      "responsibilities": [
+        "Review new/updated agent prompts",
+        "Check permission scopes match responsibilities",
+        "Verify skill triggers and instructions",
+        "Reject ambiguous or unsafe definitions"
+      ],
+      "file": ".opencode/agents/agent-reviewer.md"
+    },
+    {
+      "id": "agent-versioner",
+      "name": "Agent Versioner",
+      "role": "Roster & registry lifecycle",
+      "unit": "Agent Foundry",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "agent-forge",
+      "description": "Maintains the canonical AGENT_REGISTRY.json and the diff/version history of the organization itself.",
+      "responsibilities": [
+        "Keep AGENT_REGISTRY.json in sync with generated agents",
+        "Record organizational changes (agents added/merged/retired)",
+        "Produce org drift reports vs the registry",
+        "Enforce naming/ontology consistency"
+      ],
+      "file": ".opencode/agents/agent-versioner.md"
+    },
+    {
+      "id": "knowledge-curator",
+      "name": "Knowledge Curator",
+      "role": "Knowledge Base owner",
+      "unit": "Knowledge Commons",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "Council of Architects",
+      "description": "Owns KNOWLEDGE_BASE.md: accepts, indexes, and retires knowledge entries through the knowledge lifecycle.",
+      "responsibilities": [
+        "Accept/reject knowledge proposals",
+        "Index entries with taxonomy and tags",
+        "Retire stale entries and record reasons",
+        "Maintain the knowledge lifecycle policy"
+      ],
+      "file": ".opencode/agents/knowledge-curator.md"
+    },
+    {
+      "id": "memory-steward",
+      "name": "Memory Steward",
+      "role": "Shared memory owner",
+      "unit": "Knowledge Commons",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "knowledge-curator",
+      "description": "Owns MEMORY_INDEX.md and the shared memory store; governs what agents persist and how it is indexed.",
+      "responsibilities": [
+        "Govern writes to shared memory",
+        "Maintain the memory index and TTL policy",
+        "Prevent stale or conflicting memory entries",
+        "Own the memory MCP server configuration"
+      ],
+      "file": ".opencode/agents/memory-steward.md"
+    },
+    {
+      "id": "search-librarian",
+      "name": "Search Librarian",
+      "role": "Knowledge retrieval",
+      "unit": "Knowledge Commons",
+      "unit_type": "council",
+      "tier": "read",
+      "escalates_to": "knowledge-curator",
+      "description": "Locates knowledge, prior decisions, and similar issues across the Knowledge Base, memory, and codebase.",
+      "responsibilities": [
+        "Find relevant prior art for any ticket",
+        "Answer cross-referencing questions",
+        "Maintain retrieval conventions",
+        "Report knowledge gaps to the Curator"
+      ],
+      "file": ".opencode/agents/search-librarian.md"
+    },
+    {
+      "id": "quality-guardian",
+      "name": "Quality Guardian",
+      "role": "Quality gate authority",
+      "unit": "Quality Guardians",
+      "unit_type": "council",
+      "tier": "read",
+      "escalates_to": "Council of Architects",
+      "description": "Owns the quality definition-of-done and the release gate. Final authority on whether a change ships.",
+      "responsibilities": [
+        "Own definition-of-done and release gate criteria",
+        "Adjudicate quality gate disputes",
+        "Track quality metrics across divisions",
+        "Sign off final release"
+      ],
+      "file": ".opencode/agents/quality-guardian.md"
+    },
+    {
+      "id": "standards-gatekeeper",
+      "name": "Standards Gatekeeper",
+      "role": "Standards & conventions",
+      "unit": "Quality Guardians",
+      "unit_type": "council",
+      "tier": "read",
+      "escalates_to": "quality-guardian",
+      "description": "Enforces coding standards, conventions, and consistency across all divisions.",
+      "responsibilities": [
+        "Maintain coding standards and conventions",
+        "Enforce standards compliance at review gates",
+        "Track standard violations and waivers",
+        "Coordinate with the Documentation Guild"
+      ],
+      "file": ".opencode/agents/standards-gatekeeper.md"
+    },
+    {
+      "id": "release-custodian",
+      "name": "Release Custodian",
+      "role": "Release process",
+      "unit": "Quality Guardians",
+      "unit_type": "council",
+      "tier": "production",
+      "escalates_to": "quality-guardian",
+      "description": "Owns the release process: versioning, change logs, release notes, and deployment coordination.",
+      "responsibilities": [
+        "Own versioning and changelog policy",
+        "Prepare and coordinate releases",
+        "Verify release gate evidence is complete",
+        "Coordinate deployment with Platform Division"
+      ],
+      "file": ".opencode/agents/release-custodian.md"
+    },
+    {
+      "id": "toolsmith",
+      "name": "Toolsmith",
+      "role": "Tooling & scripting",
+      "unit": "Tooling Council",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "Council of Architects",
+      "description": "Builds and maintains scripts, generators, and internal tooling used by the organization.",
+      "responsibilities": [
+        "Build/repair internal scripts and tooling",
+        "Own the agent generator and scaffold scripts",
+        "Automate repetitive engineering tasks",
+        "Document tool usage"
+      ],
+      "file": ".opencode/agents/toolsmith.md"
+    },
+    {
+      "id": "mcp-specialist",
+      "name": "MCP Specialist",
+      "role": "MCP server configuration",
+      "unit": "Tooling Council",
+      "unit_type": "council",
+      "tier": "production",
+      "escalates_to": "toolsmith",
+      "description": "Owns MCP server configuration and the recovered server scripts (filesystem, memory, sqlite, git, curl, portainer, n8n).",
+      "responsibilities": [
+        "Configure and validate MCP servers",
+        "Own MCP server scripts and their lifecycle",
+        "Keep secrets out of committed config",
+        "Troubleshoot MCP connectivity"
+      ],
+      "file": ".opencode/agents/mcp-specialist.md"
+    },
+    {
+      "id": "workflow-engineer",
+      "name": "Workflow Engineer",
+      "role": "Workflow & automation design",
+      "unit": "Tooling Council",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "toolsmith",
+      "description": "Designs and maintains the delegation, gate, and pipeline workflows the organization executes.",
+      "responsibilities": [
+        "Design delegation and gate workflows",
+        "Maintain workflow skills and templates",
+        "Automate pipeline steps",
+        "Measure workflow effectiveness"
+      ],
+      "file": ".opencode/agents/workflow-engineer.md"
+    },
+    {
+      "id": "docs-lead",
+      "name": "Docs Lead",
+      "role": "Documentation authority",
+      "unit": "Documentation Guild",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "Council of Architects",
+      "description": "Owns documentation structure, voice, and completeness across the project.",
+      "responsibilities": [
+        "Own documentation structure and conventions",
+        "Coordinate documentation work across divisions",
+        "Review user-facing doc changes",
+        "Maintain the docs backlog"
+      ],
+      "file": ".opencode/agents/docs-lead.md"
+    },
+    {
+      "id": "api-docs-writer",
+      "name": "API Docs Writer",
+      "role": "API & developer docs",
+      "unit": "Documentation Guild",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "docs-lead",
+      "description": "Writes and maintains API references and developer-facing documentation.",
+      "responsibilities": [
+        "Document APIs, functions, and endpoints",
+        "Keep developer guides current",
+        "Document configuration and install steps",
+        "Sync docs with code changes"
+      ],
+      "file": ".opencode/agents/api-docs-writer.md"
+    },
+    {
+      "id": "runbook-writer",
+      "name": "Runbook Writer",
+      "role": "Ops runbooks",
+      "unit": "Documentation Guild",
+      "unit_type": "council",
+      "tier": "read-write",
+      "escalates_to": "docs-lead",
+      "description": "Writes operational runbooks for deployments, incidents, and maintenance procedures.",
+      "responsibilities": [
+        "Write deployment and ops runbooks",
+        "Document incident response procedures",
+        "Keep runbooks aligned with Platform/Security divisions",
+        "Review ops docs for accuracy"
+      ],
+      "file": ".opencode/agents/runbook-writer.md"
+    },
+    {
+      "id": "feature-division-council",
+      "name": "Feature Division Council",
+      "role": "Division lead",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "summoner",
+      "description": "Leads Feature Division delivery: allocates work to specialists, owns the feature gate, and reports status.",
+      "responsibilities": [
+        "Allocate feature work to specialists",
+        "Run the division-level review gate",
+        "Resolve intra-division conflicts",
+        "Report status to the Summoner"
+      ],
+      "file": ".opencode/agents/feature-division-council.md"
+    },
+    {
+      "id": "feature-planner",
+      "name": "Feature Planner",
+      "role": "Feature planning & specs",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Turns tickets into implementable plans: scope, approach, files, tests, and acceptance criteria.",
+      "responsibilities": [
+        "Break tickets into concrete implementation plans",
+        "Identify affected files and modules",
+        "Define acceptance criteria",
+        "Identify risks and test strategy"
+      ],
+      "file": ".opencode/agents/feature-planner.md"
+    },
+    {
+      "id": "frontend-engineer",
+      "name": "Frontend Engineer",
+      "role": "Frontend implementation",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Implements and fixes frontend code: HTML/CSS/JS, responsive behavior, and browser compatibility.",
+      "responsibilities": [
+        "Implement frontend changes per plan",
+        "Follow accessibility and responsiveness conventions",
+        "Verify frontend behavior in supported browsers",
+        "Self-review against standards"
+      ],
+      "file": ".opencode/agents/frontend-engineer.md"
+    },
+    {
+      "id": "backend-engineer",
+      "name": "Backend Engineer",
+      "role": "Backend implementation",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Implements and fixes backend code: PHP functions, modules, and server-side logic.",
+      "responsibilities": [
+        "Implement backend changes per plan",
+        "Follow PHP coding standards",
+        "Run php -l and unit checks",
+        "Keep DB access consistent with Data Division"
+      ],
+      "file": ".opencode/agents/backend-engineer.md"
+    },
+    {
+      "id": "fullstack-engineer",
+      "name": "Fullstack Engineer",
+      "role": "End-to-end implementation",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Implements changes spanning frontend and backend when a single-responsibility engineer is insufficient.",
+      "responsibilities": [
+        "Implement cross-layer changes end-to-end",
+        "Coordinate with frontend and backend engineers",
+        "Ensure integration consistency",
+        "Run full verification for the touched paths"
+      ],
+      "file": ".opencode/agents/fullstack-engineer.md"
+    },
+    {
+      "id": "api-engineer",
+      "name": "API Engineer",
+      "role": "Interfaces & contracts",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Owns API/interface contracts, payload shapes, and integrations between modules and services.",
+      "responsibilities": [
+        "Define and maintain interface contracts",
+        "Review payload and parameter changes",
+        "Document API surface with the Guild",
+        "Validate integration expectations"
+      ],
+      "file": ".opencode/agents/api-engineer.md"
+    },
+    {
+      "id": "db-engineer",
+      "name": "DB Engineer",
+      "role": "Schema & query changes",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Implements schema changes and query updates for feature work, coordinated with the Data Division.",
+      "responsibilities": [
+        "Author schema/migration changes",
+        "Review query changes for correctness",
+        "Coordinate with Data Division on standards",
+        "Verify against MySQL/MariaDB"
+      ],
+      "file": ".opencode/agents/db-engineer.md"
+    },
+    {
+      "id": "ui-ux-engineer",
+      "name": "UI/UX Engineer",
+      "role": "User experience & interface",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Owns the user-facing behavior of changes: interaction design, feedback, and usability.",
+      "responsibilities": [
+        "Review changes for UX correctness",
+        "Specify interaction behavior for frontend work",
+        "Check accessibility and mobile usability",
+        "Flag UX regressions"
+      ],
+      "file": ".opencode/agents/ui-ux-engineer.md"
+    },
+    {
+      "id": "feature-tester",
+      "name": "Feature Tester",
+      "role": "Feature acceptance testing",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Verifies feature work against acceptance criteria and writes the feature test evidence.",
+      "responsibilities": [
+        "Verify acceptance criteria are met",
+        "Write/execute feature-level tests",
+        "Record test evidence for the quality gate",
+        "Report defects to the division"
+      ],
+      "file": ".opencode/agents/feature-tester.md"
+    },
+    {
+      "id": "migration-engineer",
+      "name": "Migration Engineer",
+      "role": "Data & code migration",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Owns data and code migrations associated with feature delivery.",
+      "responsibilities": [
+        "Plan and author migrations",
+        "Verify migration correctness and idempotency",
+        "Coordinate with Data Division on backups",
+        "Document migration steps"
+      ],
+      "file": ".opencode/agents/migration-engineer.md"
+    },
+    {
+      "id": "release-engineer",
+      "name": "Release Engineer",
+      "role": "Feature release prep",
+      "unit": "Feature Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "feature-division-council",
+      "description": "Prepares feature deliverables for release: changelog entries, version updates, and handoff to Release Custodian.",
+      "responsibilities": [
+        "Draft changelog and release notes",
+        "Update version markers",
+        "Assemble release evidence",
+        "Hand off to the Release Custodian"
+      ],
+      "file": ".opencode/agents/release-engineer.md"
+    },
+    {
+      "id": "integration-division-council",
+      "name": "Integration Division Council",
+      "role": "Division lead",
+      "unit": "Integration Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "summoner",
+      "description": "Leads integration work: MCP, webhooks, automation, and external service connectivity.",
+      "responsibilities": [
+        "Allocate integration work to specialists",
+        "Run the division-level review gate",
+        "Resolve connectivity issues",
+        "Report status to the Summoner"
+      ],
+      "file": ".opencode/agents/integration-division-council.md"
+    },
+    {
+      "id": "mcp-engineer",
+      "name": "MCP Engineer",
+      "role": "MCP integration engineering",
+      "unit": "Integration Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "integration-division-council",
+      "description": "Implements and maintains MCP server scripts and their integration with OpenCode.",
+      "responsibilities": [
+        "Implement/repair MCP server scripts",
+        "Validate MCP tool availability",
+        "Coordinate with MCP Specialist on config",
+        "Document MCP integration"
+      ],
+      "file": ".opencode/agents/mcp-engineer.md"
+    },
+    {
+      "id": "webhook-engineer",
+      "name": "Webhook Engineer",
+      "role": "Webhook & event integration",
+      "unit": "Integration Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "integration-division-council",
+      "description": "Owns webhook endpoints and event-driven integrations between systems.",
+      "responsibilities": [
+        "Implement and secure webhook endpoints",
+        "Own event payload contracts",
+        "Test webhook delivery and retries",
+        "Document event flows"
+      ],
+      "file": ".opencode/agents/webhook-engineer.md"
+    },
+    {
+      "id": "n8n-orchestrator",
+      "name": "n8n Orchestrator",
+      "role": "n8n automation workflows",
+      "unit": "Integration Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "integration-division-council",
+      "description": "Builds and maintains n8n automation workflows; production-gated (recovered n8n server).",
+      "responsibilities": [
+        "Build/maintain n8n workflows",
+        "Validate workflow triggers and error handling",
+        "Keep credentials out of workflow definitions",
+        "Coordinate with Security on access"
+      ],
+      "file": ".opencode/agents/n8n-orchestrator.md"
+    },
+    {
+      "id": "docker-ops",
+      "name": "Docker Ops",
+      "role": "Docker containers & volumes",
+      "unit": "Integration Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "integration-division-council",
+      "description": "Owns Docker containers, images, volumes, and compose stacks on the host.",
+      "responsibilities": [
+        "Manage containers and compose stacks",
+        "Inspect volumes and mounts",
+        "Diagnose container runtime issues",
+        "Coordinate with Platform Division"
+      ],
+      "file": ".opencode/agents/docker-ops.md"
+    },
+    {
+      "id": "portainer-ops",
+      "name": "Portainer Ops",
+      "role": "Portainer management",
+      "unit": "Integration Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "integration-division-council",
+      "description": "Owns Portainer-based container management via the recovered Portainer MCP server.",
+      "responsibilities": [
+        "Manage stacks via Portainer",
+        "Inspect container state and logs",
+        "Apply safe container operations",
+        "Report anomalies to Platform Division"
+      ],
+      "file": ".opencode/agents/portainer-ops.md"
+    },
+    {
+      "id": "dns-ops",
+      "name": "DNS Ops",
+      "role": "DNS & proxy host management",
+      "unit": "Integration Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "integration-division-council",
+      "description": "Owns DNS and reverse-proxy host configuration for deployed services.",
+      "responsibilities": [
+        "Manage proxy host configuration",
+        "Validate DNS records",
+        "Maintain TLS/HTTPS endpoints",
+        "Document service URLs"
+      ],
+      "file": ".opencode/agents/dns-ops.md"
+    },
+    {
+      "id": "secure-connector",
+      "name": "Secure Connector",
+      "role": "Secure remote access",
+      "unit": "Integration Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "integration-division-council",
+      "description": "Owns the SSH-based host access and secure connectivity (recovered extravus-prod key). Production-gated.",
+      "responsibilities": [
+        "Operate SSH host access for ops work",
+        "Run read-only host forensics",
+        "Perform delegated maintenance",
+        "Never expose credentials"
+      ],
+      "file": ".opencode/agents/secure-connector.md"
+    },
+    {
+      "id": "quality-division-council",
+      "name": "Quality Division Council",
+      "role": "Division lead",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "summoner",
+      "description": "Leads testing strategy and execution for all delivery divisions.",
+      "responsibilities": [
+        "Allocate testing work to specialists",
+        "Own test strategy per feature",
+        "Run the quality gate for delivery divisions",
+        "Record gate verdicts in tickets",
+        "Report status to the Summoner"
+      ],
+      "file": ".opencode/agents/quality-division-council.md"
+    },
+    {
+      "id": "test-architect",
+      "name": "Test Architect",
+      "role": "Test strategy & coverage",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "quality-division-council",
+      "description": "Defines test strategy and coverage requirements for features.",
+      "responsibilities": [
+        "Define test strategy and coverage targets",
+        "Choose test tools and harnesses",
+        "Review test plans",
+        "Track coverage gaps"
+      ],
+      "file": ".opencode/agents/test-architect.md"
+    },
+    {
+      "id": "unit-test-engineer",
+      "name": "Unit Test Engineer",
+      "role": "Unit test authoring",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "quality-division-council",
+      "description": "Authors unit tests for changed functions and logic.",
+      "responsibilities": [
+        "Write unit tests for changed code",
+        "Run unit test suites",
+        "Report failures with evidence",
+        "Keep tests maintainable"
+      ],
+      "file": ".opencode/agents/unit-test-engineer.md"
+    },
+    {
+      "id": "integration-test-engineer",
+      "name": "Integration Test Engineer",
+      "role": "Integration testing",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "quality-division-council",
+      "description": "Tests interactions between modules, functions, and services.",
+      "responsibilities": [
+        "Author integration tests",
+        "Verify cross-module contracts",
+        "Run integration test suites",
+        "Document integration evidence"
+      ],
+      "file": ".opencode/agents/integration-test-engineer.md"
+    },
+    {
+      "id": "e2e-test-engineer",
+      "name": "E2E Test Engineer",
+      "role": "End-to-end testing",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "quality-division-council",
+      "description": "Tests user-facing flows end-to-end against running code.",
+      "responsibilities": [
+        "Author end-to-end flow tests",
+        "Run E2E suites against live environments",
+        "Record pass/fail evidence",
+        "Report UX-blocking defects"
+      ],
+      "file": ".opencode/agents/e2e-test-engineer.md"
+    },
+    {
+      "id": "perf-test-engineer",
+      "name": "Perf Test Engineer",
+      "role": "Performance testing",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "quality-division-council",
+      "description": "Assesses performance impact of changes.",
+      "responsibilities": [
+        "Run performance checks on changed paths",
+        "Report regressions with data",
+        "Maintain perf baselines",
+        "Advise on optimization"
+      ],
+      "file": ".opencode/agents/perf-test-engineer.md"
+    },
+    {
+      "id": "security-tester",
+      "name": "Security Tester",
+      "role": "Security testing",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read",
+      "escalates_to": "quality-division-council",
+      "description": "Tests changes for security issues; coordinates findings with the Security Division.",
+      "responsibilities": [
+        "Test for XSS, injection, and auth issues",
+        "Feed findings to the Security Division",
+        "Verify security fixes",
+        "Record security test evidence"
+      ],
+      "file": ".opencode/agents/security-tester.md"
+    },
+    {
+      "id": "a11y-tester",
+      "name": "Accessibility Tester",
+      "role": "Accessibility testing",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "quality-division-council",
+      "description": "Tests changes for accessibility compliance.",
+      "responsibilities": [
+        "Check a11y of changed UI",
+        "Verify keyboard and screen-reader behavior",
+        "Report a11y defects",
+        "Maintain a11y checklists"
+      ],
+      "file": ".opencode/agents/a11y-tester.md"
+    },
+    {
+      "id": "regression-gate",
+      "name": "Regression Gate",
+      "role": "Regression protection",
+      "unit": "Quality Division",
+      "unit_type": "division",
+      "tier": "read",
+      "escalates_to": "quality-division-council",
+      "description": "Owns regression checks at the quality gate; ensures prior behavior is not broken.",
+      "responsibilities": [
+        "Run regression checks before release",
+        "Verify previously-fixed behaviors still work",
+        "Gate on regression failures",
+        "Maintain regression suite"
+      ],
+      "file": ".opencode/agents/regression-gate.md"
+    },
+    {
+      "id": "security-division-council",
+      "name": "Security Division Council",
+      "role": "Division lead",
+      "unit": "Security Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "summoner",
+      "description": "Leads security engineering and owns the security gate for all changes.",
+      "responsibilities": [
+        "Allocate security work to specialists",
+        "Own the security review gate",
+        "Record gate verdicts in tickets",
+        "Prioritize vulnerabilities",
+        "Report status to the Summoner"
+      ],
+      "file": ".opencode/agents/security-division-council.md"
+    },
+    {
+      "id": "threat-modeler",
+      "name": "Threat Modeler",
+      "role": "Threat modeling",
+      "unit": "Security Division",
+      "unit_type": "division",
+      "tier": "read",
+      "escalates_to": "security-division-council",
+      "description": "Models threats for features and infrastructure changes.",
+      "responsibilities": [
+        "Produce threat models for changes",
+        "Identify attack surfaces",
+        "Recommend mitigations",
+        "Track residual risk"
+      ],
+      "file": ".opencode/agents/threat-modeler.md"
+    },
+    {
+      "id": "vuln-scanner",
+      "name": "Vulnerability Scanner",
+      "role": "Vulnerability discovery",
+      "unit": "Security Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "security-division-council",
+      "description": "Scans code and dependencies for vulnerabilities.",
+      "responsibilities": [
+        "Scan changed code for vulnerabilities",
+        "Check dependencies for advisories",
+        "Report findings with severity",
+        "Verify fixes"
+      ],
+      "file": ".opencode/agents/vuln-scanner.md"
+    },
+    {
+      "id": "secrets-auditor",
+      "name": "Secrets Auditor",
+      "role": "Secrets & credentials",
+      "unit": "Security Division",
+      "unit_type": "division",
+      "tier": "read",
+      "escalates_to": "security-division-council",
+      "description": "Ensures secrets and credentials are never committed or exposed.",
+      "responsibilities": [
+        "Audit diffs for secrets",
+        "Review config for exposed credentials",
+        "Enforce secrets policy",
+        "Report exposures immediately"
+      ],
+      "file": ".opencode/agents/secrets-auditor.md"
+    },
+    {
+      "id": "network-hardener",
+      "name": "Network Hardener",
+      "role": "Network security",
+      "unit": "Security Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "security-division-council",
+      "description": "Hardens network and proxy configuration; production-gated.",
+      "responsibilities": [
+        "Review proxy/firewall config",
+        "Validate TLS and headers",
+        "Harden exposed services",
+        "Coordinate with DNS Ops"
+      ],
+      "file": ".opencode/agents/network-hardener.md"
+    },
+    {
+      "id": "container-hardener",
+      "name": "Container Hardener",
+      "role": "Container security",
+      "unit": "Security Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "security-division-council",
+      "description": "Hardens container images and runtime configuration; production-gated.",
+      "responsibilities": [
+        "Review Docker images and run config",
+        "Validate least-privilege mounts",
+        "Check base image advisories",
+        "Coordinate with Docker Ops"
+      ],
+      "file": ".opencode/agents/container-hardener.md"
+    },
+    {
+      "id": "auth-engineer",
+      "name": "Auth Engineer",
+      "role": "Authentication & authorization",
+      "unit": "Security Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "security-division-council",
+      "description": "Owns authentication and authorization logic across the platform.",
+      "responsibilities": [
+        "Review authn/authz changes",
+        "Validate session and credential handling",
+        "Test access-control paths",
+        "Maintain auth standards"
+      ],
+      "file": ".opencode/agents/auth-engineer.md"
+    },
+    {
+      "id": "incident-responder",
+      "name": "Incident Responder",
+      "role": "Security incident response",
+      "unit": "Security Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "security-division-council",
+      "description": "Responds to security incidents; production-gated.",
+      "responsibilities": [
+        "Triage security incidents",
+        "Contain and remediate",
+        "Document incident reports",
+        "Coordinate with Platform Division"
+      ],
+      "file": ".opencode/agents/incident-responder.md"
+    },
+    {
+      "id": "data-division-council",
+      "name": "Data Division Council",
+      "role": "Division lead",
+      "unit": "Data Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "summoner",
+      "description": "Leads data engineering: schema, SQL, backups, and reporting.",
+      "responsibilities": [
+        "Allocate data work to specialists",
+        "Own data standards and conventions",
+        "Run the data review gate",
+        "Report status to the Summoner"
+      ],
+      "file": ".opencode/agents/data-division-council.md"
+    },
+    {
+      "id": "sql-optimizer",
+      "name": "SQL Optimizer",
+      "role": "Query performance",
+      "unit": "Data Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "data-division-council",
+      "description": "Reviews and optimizes SQL queries.",
+      "responsibilities": [
+        "Review query plans for hot paths",
+        "Optimize slow queries",
+        "Advise on indexing",
+        "Document query changes"
+      ],
+      "file": ".opencode/agents/sql-optimizer.md"
+    },
+    {
+      "id": "db-admin",
+      "name": "DB Admin",
+      "role": "Database administration",
+      "unit": "Data Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "data-division-council",
+      "description": "Owns database administration for production databases; production-gated.",
+      "responsibilities": [
+        "Perform DB administration",
+        "Execute reviewed DDL/DML",
+        "Verify schema integrity",
+        "Coordinate with Platform Division"
+      ],
+      "file": ".opencode/agents/db-admin.md"
+    },
+    {
+      "id": "backup-engineer",
+      "name": "Backup Engineer",
+      "role": "Backup & recovery",
+      "unit": "Data Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "data-division-council",
+      "description": "Owns database backups and recovery procedures; production-gated.",
+      "responsibilities": [
+        "Maintain backup schedules",
+        "Verify backup restorability",
+        "Document recovery procedures",
+        "Coordinate with Disaster Recovery"
+      ],
+      "file": ".opencode/agents/backup-engineer.md"
+    },
+    {
+      "id": "etl-engineer",
+      "name": "ETL Engineer",
+      "role": "Data pipelines",
+      "unit": "Data Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "data-division-council",
+      "description": "Builds and maintains data extraction/transformation pipelines.",
+      "responsibilities": [
+        "Build/maintain ETL pipelines",
+        "Validate data transformations",
+        "Document pipeline contracts",
+        "Coordinate with Data Architect"
+      ],
+      "file": ".opencode/agents/etl-engineer.md"
+    },
+    {
+      "id": "analytics-engineer",
+      "name": "Analytics Engineer",
+      "role": "Analytics & reporting",
+      "unit": "Data Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "data-division-council",
+      "description": "Builds analytics and reporting queries.",
+      "responsibilities": [
+        "Build analytics/report queries",
+        "Validate report correctness",
+        "Maintain report catalog",
+        "Coordinate with Documentation Guild"
+      ],
+      "file": ".opencode/agents/analytics-engineer.md"
+    },
+    {
+      "id": "report-builder",
+      "name": "Report Builder",
+      "role": "Report generation",
+      "unit": "Data Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "data-division-council",
+      "description": "Owns report generation and export features.",
+      "responsibilities": [
+        "Maintain report generators",
+        "Verify export formats",
+        "Document report options",
+        "Coordinate with Feature Division"
+      ],
+      "file": ".opencode/agents/report-builder.md"
+    },
+    {
+      "id": "data-quality-steward",
+      "name": "Data Quality Steward",
+      "role": "Data quality",
+      "unit": "Data Division",
+      "unit_type": "division",
+      "tier": "read-write",
+      "escalates_to": "data-division-council",
+      "description": "Monitors and fixes data quality issues.",
+      "responsibilities": [
+        "Monitor data quality metrics",
+        "Investigate data anomalies",
+        "Coordinate fixes with DB Admin",
+        "Document data standards"
+      ],
+      "file": ".opencode/agents/data-quality-steward.md"
+    },
+    {
+      "id": "platform-division-council",
+      "name": "Platform Division Council",
+      "role": "Division lead",
+      "unit": "Platform Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "summoner",
+      "description": "Leads platform/infrastructure work: host, containers, networking, and operations.",
+      "responsibilities": [
+        "Allocate platform work to specialists",
+        "Own platform reliability",
+        "Run the platform review gate",
+        "Report status to the Summoner"
+      ],
+      "file": ".opencode/agents/platform-division-council.md"
+    },
+    {
+      "id": "sre",
+      "name": "SRE",
+      "role": "Reliability engineering",
+      "unit": "Platform Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "platform-division-council",
+      "description": "Owns reliability, uptime, and incident operations for deployed services; production-gated.",
+      "responsibilities": [
+        "Monitor service reliability",
+        "Lead incident triage and resolution",
+        "Own SLOs and uptime",
+        "Coordinate with Incident Responder"
+      ],
+      "file": ".opencode/agents/sre.md"
+    },
+    {
+      "id": "ci-cd-engineer",
+      "name": "CI/CD Engineer",
+      "role": "Build & deploy pipelines",
+      "unit": "Platform Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "platform-division-council",
+      "description": "Owns build and deployment pipelines; production-gated.",
+      "responsibilities": [
+        "Maintain build/deploy pipelines",
+        "Validate deployment steps",
+        "Own environment promotion",
+        "Coordinate with Release Custodian"
+      ],
+      "file": ".opencode/agents/ci-cd-engineer.md"
+    },
+    {
+      "id": "monitoring-specialist",
+      "name": "Monitoring Specialist",
+      "role": "Monitoring & alerting",
+      "unit": "Platform Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "platform-division-council",
+      "description": "Owns monitoring and alerting for deployed services; production-gated.",
+      "responsibilities": [
+        "Maintain monitoring/alerting",
+        "Tune alert thresholds",
+        "Report service health",
+        "Coordinate with SRE"
+      ],
+      "file": ".opencode/agents/monitoring-specialist.md"
+    },
+    {
+      "id": "host-ops-specialist",
+      "name": "Host Ops Specialist",
+      "role": "Host machine operations",
+      "unit": "Platform Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "platform-division-council",
+      "description": "Operates the host machine via SSH (recovered extravus-prod access) for maintenance of dockers, apps, and websites. Production-gated.",
+      "responsibilities": [
+        "Perform delegated host maintenance",
+        "Run read-only host forensics",
+        "Maintain services on the host",
+        "Never expose credentials"
+      ],
+      "file": ".opencode/agents/host-ops-specialist.md"
+    },
+    {
+      "id": "nginx-specialist",
+      "name": "Nginx Specialist",
+      "role": "Reverse proxy & web server",
+      "unit": "Platform Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "platform-division-council",
+      "description": "Owns nginx and reverse-proxy configuration; production-gated.",
+      "responsibilities": [
+        "Maintain nginx/proxy config",
+        "Manage sites and TLS",
+        "Tune proxy performance",
+        "Coordinate with Network Hardener"
+      ],
+      "file": ".opencode/agents/nginx-specialist.md"
+    },
+    {
+      "id": "disaster-recovery",
+      "name": "Disaster Recovery",
+      "role": "Recovery & continuity",
+      "unit": "Platform Division",
+      "unit_type": "division",
+      "tier": "production",
+      "escalates_to": "platform-division-council",
+      "description": "Owns disaster recovery and environment continuity; production-gated.",
+      "responsibilities": [
+        "Maintain recovery procedures",
+        "Test restore drills",
+        "Document recovery runbooks",
+        "Coordinate with Backup Engineer"
+      ],
+      "file": ".opencode/agents/disaster-recovery.md"
+    }
+  ]
+}

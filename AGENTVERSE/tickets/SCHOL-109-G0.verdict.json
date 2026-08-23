@@ -1,0 +1,39 @@
+{
+  "ticket": "SCHOL-109",
+  "gate": "G0",
+  "timestamp": "2026-08-19T20:09:30Z",
+  "ticket_title": "SCHOL-109 — Billing_Elements ListOutput TypeError Fix (12.9.2 Compatibility)",
+  "ticket_status": "RELEASED",
+  "ticket_type": "bug",
+  "ticket_priority": "critical",
+  "ac_results": [
+    {
+      "id": "G0-AC1",
+      "description": "Ticket has title",
+      "status": "MET",
+      "evidence": "Title: SCHOL-109 — Billing_Elements ListOutput TypeError Fix (12.9.2 Compatibility)"
+    },
+    {
+      "id": "G0-AC2",
+      "description": "Ticket has status",
+      "status": "MET",
+      "evidence": "Status: RELEASED"
+    },
+    {
+      "id": "G0-AC3",
+      "description": "Ticket has type",
+      "status": "MET",
+      "evidence": "Type: bug"
+    }
+  ],
+  "tests": [],
+  "evidence": [],
+  "artifact_hash": "449a44e49c3cc67253f9db5ea5276489285e90a004731d2d54a951a94dc752f6",
+  "summary": {
+    "total_ac": 3,
+    "met": 3,
+    "not_met": 0
+  },
+  "verdict": "PASS",
+  "status": "VERIFIED"
+}
