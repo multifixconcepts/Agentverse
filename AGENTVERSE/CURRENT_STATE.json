@@ -1,0 +1,48 @@
+{
+  "version": "2.0",
+  "last_verified": "2026-08-23T01:51:59Z",
+  "last_verifier": "sync-state",
+  "project": "scholapro",
+  "rosariosis_version": {
+    "source": "12.9.2",
+    "production": "12.9.2",
+    "consistency": "CONSISTENT"
+  },
+  "active_tickets": {
+    "IN_PROGRESS": [
+      "SCHOL-814"
+    ],
+    "DELEGATED": [],
+    "VERIFICATION_BLOCKED": [
+      "SCHOL-813"
+    ],
+    "OPEN_NEXT": [
+      "SCHOL-024",
+      "SCHOL-025",
+      "SCHOL-026",
+      "SCHOL-027",
+      "SCHOL-028",
+      "SCHOL-029",
+      "SCHOL-030",
+      "SCHOL-031",
+      "SCHOL-032",
+      "SCHOL-033",
+      "SCHOL-034",
+      "SCHOL-035",
+      "SCHOL-036",
+      "SCHOL-037",
+      "SCHOL-108"
+    ]
+  },
+  "released_tickets": [
+    "SCHOL-106",
+    "SCHOL-107",
+    "SCHOL-109"
+  ],
+  "latest_ticket": "SCHOL-814",
+  "latest_kb_entry": "KB-0025",
+  "agent_count": 70,
+  "gate_chain": "G0→G1→G2→G3→G4→G5→G6",
+  "truth_principle": "CLAIM ≠ FACT",
+  "verification_requirement": "Every gate advance requires machine-verifiable evidence, not agent declarations"
+}

@@ -1,0 +1,58 @@
+{
+  "ticket": "SCHOL-109",
+  "gate": "G5",
+  "timestamp": "2026-08-19T20:09:05Z",
+  "ticket_title": "SCHOL-109 — Billing_Elements ListOutput TypeError Fix (12.9.2 Compatibility)",
+  "ticket_status": "RELEASED",
+  "ticket_type": "bug",
+  "ticket_priority": "critical",
+  "ac_results": [
+    {
+      "id": "G5-AC1",
+      "description": "All PHP files pass syntax check",
+      "status": "NOT_MET",
+      "evidence": "0/3 passed"
+    },
+    {
+      "id": "G5-AC2",
+      "description": "Production HTTP 200",
+      "status": "MET",
+      "evidence": "HTTP 200"
+    }
+  ],
+  "tests": [],
+  "evidence": [
+    {
+      "check": "php -l",
+      "target": "/home/coder/premium-modules/Billing_Elements/Elements.php",
+      "result": "FAIL",
+      "output": "/bin/sh: 1: php: not found"
+    },
+    {
+      "check": "php -l",
+      "target": "/home/coder/project/scholapro/functions/ListOutput.fnc.php",
+      "result": "FAIL",
+      "output": "/bin/sh: 1: php: not found"
+    },
+    {
+      "check": "php -l",
+      "target": "/home/coder/project/scholapro/Modules.php",
+      "result": "FAIL",
+      "output": "/bin/sh: 1: php: not found"
+    },
+    {
+      "check": "curl",
+      "target": "https://school4.edunaija.online",
+      "result": "HTTP 200",
+      "output": "HTTP status 200"
+    }
+  ],
+  "artifact_hash": "449a44e49c3cc67253f9db5ea5276489285e90a004731d2d54a951a94dc752f6",
+  "summary": {
+    "total_ac": 2,
+    "met": 1,
+    "not_met": 1
+  },
+  "verdict": "FAIL",
+  "status": "NOT_VERIFIED"
+}

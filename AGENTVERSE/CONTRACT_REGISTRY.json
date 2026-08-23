@@ -1,0 +1,89 @@
+{
+  "version": "2.0",
+  "last_updated": "2026-08-19",
+  "api_contracts": [
+    {
+      "id": "billing-elements-programs",
+      "description": "Billing_Elements module program URLs",
+      "programs": [
+        "Configuration",
+        "Monthly Fees",
+        "Payments Import",
+        "Print Invoices",
+        "Print Receipts",
+        "Pay"
+      ],
+      "expected_http_status": 200,
+      "base_url": "https://school4.edunaija.online",
+      "verified_date": "2026-08-19",
+      "verified_by": "SCHOL-106 G5"
+    }
+  ],
+  "database_contracts": [
+    {
+      "id": "billing-monthly-fees",
+      "table": "billing_monthly_fees",
+      "module": "Billing_Elements",
+      "columns": [
+        "id",
+        "school_id",
+        "student_id",
+        "amount",
+        "due_date",
+        "status"
+      ],
+      "schema_source": "SCHOL-006 install.sql"
+    }
+  ],
+  "field_name_contracts": [
+    {
+      "id": "listoutput-api",
+      "api": "ListOutput()",
+      "version_12_4_2": {
+        "param_6": "functions"
+      },
+      "version_12_9_2": {
+        "param_6": "group"
+      },
+      "breaking_change": true,
+      "discovered_in": "SCHOL-108",
+      "fixed_in": "SCHOL-109"
+    }
+  ],
+  "function_contracts": [
+    {
+      "id": "student-utils-api",
+      "file": "scholapro/lib/student_utils.php",
+      "signatures": {
+        "v1": {
+          "name": "getStudentCount",
+          "params": ["$school_id"],
+          "defined_in": "SCHOL-110-ORIG"
+        },
+        "v2": {
+          "name": "getStudentCount",
+          "params": ["$school_id", "$grade_level = null"],
+          "defined_in": "SCHOL-110"
+        }
+      },
+      "breaking_change": false,
+      "backward_compatible": true,
+      "change_reason": "MID_TASK_REQUIREMENT_CHANGE — added optional grade_level filter",
+      "verified_date": "2026-08-19",
+      "verified_by": "SCHOL-110-G5"
+    }
+  ],
+  "module_contracts": [
+    {
+      "id": "premium-module-structure",
+      "description": "Premium module file structure convention",
+      "required_files": [
+        "Help_en.php",
+        "icon.png",
+        "README.md"
+      ],
+      "zip_contract": "All files + directories, sha256 verified",
+      "defined_in": "KB-0013"
+    }
+  ]
+}

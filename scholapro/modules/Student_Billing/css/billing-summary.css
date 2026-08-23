@@ -1,0 +1,60 @@
+/*
+ * Student Billing — Payment Summary styles
+ *
+ * Styles for summary tables: striped rows, right-aligned amounts, bold totals.
+ * Loaded by modules/Student_Billing/PaymentSummary.php
+ */
+
+/* Payments-by-type table (inside .billing-summary wrapper) */
+.billing-summary table,
+table.billing-summary-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.billing-summary table th,
+.billing-summary table td,
+table.billing-summary-table th,
+table.billing-summary-table td {
+	padding: 6px 10px;
+	border-bottom: 1px solid #ddd;
+	text-align: left;
+}
+
+/* Right-align amount columns (every column after the first) */
+.billing-summary table th:nth-child(n+2),
+.billing-summary table td:nth-child(n+2),
+table.billing-summary-table th:nth-child(n+2),
+table.billing-summary-table td:nth-child(n+2),
+.billing-summary-totals td.amount {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Striped rows */
+.billing-summary table tbody tr:nth-child(even),
+table.billing-summary-table tbody tr:nth-child(even) {
+	background-color: #f5f7fa;
+}
+
+/* Totals table */
+.billing-summary-totals {
+	margin-top: 12px;
+	margin-left: auto;
+	border-collapse: collapse;
+}
+
+.billing-summary-totals td {
+	padding: 4px 10px;
+	white-space: nowrap;
+}
+
+/* Bold totals row with heavier top border */
+.billing-summary-totals tr.total-row td {
+	font-weight: bold;
+	border-top: 2px solid #333;
+}
+
+.billing-summary-totals td.total-amount b {
+	font-size: 1.05em;
+}

@@ -1,0 +1,48 @@
+{
+  "test_id": "TEST-110",
+  "function": "getStudentCount",
+  "signature_v2": "getStudentCount($school_id, $grade_level = null)",
+  "file": "scholapro/lib/student_utils.php",
+  "change_log": [
+    {
+      "from": "getStudentCount($school_id)",
+      "to": "getStudentCount($school_id, $grade_level = null)",
+      "reason": "MID_TASK_REQUIREMENT_CHANGE",
+      "change_date": "2026-08-19"
+    }
+  ],
+  "tests": [
+    {
+      "id": "TC-101",
+      "description": "Returns total count when grade_level is null (backward compatible)",
+      "input": {"school_id": 1, "grade_level": null},
+      "expected": "integer >= 0",
+      "status": "PASS"
+    },
+    {
+      "id": "TC-102",
+      "description": "Returns filtered count when grade_level is provided",
+      "input": {"school_id": 1, "grade_level": 3},
+      "expected": "integer >= 0",
+      "status": "PASS"
+    },
+    {
+      "id": "TC-103",
+      "description": "Returns 0 for non-existent school_id with null grade",
+      "input": {"school_id": 99999, "grade_level": null},
+      "expected": "0",
+      "status": "PASS"
+    },
+    {
+      "id": "TC-104",
+      "description": "Returns 0 for non-existent grade level",
+      "input": {"school_id": 1, "grade_level": 999},
+      "expected": "0",
+      "status": "PASS"
+    }
+  ],
+  "created_date": "2026-08-19",
+  "updated_date": "2026-08-19",
+  "status": "COMPLETE",
+  "previous_test_claim": "TEST-INIT-001"
+}

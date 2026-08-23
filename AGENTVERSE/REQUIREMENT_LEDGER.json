@@ -1,0 +1,190 @@
+{
+  "version": "2.0",
+  "last_updated": "2026-08-19",
+  "entries": [
+    {
+      "ticket_id": "SCHOL-008",
+      "title": "Student Photo Upload and Display",
+      "acceptance_criteria": [
+        {
+          "id": "AC-008-01",
+          "description": "Student profile page displays uploaded photo",
+          "status": "VERIFIED",
+          "evidence_type": "LIVE_SMOKE",
+          "evidence_ref": "https://school4.edunaija.online/index.php?module=Students&type=detail&id=1 — photo renders"
+        },
+        {
+          "id": "AC-008-02",
+          "description": "Photo upload accepts JPG and PNG formats up to 5MB",
+          "status": "VERIFIED",
+          "evidence_type": "AUTOMATED",
+          "evidence_ref": "Upload test script confirmed format and size validation"
+        },
+        {
+          "id": "AC-008-03",
+          "description": "Default placeholder displays when no photo is uploaded",
+          "status": "VERIFIED",
+          "evidence_type": "LIVE_SMOKE",
+          "evidence_ref": "Student record without photo shows placeholder image"
+        }
+      ],
+      "verification_method": "LIVE_SMOKE",
+      "last_verified_date": "2026-08-10",
+      "verifier": "SCHOL-008-G5"
+    },
+    {
+      "ticket_id": "SCHOL-097",
+      "title": "Billing Elements Module — Program URL Routing",
+      "acceptance_criteria": [
+        {
+          "id": "AC-097-01",
+          "description": "All 6 Billing_Elements programs are accessible via direct URL",
+          "status": "VERIFIED",
+          "evidence_type": "AUTOMATED",
+          "evidence_ref": "curl_probe.sh returned HTTP 200 for all 6 program endpoints"
+        },
+        {
+          "id": "AC-097-02",
+          "description": "Program URLs follow RosarioSIS routing conventions",
+          "status": "VERIFIED",
+          "evidence_type": "CODE_REVIEW",
+          "evidence_ref": "Billing_Elements.php program dispatch matches modular_arms_style pattern"
+        }
+      ],
+      "verification_method": "AUTOMATED",
+      "last_verified_date": "2026-08-14",
+      "verifier": "SCHOL-097-G5"
+    },
+    {
+      "ticket_id": "SCHOL-103",
+      "title": "Monthly Fees Billing Generation Logic",
+      "acceptance_criteria": [
+        {
+          "id": "AC-103-01",
+          "description": "Monthly fees are generated for all active students in the selected period",
+          "status": "VERIFIED",
+          "evidence_type": "AUTOMATED",
+          "evidence_ref": "Generated fees count matches active student count for period"
+        },
+        {
+          "id": "AC-103-02",
+          "description": "Fee amounts match the fee structure configured for the student's program",
+          "status": "VERIFIED",
+          "evidence_type": "DATABASE",
+          "evidence_ref": "billing_monthly_fees amounts cross-referenced with fee_structure table"
+        },
+        {
+          "id": "AC-103-03",
+          "description": "Duplicate generation is prevented within the same period",
+          "status": "VERIFIED",
+          "evidence_type": "AUTOMATED",
+          "evidence_ref": "Second generation attempt returns duplicate prevention message"
+        }
+      ],
+      "verification_method": "AUTOMATED",
+      "last_verified_date": "2026-08-15",
+      "verifier": "SCHOL-103-G5"
+    },
+    {
+      "ticket_id": "SCHOL-106",
+      "title": "Billing Elements Module — ZIP Package and Deployment",
+      "acceptance_criteria": [
+        {
+          "id": "AC-106-01",
+          "description": "ZIP archive contains all required module files (Help_en.php, icon.png, README.md)",
+          "status": "VERIFIED",
+          "evidence_type": "AUTOMATED",
+          "evidence_ref": "zip_contents.sh confirmed 3 required files present"
+        },
+        {
+          "id": "AC-106-02",
+          "description": "ZIP deploys cleanly into Modules/ directory without overwrite conflicts",
+          "status": "VERIFIED",
+          "evidence_type": "LIVE_SMOKE",
+          "evidence_ref": "Deployed to production container, module appears in admin menu"
+        },
+        {
+          "id": "AC-106-03",
+          "description": "SHA256 checksum of ZIP matches published value",
+          "status": "VERIFIED",
+          "evidence_type": "AUTOMATED",
+          "evidence_ref": "sha256sum verified against CONTRACT_REGISTRY checksum"
+        }
+      ],
+      "verification_method": "LIVE_SMOKE",
+      "last_verified_date": "2026-08-16",
+      "verifier": "SCHOL-106-G5"
+    },
+    {
+      "ticket_id": "SCHOL-109",
+      "title": "ListOutput API Parameter Name Fix (functions → group)",
+      "acceptance_criteria": [
+        {
+          "id": "AC-109-01",
+          "description": "All ListOutput() calls use parameter name 'group' instead of 'functions' for v12.9.2 compatibility",
+          "status": "VERIFIED",
+          "evidence_type": "CODE_REVIEW",
+          "evidence_ref": "grep confirmed zero remaining 'functions' param_6 references in ListOutput calls"
+        },
+        {
+          "id": "AC-109-02",
+          "description": "Billing_Elements list views render without PHP warnings or errors",
+          "status": "VERIFIED",
+          "evidence_type": "LIVE_SMOKE",
+          "evidence_ref": "Production page load confirmed clean output, no PHP warnings in error log"
+        },
+        {
+          "id": "AC-109-03",
+          "description": "Contract registry updated with breaking change documentation",
+          "status": "VERIFIED",
+          "evidence_type": "CODE_REVIEW",
+          "evidence_ref": "CONTRACT_REGISTRY.json field_name_contracts section updated with v12.4.2 vs v12.9.2 diff"
+        }
+      ],
+      "verification_method": "LIVE_SMOKE",
+      "last_verified_date": "2026-08-19",
+      "verifier": "SCHOL-109-G5"
+    },
+    {
+      "ticket_id": "SCHOL-110",
+      "title": "Student Count API — Grade Level Filter (Requirement Change)",
+      "change_type": "MID_TASK_REQUIREMENT_CHANGE",
+      "original_ticket": "SCHOL-110-ORIG",
+      "original_signature": "getStudentCount($school_id)",
+      "changed_signature": "getStudentCount($school_id, $grade_level = null)",
+      "acceptance_criteria": [
+        {
+          "id": "AC-110-01",
+          "description": "getStudentCount($school_id) returns total student count for the school when grade_level is null",
+          "status": "VERIFIED",
+          "evidence_type": "AUTOMATED",
+          "evidence_ref": "TC-101: null grade_level returns full count"
+        },
+        {
+          "id": "AC-110-02",
+          "description": "getStudentCount($school_id, $grade) returns count filtered by grade level when grade_level is provided",
+          "status": "VERIFIED",
+          "evidence_type": "AUTOMATED",
+          "evidence_ref": "TC-102: provided grade_level returns filtered count"
+        },
+        {
+          "id": "AC-110-03",
+          "description": "Original implementation fully replaced, not patched",
+          "status": "VERIFIED",
+          "evidence_type": "CODE_REVIEW",
+          "evidence_ref": "student_utils.php shows clean grade_level branch, no legacy code"
+        },
+        {
+          "id": "AC-110-04",
+          "description": "Contract registry updated with new API signature",
+          "status": "VERIFIED",
+          "evidence_type": "CODE_REVIEW",
+          "evidence_ref": "CONTRACT_REGISTRY.json student_utils_contracts section updated"
+        }
+      ],
+      "verification_method": "AUTOMATED",
+      "last_verified_date": "2026-08-19",
+      "verifier": "SCHOL-110-G5"
+    }
+  ]
+}

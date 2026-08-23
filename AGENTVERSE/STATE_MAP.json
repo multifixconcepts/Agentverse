@@ -1,0 +1,39 @@
+{
+  "version": "2.0",
+  "last_updated": "2026-08-23",
+  "description": "Role assignments and gate mappings for runtime SoD enforcement. Source: SEPARATION_OF_DUTIES.md + AGENT_REGISTRY.json",
+  "role_assignments": {
+    "summoner": { "role": "ORCHESTRATOR", "gate": null, "unit": "Summoner" },
+    "chief-architect": { "role": "VERIFIER", "gate": "G3", "unit": "Council of Architects" },
+    "system-architect": { "role": "REVIEWER", "gate": null, "unit": "Council of Architects" },
+    "data-architect": { "role": "REVIEWER", "gate": null, "unit": "Council of Architects" },
+    "quality-guardian": { "role": "VERIFIER", "gate": "G5", "unit": "Quality Guardians" },
+    "standards-gatekeeper": { "role": "REVIEWER", "gate": null, "unit": "Quality Guardians" },
+    "release-custodian": { "role": "RELEASE_AUTHORITY", "gate": "G6", "unit": "Quality Guardians" },
+    "security-division-council": { "role": "VERIFIER", "gate": "G4", "unit": "Security Division" },
+    "feature-division-council": { "role": "IMPLEMENTER", "gate": null, "unit": "Feature Division" },
+    "backend-engineer": { "role": "IMPLEMENTER", "gate": null, "unit": "Feature Division" },
+    "frontend-engineer": { "role": "IMPLEMENTER", "gate": null, "unit": "Feature Division" },
+    "fullstack-engineer": { "role": "IMPLEMENTER", "gate": null, "unit": "Feature Division" },
+    "db-engineer": { "role": "IMPLEMENTER", "gate": null, "unit": "Feature Division" },
+    "quality-division-council": { "role": "VERIFIER", "gate": null, "unit": "Quality Division" },
+    "regression-gate": { "role": "VERIFIER", "gate": null, "unit": "Quality Division" }
+  },
+  "gate_chain": {
+    "G0": { "name": "Triage", "owner": "summoner", "type": "TRIAGE" },
+    "G1": { "name": "Peer Review", "owner": "peer-same-division", "type": "REVIEW" },
+    "G2": { "name": "Division Review", "owner": "division-council", "type": "REVIEW" },
+    "G3": { "name": "Architecture", "owner": "chief-architect", "type": "VERIFIER" },
+    "G4": { "name": "Security", "owner": "security-division-council", "type": "VERIFIER" },
+    "G5": { "name": "Quality", "owner": "quality-guardian", "type": "VERIFIER" },
+    "G6": { "name": "Release", "owner": "release-custodian", "type": "RELEASE_AUTHORITY" }
+  },
+  "sod_rules": {
+    "rule_1": "An agent can REQUEST verification but cannot DETERMINE the result",
+    "rule_2": "Gate PASS verdict must come from verification script, not agent assertion",
+    "rule_3": "Conflict of interest requires reassignment",
+    "rule_4": "Implementer cannot verify own work",
+    "rule_5": "VERIFICATION_BLOCKED tickets block release",
+    "rule_6": "Missing/ambiguous verification state resolves to DENY"
+  }
+}

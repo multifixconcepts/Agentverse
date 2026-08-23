@@ -1,1 +1,92 @@
-{"type":"entity","name":"MCP Framework Project","entityType":"project","observations":["This project uses an advanced MCP framework with active docker servers in portainer for development"]}
+[
+  {
+    "type": "entity",
+    "name": "school4",
+    "entityType": "deployment",
+    "observations": [
+      "Container name: school4",
+      "Image: php:8.1-apache",
+      "Database container: db-school4",
+      "Port mapping: 8084:80",
+      "Network: npm-network",
+      "Volume: school4_school4_data -> /var/www/html",
+      "Access URL: https://school4.edunaija.online",
+      "Software: RosarioSIS 12.9.2 (upgraded from 12.4.2 on 2026-08-17)",
+      "Status: Running",
+      "PHP modules: gd mbstring mysqli mysqlnd pdo_mysql intl zip iconv xml opcache"
+    ]
+  },
+  {
+    "type": "entity",
+    "name": "db-school4",
+    "entityType": "database",
+    "observations": [
+      "Container name: db-school4",
+      "Image: mariadb",
+      "Database name: school4_db",
+      "Network: npm-network",
+      "Volume: db_school4_data",
+      "MariaDB version: 12.3.2 (upgraded from 11.8.2)"
+    ]
+  },
+  {
+    "type": "entity",
+    "name": "extravus-prod",
+    "entityType": "host",
+    "observations": [
+      "SSH alias: extravus-prod",
+      "IP: 161.153.35.43",
+      "OS: ubuntu",
+      "Architecture: aarch64",
+      "Kernel: 6.17.0-1019-oracle"
+    ]
+  },
+  {
+    "type": "entity",
+    "name": "dev-box",
+    "entityType": "host",
+    "observations": [
+      "Platform: code-server (vscode.edunaija.online)",
+      "Container: fda331b9b566",
+      "OS: Debian 13 (trixie) aarch64",
+      "Node runtime: /usr/lib/code-server/lib/node",
+      "npm CLI: /home/coder/.npm-global/lib/node_modules/npm/bin/npm-cli.js",
+      "Extensions: intelephense, eslint, prettier, ts-next, git-graph, gitlens, markdown, docker, errorlens, spell-checker, rainbow-csv, sqltools+mysql, rest-client"
+    ]
+  },
+  {
+    "type": "entity",
+    "name": "nginx-proxy-manager",
+    "entityType": "proxy",
+    "observations": [
+      "Static asset caching: proxy_cache_valid any 30m",
+      "404 caching: proxy_cache_valid 404 1m",
+      "Cache path: /var/lib/nginx/cache/public (levels=1:2)",
+      "Purge recipe: compute md5 of URL, rm cache file at /var/lib/nginx/cache/public/${KEY:0:1}/${KEY:1:2}/${KEY:3}",
+      "Assets config: /data/nginx/conf.d/include/assets.conf"
+    ]
+  },
+  {
+    "type": "entity",
+    "name": "github-repos",
+    "entityType": "repository",
+    "observations": [
+      "Owner: multifixconcepts",
+      "ScholaPro: default 4.2-release (stale, CI mismatch)",
+      "School-Management-Syetem: typo in name, rename pending",
+      "openclassify: UNRELATED to ScholaPro (KB-0011 boundary)",
+      "agentverse-dungeon: Agentverse project repo"
+    ]
+  },
+  {
+    "type": "entity",
+    "name": "premium-modules",
+    "entityType": "software",
+    "observations": [
+      "Location: /home/coder/premium-modules/",
+      "M1 Billing_Elements: 17 files, icon (FA naira-sign), Help (KB-0018), zip validated",
+      "M2 Student_Billing_Premium: 21 files, Monnify/Moniepoint gateway, 6 programs",
+      "Deployment: upload zip via school4 Modules manager, activate, chown www-data"
+    ]
+  }
+]

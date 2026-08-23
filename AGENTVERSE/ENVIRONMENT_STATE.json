@@ -1,0 +1,41 @@
+{
+  "version": "2.0",
+  "last_checked": "2026-08-23T01:51:59Z",
+  "source": {
+    "path": "/home/coder/project/scholapro",
+    "version": "12.9.2",
+    "defined_in": "scholapro/Warehouse.php:20",
+    "status": "VALID"
+  },
+  "production": {
+    "container": "school4",
+    "host": "extravus-prod",
+    "url": "https://school4.edunaija.online",
+    "version": "12.9.2",
+    "upgraded_from": "12.4.2",
+    "upgrade_date": "2026-08-17",
+    "status": "NOT_RUNNING"
+  },
+  "database": {
+    "container": "db-school4",
+    "name": "school4_db",
+    "engine": "MariaDB",
+    "version": "12.3.2",
+    "status": "LOCAL_ONLY"
+  },
+  "consistency": {
+    "source_production_match": true,
+    "issue": "none",
+    "resolution_required": "none",
+    "blocking": false
+  },
+  "mcp_servers": {
+    "sqlite": "CONFIGURED",
+    "filesystem": "CONFIGURED",
+    "memory": "CONFIGURED",
+    "git": "CONFIGURED",
+    "curl": "CONFIGURED",
+    "playwright": "CONFIGURED",
+    "sequential-thinking": "CONFIGURED"
+  }
+}

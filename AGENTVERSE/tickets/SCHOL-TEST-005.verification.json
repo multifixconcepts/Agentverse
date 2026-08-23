@@ -1,0 +1,23 @@
+{
+  "ticket": "SCHOL-TEST-005",
+  "previous_model_claims": {
+    "AC-1": "VERIFIED",
+    "AC-2": "VERIFIED",
+    "AC-3": "VERIFIED",
+    "AC-4": "VERIFIED"
+  },
+  "independent_verification": {
+    "AC-1": "PARTIAL — regex blocks non-alphanumeric but also blocks spaces, which are not alphanumeric. AC says 'only alphanumeric' but spaces pass through.",
+    "AC-2": "NOT VERIFIED — htmlspecialchars is HTML entity encoding, not SQL injection prevention. No parameterized queries, no PDO/mysqli escaping. Returns false (boolean), not empty result set as AC requires.",
+    "AC-3": "VERIFIED — strlen($query) > 200 correctly rejects inputs exceeding 200 characters.",
+    "AC-4": "NOT VERIFIED — htmlspecialchars sanitizes for HTML context only (XSS prevention). Does not sanitize SQL special characters (quotes, semicolons, dashes). Given AC-2's SQL context, this is insufficient."
+  },
+  "model_a_claims_accepted": 1,
+  "model_a_claims_rejected": 3,
+  "remaining_work": "AC-2 needs parameterized queries or mysqli_real_escape_string/PDO prepared statements. AC-4 needs SQL-specific sanitization. AC-1 needs clarification on whether spaces should be allowed. Calling code must handle validateStudentSearch() returning false to produce empty result, not error.",
+  "recommendation": "HALT — previous model's claims were largely unverified. 3 of 4 ACs require rework.",
+  "boot_sequence_followed": true,
+  "state_loaded_from_durable_artifacts": true,
+  "conversation_history_used": false,
+  "claim_vs_fact_distinction_maintained": true
+}
