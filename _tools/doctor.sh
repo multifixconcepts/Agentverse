@@ -319,6 +319,110 @@ fi
 
 echo ""
 
+# --- 9. VERSION File ---
+echo "VERSION File"
+
+if [ -f "$PROJECT/VERSION" ]; then
+  FILE_VERSION=$(cat "$PROJECT/VERSION" | tr -d '[:space:]')
+  check_pass "VERSION file ........." "$FILE_VERSION"
+else
+  check_fail "VERSION file ........." "not found"
+fi
+
+echo ""
+
+# --- 10. Git Tags ---
+echo "Git Tags"
+
+TAG_COUNT=$(git -C "$PROJECT" tag -l 2>/dev/null | wc -l)
+if [ "$TAG_COUNT" -gt 0 ]; then
+  LATEST_TAG=$(git -C "$PROJECT" tag -l --sort=-v:refname | head -1)
+  check_pass "Git tags ............." "$TAG_COUNT tags, latest: $LATEST_TAG"
+else
+  check_warn "Git tags ............." "no tags found"
+fi
+
+echo ""
+
+# --- 11. Polyglot Runtimes ---
+echo "Polyglot Runtimes"
+
+RUNTIME_PASS=0
+RUNTIME_TOTAL=6
+check_runtime() {
+  local name="$1" cmd="$2"
+  if eval "$cmd" >/dev/null 2>&1; then
+    RUNTIME_PASS=$((RUNTIME_PASS + 1))
+  else
+    check_warn "Not available ........" "$name"
+  fi
+}
+
+check_runtime "Node.js" "node --version"
+check_runtime "Python" "/home/coder/python/bin/python3 --version"
+check_runtime "Go" "/home/coder/go/bin/go version"
+check_runtime "Rust" "/home/coder/.cargo/bin/rustc --version"
+check_runtime "Java" "/home/coder/jdk-21.0.3+9/bin/java --version"
+check_runtime "C#/.NET" "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet --version"
+
+if [ "$RUNTIME_PASS" -eq "$RUNTIME_TOTAL" ]; then
+  check_pass "Runtimes ............." "$RUNTIME_PASS/$RUNTIME_TOTAL tier-1 runtimes available"
+else
+  check_warn "Runtimes ............." "$RUNTIME_PASS/$RUNTIME_TOTAL tier-1 runtimes available"
+fi
+
+echo ""
+
+# --- 12. Pre-commit Hook ---
+echo "Pre-commit Hook"
+
+if [ -f "$PROJECT/.git/hooks/pre-commit" ] && [ -x "$PROJECT/.git/hooks/pre-commit" ]; then
+  check_pass "Pre-commit hook ......" "installed and executable"
+elif [ -f "$PROJECT/.git/hooks/pre-commit" ]; then
+  check_warn "Pre-commit hook ......" "installed but not executable"
+else
+  check_warn "Pre-commit hook ......" "not installed"
+fi
+
+echo ""
+
+# --- 13. Task Ledger ---
+echo "Task Ledger"
+
+if [ -f "$AGENTVERSE/agentverse.db" ]; then
+  TASK_TABLE=$(sqlite3 "$AGENTVERSE/agentverse.db" "SELECT name FROM sqlite_master WHERE type='table' AND name='task_ledger';" 2>/dev/null || echo "")
+  if [ "$TASK_TABLE" = "task_ledger" ]; then
+    TASK_COUNT=$(sqlite3 "$AGENTVERSE/agentverse.db" "SELECT COUNT(*) FROM task_ledger;" 2>/dev/null || echo "0")
+    check_pass "Task ledger .........." "table exists, $TASK_COUNT entries"
+  else
+    check_warn "Task ledger .........." "table not yet created"
+  fi
+else
+  check_warn "Task ledger .........." "agentverse.db not found"
+fi
+
+echo ""
+
+# --- 14. Secret Hygiene ---
+echo "Secret Hygiene"
+
+# Check for secrets in git history
+SECRETS_IN_HISTORY=0
+if git -C "$PROJECT" log --all -p 2>/dev/null | grep -qE 'ghp_[A-Za-z0-9]{36}'; then
+  SECRETS_IN_HISTORY=$((SECRETS_IN_HISTORY + 1))
+fi
+if git -C "$PROJECT" log --all -p 2>/dev/null | grep -qE 'ptr_[A-Za-z0-9+/]{20,}'; then
+  SECRETS_IN_HISTORY=$((SECRETS_IN_HISTORY + 1))
+fi
+
+if [ "$SECRETS_IN_HISTORY" -eq 0 ]; then
+  check_pass "Git history .........." "no obvious secrets found"
+else
+  check_warn "Git history .........." "$SECRETS_IN_HISTORY secret pattern(s) found in history"
+fi
+
+echo ""
+
 # =============================================
 # --- Final Verdict ---
 echo "============================================"

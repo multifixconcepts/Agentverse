@@ -260,3 +260,80 @@ jobs:
         with:
           name: consistency-results
           path: /tmp/consistency-results.txt
+
+  polyglot-validation:
+    name: polyglot-validation
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runtime: [python, go, rust, java, dotnet]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        if: matrix.runtime == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Go
+        if: matrix.runtime == 'go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Setup Rust
+        if: matrix.runtime == 'rust'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java
+        if: matrix.runtime == 'java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup .NET
+        if: matrix.runtime == 'dotnet'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Validate Python
+        if: matrix.runtime == 'python'
+        run: |
+          python3 --version
+          python3 -c "import sqlite3; print('sqlite3 OK')"
+          python3 -c "import json; print('json OK')"
+          python3 -c "import hashlib; print('hashlib OK')"
+
+      - name: Validate Go
+        if: matrix.runtime == 'go'
+        run: |
+          go version
+          go env GOPATH
+          echo 'package main; import "fmt"; func main() { fmt.Println("Go OK") }' > /tmp/test.go
+          go run /tmp/test.go
+
+      - name: Validate Rust
+        if: matrix.runtime == 'rust'
+        run: |
+          rustc --version
+          cargo --version
+          echo 'fn main() { println!("Rust OK"); }' > /tmp/test.rs
+          rustc /tmp/test.rs -o /tmp/test && /tmp/test
+
+      - name: Validate Java
+        if: matrix.runtime == 'java'
+        run: |
+          java --version
+          javac --version
+          echo 'public class Test { public static void main(String[] args) { System.out.println("Java OK"); } }' > /tmp/Test.java
+          javac /tmp/Test.java -d /tmp && java -cp /tmp Test
+
+      - name: Validate .NET
+        if: matrix.runtime == 'dotnet'
+        run: |
+          dotnet --version
+          dotnet new console -o /tmp/dotnet-test --force
+          cd /tmp/dotnet-test && dotnet run
