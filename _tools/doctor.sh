@@ -10,6 +10,9 @@ PROJECT="/home/coder/project"
 AGENTVERSE="$PROJECT/AGENTVERSE"
 AGENTS_DIR="$PROJECT/.opencode/agents"
 SKILLS_DIR="$PROJECT/.opencode/skills"
+export PATH="/home/coder/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
+export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+export JAVA_HOME="/home/coder/jdk-21.0.3+9"
 
 TOTAL_CHECKS=0
 PASS_COUNT=0
@@ -344,11 +347,13 @@ fi
 
 echo ""
 
-# --- 11. Polyglot Runtimes ---
-echo "Polyglot Runtimes"
+# --- 11. Polyglot Runtimes & Toolchains ---
+echo "Polyglot Runtimes & Toolchains"
 
 RUNTIME_PASS=0
-RUNTIME_TOTAL=6
+RUNTIME_TOTAL=11
+TOOLCHAIN_PASS=0
+TOOLCHAIN_TOTAL=0
 check_runtime() {
   local name="$1" cmd="$2"
   if eval "$cmd" >/dev/null 2>&1; then
@@ -358,17 +363,57 @@ check_runtime() {
   fi
 }
 
-check_runtime "Node.js" "node --version"
-check_runtime "Python" "/home/coder/python/bin/python3 --version"
-check_runtime "Go" "/home/coder/go/bin/go version"
-check_runtime "Rust" "/home/coder/.cargo/bin/rustc --version"
-check_runtime "Java" "/home/coder/jdk-21.0.3+9/bin/java --version"
-check_runtime "C#/.NET" "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet --version"
+check_toolchain() {
+  local name="$1" cmd="$2"
+  TOOLCHAIN_TOTAL=$((TOOLCHAIN_TOTAL + 1))
+  if eval "$cmd" >/dev/null 2>&1; then
+    TOOLCHAIN_PASS=$((TOOLCHAIN_PASS + 1))
+  else
+    check_warn "Toolchain incomplete .." "$name"
+  fi
+}
+
+# Tier 1 runtimes
+check_runtime "Node.js .............." "node --version"
+check_runtime "TypeScript ..........." "tsc --version"
+check_runtime "Python ..............." "/home/coder/python/bin/python3 --version"
+check_runtime "Go ..................." "/home/coder/go/bin/go version"
+check_runtime "Rust ................." "/home/coder/.cargo/bin/rustc --version"
+check_runtime "Java ................." "/home/coder/jdk-21.0.3+9/bin/java --version"
+check_runtime "C#/.NET .............." "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet --version"
+
+# Tier 2 runtimes
+check_runtime "C (gcc) .............." "gcc --version"
+check_runtime "C++ (g++) ............" "g++ --version"
+check_runtime "Ruby ................." "ruby --version"
+check_runtime "Kotlin ..............." "/home/coder/bin/kotlinc -version"
+
+# Toolchain completeness (formatters, linters, test runners, package managers)
+check_toolchain "eslint .............." "eslint --version"
+check_toolchain "prettier ............" "prettier --version"
+check_toolchain "ruff ................" "ruff --version"
+check_toolchain "black ..............." "black --version"
+check_toolchain "mypy ................" "mypy --version"
+check_toolchain "pytest .............." "pytest --version"
+check_toolchain "staticcheck ........." "staticcheck --version"
+check_toolchain "clippy .............." "/home/coder/.cargo/bin/clippy --version"
+check_toolchain "rustfmt ............." "/home/coder/.cargo/bin/rustfmt --version"
+check_toolchain "rubocop ............." "rubocop --version"
+check_toolchain "composer ............" "/home/coder/bin/composer --version"
+check_toolchain "npm ................." "npm --version"
+check_toolchain "pip ................." "/home/coder/python/bin/pip --version"
+check_toolchain "gh .................." "gh --version"
 
 if [ "$RUNTIME_PASS" -eq "$RUNTIME_TOTAL" ]; then
-  check_pass "Runtimes ............." "$RUNTIME_PASS/$RUNTIME_TOTAL tier-1 runtimes available"
+  check_pass "Runtimes ............." "$RUNTIME_PASS/$RUNTIME_TOTAL runtimes available"
 else
-  check_warn "Runtimes ............." "$RUNTIME_PASS/$RUNTIME_TOTAL tier-1 runtimes available"
+  check_warn "Runtimes ............." "$RUNTIME_PASS/$RUNTIME_TOTAL runtimes available"
+fi
+
+if [ "$TOOLCHAIN_PASS" -eq "$TOOLCHAIN_TOTAL" ]; then
+  check_pass "Toolchains ..........." "$TOOLCHAIN_PASS/$TOOLCHAIN_TOTAL toolchain tools available"
+else
+  check_warn "Toolchains ..........." "$TOOLCHAIN_PASS/$TOOLCHAIN_TOTAL toolchain tools available"
 fi
 
 echo ""
