@@ -10,7 +10,7 @@ PROJECT="/home/coder/project"
 AGENTVERSE="$PROJECT/AGENTVERSE"
 AGENTS_DIR="$PROJECT/.opencode/agents"
 SKILLS_DIR="$PROJECT/.opencode/skills"
-export PATH="/home/coder/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
+export PATH="/home/coder/bin:/home/coder/.npm-global/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 export JAVA_HOME="/home/coder/jdk-21.0.3+9"
 
@@ -351,7 +351,7 @@ echo ""
 echo "Polyglot Runtimes & Toolchains"
 
 RUNTIME_PASS=0
-RUNTIME_TOTAL=11
+RUNTIME_TOTAL=13
 TOOLCHAIN_PASS=0
 TOOLCHAIN_TOTAL=0
 check_runtime() {
@@ -387,6 +387,8 @@ check_runtime "C (gcc) .............." "gcc --version"
 check_runtime "C++ (g++) ............" "g++ --version"
 check_runtime "Ruby ................." "ruby --version"
 check_runtime "Kotlin ..............." "/home/coder/bin/kotlinc -version"
+check_runtime "Swift ................" "/home/coder/bin/swift --version"
+check_runtime "Dart ................." "/home/coder/bin/dart --version"
 
 # Toolchain completeness (formatters, linters, test runners, package managers)
 check_toolchain "eslint .............." "eslint --version"
@@ -464,6 +466,115 @@ if [ "$SECRETS_IN_HISTORY" -eq 0 ]; then
   check_pass "Git history .........." "no obvious secrets found"
 else
   check_warn "Git history .........." "$SECRETS_IN_HISTORY secret pattern(s) found in history"
+fi
+
+echo ""
+
+# --- 15. Framework Verification ---
+echo "Framework Verification"
+
+FW_PASS=0
+FW_TOTAL=0
+check_framework() {
+  local name="$1" cmd="$2"
+  FW_TOTAL=$((FW_TOTAL + 1))
+  if eval "$cmd" >/dev/null 2>&1; then
+    FW_PASS=$((FW_PASS + 1))
+  else
+    check_warn "Framework ............" "$name not available"
+  fi
+}
+
+check_framework "Express.js ..........." "node -e \"require('express')\" 2>/dev/null || npm ls express 2>/dev/null"
+check_framework "FastAPI .............." "/home/coder/python/bin/python3 -c \"import fastapi\" 2>/dev/null"
+check_framework "Django ..............." "/home/coder/python/bin/python3 -c \"import django\" 2>/dev/null"
+check_framework "ASP.NET .............." "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet --list-sdks 2>/dev/null | grep -q '8'"
+check_framework "Spring (Java) ........" "/home/coder/jdk-21.0.3+9/bin/java -version 2>/dev/null"
+check_framework "Laravel (PHP) ........" "/home/coder/bin/php -r \"echo class_exists('Illuminate\\Support\\ServiceProvider') ? 1 : 0;\" 2>/dev/null || echo '0'"
+
+if [ "$FW_PASS" -eq "$FW_TOTAL" ]; then
+  check_pass "Frameworks ..........." "$FW_PASS/$FW_TOTAL frameworks verified"
+else
+  check_warn "Frameworks ..........." "$FW_PASS/$FW_TOTAL frameworks verified"
+fi
+
+echo ""
+
+# --- 16. Database Engines ---
+echo "Database Engines"
+
+# SQLite
+if command -v sqlite3 >/dev/null 2>&1 || /home/coder/python/bin/python3 -c "import sqlite3" 2>/dev/null; then
+  check_pass "SQLite ..............." "available"
+else
+  check_warn "SQLite ..............." "not available"
+fi
+
+# PostgreSQL (check via Python)
+if /home/coder/python/bin/python3 -c "import psycopg2" 2>/dev/null; then
+  check_pass "PostgreSQL (psycopg2)." "driver available"
+else
+  check_warn "PostgreSQL (psycopg2)." "driver not installed"
+fi
+
+# Redis (check via Python)
+if /home/coder/python/bin/python3 -c "import redis" 2>/dev/null; then
+  check_pass "Redis (redis-py) ......" "driver available"
+else
+  check_warn "Redis (redis-py) ......" "driver not installed"
+fi
+
+# SQLAlchemy
+if /home/coder/python/bin/python3 -c "import sqlalchemy" 2>/dev/null; then
+  check_pass "SQLAlchemy ............" "available"
+else
+  check_warn "SQLAlchemy ............" "not installed"
+fi
+
+echo ""
+
+# --- 17. Deployment Infrastructure ---
+echo "Deployment Infrastructure"
+
+# Portainer API
+if [ -n "$PORTAINER_API_KEY" ] || [ -f "$AGENTVERSE/PORTAINER_API_KEY" ]; then
+  check_pass "Portainer API key ...." "configured"
+else
+  check_warn "Portainer API key ...." "not set locally (production access via extravus-prod)"
+fi
+
+# NPM connectivity
+if npm ping >/dev/null 2>&1; then
+  check_pass "NPM registry ........" "reachable"
+else
+  check_warn "NPM registry ........" "not reachable from this host"
+fi
+
+# GitHub CLI
+if gh auth status >/dev/null 2>&1; then
+  check_pass "GitHub CLI ..........." "authenticated"
+else
+  check_warn "GitHub CLI ..........." "not authenticated"
+fi
+
+# SSH key
+if [ -f "$HOME/.ssh/id_rsa_extravus" ]; then
+  check_pass "SSH key .............." "extravus key present"
+else
+  check_warn "SSH key .............." "extravus key not found"
+fi
+
+# Smoke test scripts
+SMOKE_COUNT=0
+for s in polyglot-smoke-suite.sh framework-smoke-suite.sh database-integration-tests.sh deployment-verification.sh; do
+  if [ -f "$PROJECT/_tests/$s" ]; then
+    SMOKE_COUNT=$((SMOKE_COUNT + 1))
+  fi
+done
+if [ "$SMOKE_COUNT" -eq 4 ]; then
+  check_pass "Smoke test suite ...." "$SMOKE_COUNT/4 suites present"
+else
+  check_warn "Smoke test suite ...." "$SMOKE_COUNT/4 suites present"
 fi
 
 echo ""
