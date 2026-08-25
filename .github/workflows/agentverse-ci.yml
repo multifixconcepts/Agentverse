@@ -260,3 +260,260 @@ jobs:
         with:
           name: consistency-results
           path: /tmp/consistency-results.txt
+
+  polyglot-validation:
+    name: polyglot-validation
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - runtime: node
+            setup: actions/setup-node@v4
+            setup-args: { node-version: '20' }
+            validate: |
+              node --version
+              echo 'console.log("Node OK")' > /tmp/test.js && node /tmp/test.js
+          - runtime: typescript
+            setup: actions/setup-node@v4
+            setup-args: { node-version: '20' }
+            validate: |
+              npm install -g typescript
+              tsc --version
+              echo 'const msg: string = "TS OK"; console.log(msg);' > /tmp/test.ts
+              tsc --outDir /tmp /tmp/test.ts && node /tmp/test.js
+          - runtime: python
+            setup: actions/setup-python@v5
+            setup-args: { python-version: '3.11' }
+            validate: |
+              python3 --version
+              python3 -c "import sqlite3, json, hashlib; print('stdlib OK')"
+              python3 -c "print('Python OK')"
+          - runtime: go
+            setup: actions/setup-go@v5
+            setup-args: { go-version: '1.22' }
+            validate: |
+              go version
+              echo 'package main; import "fmt"; func main() { fmt.Println("Go OK") }' > /tmp/test.go
+              go run /tmp/test.go
+          - runtime: rust
+            setup: dtolnay/rust-toolchain@stable
+            setup-args: {}
+            validate: |
+              rustc --version && cargo --version
+              echo 'fn main() { println!("Rust OK"); }' > /tmp/test.rs
+              rustc /tmp/test.rs -o /tmp/test && /tmp/test
+          - runtime: java
+            setup: actions/setup-java@v4
+            setup-args: { distribution: 'temurin', java-version: '21' }
+            validate: |
+              java --version && javac --version
+              echo 'public class Test { public static void main(String[] a) { System.out.println("Java OK"); } }' > /tmp/Test.java
+              javac /tmp/Test.java -d /tmp && java -cp /tmp Test
+          - runtime: dotnet
+            setup: actions/setup-dotnet@v4
+            setup-args: { dotnet-version: '8.0.x' }
+            validate: |
+              dotnet --version
+              dotnet new console -o /tmp/dotnet-test --force
+              cd /tmp/dotnet-test && dotnet run
+          - runtime: c-cpp
+            setup: null
+            setup-args: {}
+            validate: |
+              gcc --version && g++ --version
+              echo '#include<stdio.h>' > /tmp/test.c && echo 'int main(){printf("C OK\n");return 0;}' >> /tmp/test.c
+              gcc /tmp/test.c -o /tmp/test_c && /tmp/test_c
+              echo '#include<iostream>' > /tmp/test.cpp && echo 'int main(){std::cout<<"C++ OK"<<std::endl;return 0;}' >> /tmp/test.cpp
+              g++ /tmp/test.cpp -o /tmp/test_cpp && /tmp/test_cpp
+          - runtime: ruby
+            setup: ruby/setup-ruby@v1
+            setup-args: { ruby-version: '3.3' }
+            validate: |
+              ruby --version
+              ruby -e 'puts "Ruby OK"'
+          - runtime: php
+            setup: shivammathur/setup-php@v2
+            setup-args: { php-version: '8.2', tools: composer:v2 }
+            validate: |
+              php --version
+              php -r 'echo "PHP OK\n";'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup ${{ matrix.runtime }}
+        if: matrix.setup != 'null'
+        uses: ${{ matrix.setup }}
+        with: ${{ matrix.setup-args }}
+
+      - name: Validate ${{ matrix.runtime }}
+        run: ${{ matrix.validate }}
+
+  polyglot-toolchain-verify:
+    name: polyglot-toolchain-verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Setup C/C++
+        run: sudo apt-get update && sudo apt-get install -y gcc g++ make cmake
+
+      - name: Run Polyglot Validation Script
+        run: |
+          chmod +x _tools/validate-polyglot.sh
+          bash _tools/validate-polyglot.sh all 2>&1 | tee /tmp/polyglot-results.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: polyglot-toolchain-results
+          path: /tmp/polyglot-results.txt
+
+  smoke-project-suite:
+    name: smoke-project-suite
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime: [javascript, typescript, python, go, rust, java, csharp, c, cpp, ruby, kotlin, php, swift, dart]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: contains(matrix.runtime, 'javascript') || contains(matrix.runtime, 'typescript')
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        if: matrix.runtime == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Go
+        if: matrix.runtime == 'go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Setup Rust
+        if: matrix.runtime == 'rust'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java
+        if: matrix.runtime == 'java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup .NET
+        if: matrix.runtime == 'csharp'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup C/C++
+        if: contains(matrix.runtime, 'c') || contains(matrix.runtime, 'cpp')
+        run: sudo apt-get update && sudo apt-get install -y gcc g++
+
+      - name: Setup Ruby
+        if: matrix.runtime == 'ruby'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Setup PHP
+        if: matrix.runtime == 'php'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Run Smoke Test (${{ matrix.runtime }})
+        run: |
+          chmod +x _tests/polyglot-smoke-suite.sh
+          bash _tests/polyglot-smoke-suite.sh ${{ matrix.runtime }}
+
+  framework-smoke-suite:
+    name: framework-smoke-suite
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [express, fastapi, aspnet, spring, laravel, react, django]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: contains(matrix.framework, 'express') || contains(matrix.framework, 'react')
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        if: contains(matrix.framework, 'fastapi') || contains(matrix.framework, 'django')
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup .NET
+        if: matrix.framework == 'aspnet'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup Java
+        if: matrix.framework == 'spring'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup PHP
+        if: matrix.framework == 'laravel'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Run Framework Smoke (${{ matrix.framework }})
+        run: |
+          chmod +x _tests/framework-smoke-suite.sh
+          bash _tests/framework-smoke-suite.sh ${{ matrix.framework }}

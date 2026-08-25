@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users       User[]
+  clients     Client[]
+  products    Product[]
+  invoices    Invoice[]
+  payments    Payment[]
+  activityLog ActivityLog[]
+  recurringSchedules RecurringSchedule[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String
+  passwordHash   String    @map("password_hash")
+  name           String
+  role           String    @default("STAFF")
+  organizationId String    @map("organization_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  assignedClients Client[]     @relation("ClientAssignment")
+  createdInvoices Invoice[]    @relation("InvoiceCreator")
+  recordedPayments Payment[]   @relation("PaymentRecorder")
+  activityLog    ActivityLog[]
+
+  @@unique([email, organizationId])
+  @@index([organizationId])
+  @@index([email])
+  @@map("users")
+}
+
+model Client {
+  id             String    @id @default(uuid())
+  name           String
+  email          String
+  phone          String?
+  address        String?
+  notes          String?
+  organizationId String    @map("organization_id")
+  assignedToId   String?   @map("assigned_to_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  assignedTo   User?        @relation("ClientAssignment", fields: [assignedToId], references: [id])
+  invoices     Invoice[]
+  recurringSchedules RecurringSchedule[]
+
+  @@unique([email, organizationId])
+  @@index([organizationId])
+  @@index([assignedToId])
+  @@map("clients")
+}
+
+model Product {
+  id             String   @id @default(uuid())
+  name           String
+  description    String?
+  unitPrice      Float    @map("unit_price")
+  active         Boolean  @default(true)
+  organizationId String   @map("organization_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  invoiceItems InvoiceItem[]
+
+  @@index([organizationId])
+  @@map("products")
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  invoiceNumber  String   @map("invoice_number")
+  clientId       String   @map("client_id")
+  organizationId String   @map("organization_id")
+  createdBy      String   @map("created_by")
+  status         String   @default("DRAFT")
+  subtotal       Float
+  taxRate        Float    @default(0) @map("tax_rate")
+  taxAmount      Float    @default(0) @map("tax_amount")
+  total          Float
+  notes          String?
+  dueDate        DateTime? @map("due_date")
+  sentAt         DateTime? @map("sent_at")
+  paidAt         DateTime? @map("paid_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  client       Client       @relation(fields: [clientId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+  creator      User         @relation("InvoiceCreator", fields: [createdBy], references: [id])
+  items        InvoiceItem[]
+  payments     Payment[]
+
+  @@unique([invoiceNumber, organizationId])
+  @@index([organizationId])
+  @@index([clientId])
+  @@index([status])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String  @id @default(uuid())
+  invoiceId   String  @map("invoice_id")
+  productId   String? @map("product_id")
+  description String
+  quantity    Int
+  unitPrice   Float   @map("unit_price")
+  amount      Float
+
+  invoice Invoice  @relation(fields: [invoiceId], references: [id])
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+model Payment {
+  id              String   @id @default(uuid())
+  invoiceId       String   @map("invoice_id")
+  organizationId  String   @map("organization_id")
+  recordedBy      String   @map("recorded_by")
+  amount          Float
+  paymentMethod   String   @map("payment_method")
+  status          String   @default("COMPLETED")
+  reference       String?
+  notes           String?
+  recordedAt      DateTime @default(now()) @map("recorded_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  invoice      Invoice      @relation(fields: [invoiceId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+  recorder     User         @relation("PaymentRecorder", fields: [recordedBy], references: [id])
+
+  @@index([organizationId])
+  @@index([invoiceId])
+  @@map("payments")
+}
+
+model ActivityLog {
+  id             String   @id @default(uuid())
+  organizationId String   @map("organization_id")
+  userId         String   @map("user_id")
+  action         String
+  entityType     String   @map("entity_type")
+  entityId       String   @map("entity_id")
+  details        String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("activity_log")
+}
+
+model TokenBlacklist {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([token])
+  @@map("token_blacklist")
+}
+
+model RecurringSchedule {
+  id             String   @id @default(uuid())
+  organizationId String   @map("organization_id")
+  clientId       String   @map("client_id")
+  name           String
+  items          String   @default("[]")
+  taxRate        Float    @default(0) @map("tax_rate")
+  frequency      String
+  dayOfMonth     Int?     @map("day_of_month")
+  startDate      DateTime @map("start_date")
+  endDate        DateTime? @map("end_date")
+  nextRunDate    DateTime @map("next_run_date")
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  client       Client       @relation(fields: [clientId], references: [id])
+
+  @@index([organizationId])
+  @@index([nextRunDate])
+  @@index([active])
+  @@map("recurring_schedules")
+}

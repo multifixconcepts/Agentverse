@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Docker UI</title>
+</head>
+<body>
+    <h1>Docker UI Debug</h1>
+    <div id="debug-output"></div>
+    
+    <script>
+    async function testAPI() {
+        const debugDiv = document.getElementById('debug-output');
+        debugDiv.innerHTML = '<p>Testing API...</p>';
+        
+        try {
+            const response = await fetch('/api/containers');
+            debugDiv.innerHTML += '<p>Response status: ' + response.status + '</p>';
+            
+            const data = await response.json();
+            debugDiv.innerHTML += '<p>Response data: ' + JSON.stringify(data, null, 2).substring(0, 500) + '...</p>';
+            
+            const containers = data.containers || [];
+            debugDiv.innerHTML += '<p>Found ' + containers.length + ' containers</p>';
+            
+            if (containers.length > 0) {
+                debugDiv.innerHTML += '<p>First container: ' + JSON.stringify(containers[0]) + '</p>';
+            }
+        } catch (error) {
+            debugDiv.innerHTML += '<p>Error: ' + error.message + '</p>';
+        }
+    }
+    
+    testAPI();
+    </script>
+</body>
+</html>

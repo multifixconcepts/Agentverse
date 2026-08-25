@@ -2,7 +2,7 @@
 $DatabaseType = 'mysql';
 $DatabaseServer = 'db-school4';
 $DatabaseUsername = 'admin';
-$DatabasePassword = 'school4_admin_pass';
+$DatabasePassword = 'REDACTED_DB_PASSWORD';
 $DatabaseName = 'school4_db';
 $DatabasePort = 3306;
 

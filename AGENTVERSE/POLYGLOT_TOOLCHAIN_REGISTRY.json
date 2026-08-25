@@ -1,0 +1,530 @@
+{
+  "version": "2.0.4",
+  "last_updated": "2026-08-25",
+  "description": "AgentVerse Capability Registry — canonical model for languages, frameworks, databases, infrastructure, and execution tiers",
+
+  "capability_model": {
+    "description": "Canonical counting model distinguishing different capability types",
+    "definitions": {
+      "languages_supported": "Distinct programming languages with at least runtime available",
+      "runtimes_available": "Executable language runtimes or compilers on the host",
+      "toolchains_verified": "Full pipeline verified: detect → compile → execute → test → lint → format → package",
+      "frameworks_documented": "Known framework capabilities documented in registry (may require project-level install)",
+      "databases_documented": "Known database capabilities documented (may be remote/container)",
+      "infrastructure_tools": "Non-language tools (Docker, SSH, GitHub CLI, etc.)",
+      "execution_tiers": "Distinct execution environments (local sandbox, remote dev, production cloud)"
+    },
+    "counts": {
+      "languages_supported": 13,
+      "runtimes_available": 13,
+      "toolchains_verified": 13,
+      "frameworks_documented": 12,
+      "databases_documented": 6,
+      "infrastructure_tools": 7,
+      "execution_tiers": 3,
+      "tier1_languages": 7,
+      "tier1_verified": 7,
+      "tier2_languages": 7,
+      "tier2_verified": 7,
+      "tier3_languages": 9,
+      "tier3_verified": 0,
+      "tier3_container_strategy": true
+    }
+  },
+
+  "tiers": {
+    "tier1": {
+      "name": "Core Enterprise/Web Engineering",
+      "languages": ["javascript", "typescript", "python", "go", "rust", "java", "csharp"],
+      "verified_count": 7,
+      "total_count": 7
+    },
+    "tier2": {
+      "name": "Major Additional Production Languages",
+      "languages": ["c", "cpp", "php", "ruby", "kotlin", "swift", "dart"],
+      "verified_count": 7,
+      "total_count": 7
+    },
+    "tier3": {
+      "name": "Extended Engineering Coverage (Containerized)",
+      "languages": ["powershell", "sql", "r", "perl", "lua", "elixir", "haskell", "scala", "julia"],
+      "verified_count": 0,
+      "total_count": 9,
+      "strategy": "Container-based execution via Portainer API"
+    }
+  },
+
+  "execution_tiers": {
+    "tier_a_local": {
+      "name": "Local Sandbox",
+      "description": "Direct execution on the code-server host",
+      "capabilities": ["compile", "test", "lint", "format", "package", "debug"],
+      "tools": "All Tier 1 and Tier 2 language toolchains installed directly on host",
+      "limitations": "No root access for system packages; user-level binaries only",
+      "status": "active"
+    },
+    "tier_b_remote_dev": {
+      "name": "Remote Development/Test",
+      "description": "Execution on remote dev/test infrastructure via SSH or Portainer",
+      "capabilities": ["compile", "test", "build", "containerize"],
+      "tools": "Portainer API, SSH (extravus-prod), Docker containers",
+      "endpoint": "https://server1.extravus.com",
+      "status": "active"
+    },
+    "tier_c_production": {
+      "name": "Production Cloud",
+      "description": "Production deployment through AgentVerse gates",
+      "capabilities": ["deploy", "verify", "monitor", "rollback"],
+      "tools": "Portainer → Docker Stack → NPM → HTTPS",
+      "endpoint": "https://clientflow.edunaija.online",
+      "gates_required": ["agent_review", "secret_scan", "regression_test", "adversarial_test", "browser_verification"],
+      "status": "active"
+    }
+  },
+
+  "toolchains": {
+    "javascript": {
+      "tier": 1,
+      "display_name": "JavaScript/Node.js",
+      "runtime": { "binary": "node", "version": "v24.18.0", "path": "/home/coder/bin/node" },
+      "compiler": null,
+      "package_manager": { "binary": "npm", "version": "12.0.2", "path": "/home/coder/bin/npm" },
+      "formatter": { "binary": "prettier", "version": "3.9.6", "path": "/home/coder/bin/prettier" },
+      "linter": { "binary": "eslint", "version": "10.9.1", "path": "/home/coder/bin/eslint" },
+      "test_runner": { "binary": "node", "args": "--eval" },
+      "build_system": { "binary": "npm", "args": "run build" },
+      "debugger": { "binary": "node", "args": "--inspect" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "typescript": {
+      "tier": 1,
+      "display_name": "TypeScript",
+      "runtime": { "binary": "node", "version": "v24.18.0", "path": "/home/coder/bin/node" },
+      "compiler": { "binary": "tsc", "version": "7.0.2", "path": "/home/coder/bin/tsc" },
+      "package_manager": { "binary": "npm", "version": "12.0.2" },
+      "formatter": { "binary": "prettier", "version": "3.9.6" },
+      "linter": { "binary": "eslint", "version": "10.9.1" },
+      "test_runner": { "binary": "ts-node", "version": "10.9.2" },
+      "build_system": { "binary": "tsc", "args": "--outDir" },
+      "debugger": { "binary": "node", "args": "--inspect" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "python": {
+      "tier": 1,
+      "display_name": "Python",
+      "runtime": { "binary": "python3", "version": "3.11.9", "path": "/home/coder/python/bin/python3" },
+      "compiler": null,
+      "package_manager": { "binary": "pip", "version": "24.0" },
+      "formatter": { "binary": "black", "version": "26.5.1" },
+      "linter": { "binary": "ruff", "version": "0.16.4" },
+      "additional_linters": ["pylint 4.0.7", "flake8 7.3.0", "isort 8.0.1"],
+      "type_checker": { "binary": "mypy", "version": "2.3.1" },
+      "security_scanner": { "binary": "bandit", "version": "1.9.4" },
+      "test_runner": { "binary": "pytest", "version": "9.1.1" },
+      "build_system": { "binary": "pip", "args": "install" },
+      "debugger": { "binary": "python3", "args": "-m pdb" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "go": {
+      "tier": 1,
+      "display_name": "Go",
+      "runtime": { "binary": "go", "version": "1.22.0", "path": "/home/coder/go/bin/go" },
+      "compiler": { "binary": "go", "args": "build" },
+      "package_manager": { "binary": "go", "args": "mod", "name": "Go Modules" },
+      "formatter": { "binary": "gofmt", "path": "/home/coder/go/bin/gofmt" },
+      "linter": { "binary": "go", "args": "vet" },
+      "advanced_linter": { "binary": "staticcheck", "version": "2026.2.1" },
+      "test_runner": { "binary": "go", "args": "test" },
+      "build_system": { "binary": "go", "args": "build" },
+      "debugger": { "binary": "dlv", "path": "/home/coder/go/bin/dlv" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "rust": {
+      "tier": 1,
+      "display_name": "Rust",
+      "runtime": { "binary": "rustc", "version": "1.98.0", "path": "/home/coder/.cargo/bin/rustc" },
+      "compiler": { "binary": "rustc", "version": "1.98.0" },
+      "package_manager": { "binary": "cargo", "path": "/home/coder/.cargo/bin/cargo" },
+      "formatter": { "binary": "rustfmt", "path": "/home/coder/.cargo/bin/rustfmt" },
+      "linter": { "binary": "clippy", "path": "/home/coder/.cargo/bin/clippy" },
+      "test_runner": { "binary": "cargo", "args": "test" },
+      "build_system": { "binary": "cargo", "args": "build" },
+      "debugger": { "binary": "rust-gdb" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "java": {
+      "tier": 1,
+      "display_name": "Java",
+      "runtime": { "binary": "java", "version": "21.0.3", "path": "/home/coder/jdk-21.0.3+9/bin/java" },
+      "compiler": { "binary": "javac", "version": "21.0.3" },
+      "package_manager": { "binary": "mvn", "name": "Maven" },
+      "formatter": { "binary": "mvn", "args": "formatter:format", "name": "google-java-format" },
+      "linter": { "binary": "mvn", "args": "checkstyle:check", "name": "Checkstyle" },
+      "test_runner": { "binary": "mvn", "args": "test", "name": "JUnit via Maven" },
+      "build_system": { "binary": "mvn", "args": "package" },
+      "debugger": { "binary": "jdb" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "csharp": {
+      "tier": 1,
+      "display_name": "C# / .NET",
+      "runtime": { "binary": "dotnet", "version": "8.0.424", "path": "/home/coder/.dotnet/dotnet" },
+      "compiler": { "binary": "dotnet", "args": "build" },
+      "package_manager": { "binary": "dotnet", "args": "nuget", "name": "NuGet" },
+      "formatter": { "binary": "dotnet", "args": "format" },
+      "linter": { "binary": "dotnet", "args": "format --verify-no-changes" },
+      "test_runner": { "binary": "dotnet", "args": "test" },
+      "build_system": { "binary": "dotnet", "args": "publish" },
+      "debugger": { "binary": "dotnet", "args": "vstest" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "c": {
+      "tier": 2,
+      "display_name": "C",
+      "runtime": { "binary": "gcc", "version": "14.2.0", "path": "/usr/bin/gcc" },
+      "compiler": { "binary": "gcc", "version": "14.2.0" },
+      "package_manager": null,
+      "linter": { "binary": "gcc", "args": "-Wall -Wextra" },
+      "test_runner": { "binary": "make", "args": "test" },
+      "build_system": { "binary": "make", "version": "4.4.1" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "cpp": {
+      "tier": 2,
+      "display_name": "C++",
+      "runtime": { "binary": "g++", "version": "14.2.0", "path": "/usr/bin/g++" },
+      "compiler": { "binary": "g++", "version": "14.2.0" },
+      "package_manager": null,
+      "linter": { "binary": "g++", "args": "-Wall -Wextra -Wpedantic" },
+      "test_runner": { "binary": "ctest" },
+      "build_system": { "binary": "cmake", "version": "3.31.6" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "php": {
+      "tier": 2,
+      "display_name": "PHP",
+      "runtime": { "binary": "php", "version": "8.2.25", "path": "/home/coder/bin/php" },
+      "compiler": null,
+      "package_manager": { "binary": "composer", "version": "2.10.2", "path": "/home/coder/bin/composer" },
+      "linter": { "binary": "php", "args": "-l" },
+      "test_runner": { "binary": "phpunit", "name": "PHPUnit" },
+      "build_system": { "binary": "composer", "args": "install" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "ruby": {
+      "tier": 2,
+      "display_name": "Ruby",
+      "runtime": { "binary": "ruby", "version": "3.3.8", "path": "/usr/bin/ruby" },
+      "compiler": null,
+      "package_manager": { "binary": "gem", "version": "3.6.7", "bundler": { "binary": "bundler", "version": "4.0.19" } },
+      "formatter": { "binary": "rubocop", "version": "1.90.0" },
+      "linter": { "binary": "rubocop", "args": "--lint" },
+      "test_runner": { "binary": "Test::Unit" },
+      "build_system": { "binary": "rake" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "kotlin": {
+      "tier": 2,
+      "display_name": "Kotlin",
+      "runtime": { "binary": "kotlin", "version": "1.9.24", "path": "/home/coder/bin/kotlin", "jvm": "JRE 21.0.3+9-LTS" },
+      "compiler": { "binary": "kotlinc", "version": "1.9.24", "path": "/home/coder/bin/kotlinc" },
+      "package_manager": { "binary": "gradle" },
+      "linter": { "binary": "ktlint" },
+      "test_runner": { "binary": "JUnit via Gradle" },
+      "build_system": { "binary": "kotlinc", "args": "-include-runtime" },
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "swift": {
+      "tier": 2,
+      "display_name": "Swift",
+      "runtime": { "binary": "swift", "version": "6.1", "path": "/home/coder/bin/swift", "target": "aarch64-unknown-linux-gnu" },
+      "compiler": { "binary": "swiftc", "version": "6.1", "path": "/home/coder/bin/swiftc" },
+      "package_manager": { "binary": "swift", "args": "package", "name": "Swift Package Manager" },
+      "linter": { "binary": "swiftlint", "note": "install via brew or direct binary" },
+      "test_runner": { "binary": "swift", "args": "test" },
+      "build_system": { "binary": "swift", "args": "build" },
+      "debugger": { "binary": "lldb" },
+      "note": "Linux server-side Swift verified. iOS/macOS development requires Apple Xcode toolchain.",
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    },
+    "dart": {
+      "tier": 2,
+      "display_name": "Dart",
+      "runtime": { "binary": "dart", "version": "3.7.3", "path": "/home/coder/bin/dart" },
+      "compiler": { "binary": "dart", "args": "compile", "name": "Dart AOT Compiler" },
+      "package_manager": { "binary": "dart", "args": "pub", "name": "Dart Pub" },
+      "formatter": { "binary": "dart", "args": "format" },
+      "linter": { "binary": "dart", "args": "analyze" },
+      "test_runner": { "binary": "dart", "args": "test" },
+      "build_system": { "binary": "dart", "args": "compile exe" },
+      "debugger": { "binary": "dart", "args": "debug" },
+      "note": "Flutter is a framework layer on top of Dart; Dart SDK is the core runtime.",
+      "docker_support": true,
+      "ci_validation": true,
+      "status": "verified"
+    }
+  },
+
+  "frameworks": {
+    "php": [
+      {
+        "name": "Laravel",
+        "type": "web_framework",
+        "package_manager": "composer",
+        "test_runner": "phpunit",
+        "status": "documented",
+        "note": "Install via composer create-project laravel/laravel"
+      },
+      {
+        "name": "WordPress",
+        "type": "cms",
+        "status": "documented",
+        "note": "Already deployed (ScholaPro)"
+      }
+    ],
+    "javascript_typescript": [
+      {
+        "name": "React",
+        "type": "frontend_framework",
+        "package_manager": "npm",
+        "build_tool": "Vite/Webpack",
+        "status": "documented"
+      },
+      {
+        "name": "Next.js",
+        "type": "fullstack_framework",
+        "package_manager": "npm",
+        "build_tool": "Next.js CLI",
+        "status": "documented"
+      },
+      {
+        "name": "Express",
+        "type": "backend_framework",
+        "package_manager": "npm",
+        "status": "documented"
+      },
+      {
+        "name": "Vite",
+        "type": "build_tool",
+        "package_manager": "npm",
+        "status": "documented"
+      },
+      {
+        "name": "Playwright",
+        "type": "e2e_testing",
+        "package_manager": "npm",
+        "status": "documented"
+      },
+      {
+        "name": "Vitest",
+        "type": "test_framework",
+        "package_manager": "npm",
+        "status": "documented"
+      }
+    ],
+    "python": [
+      {
+        "name": "FastAPI",
+        "type": "api_framework",
+        "package_manager": "pip",
+        "test_runner": "pytest",
+        "status": "documented"
+      },
+      {
+        "name": "Django",
+        "type": "fullstack_framework",
+        "package_manager": "pip",
+        "test_runner": "pytest/django test",
+        "status": "documented"
+      },
+      {
+        "name": "Flask",
+        "type": "micro_framework",
+        "package_manager": "pip",
+        "status": "documented"
+      }
+    ],
+    "java": [
+      {
+        "name": "Spring Boot",
+        "type": "enterprise_framework",
+        "package_manager": "maven/gradle",
+        "test_runner": "JUnit",
+        "status": "documented"
+      }
+    ],
+    "csharp": [
+      {
+        "name": "ASP.NET",
+        "type": "web_framework",
+        "package_manager": "NuGet",
+        "test_runner": "xUnit/NUnit",
+        "status": "documented"
+      },
+      {
+        "name": "Entity Framework",
+        "type": "orm",
+        "package_manager": "NuGet",
+        "status": "documented"
+      }
+    ],
+    "ruby": [
+      {
+        "name": "Ruby on Rails",
+        "type": "fullstack_framework",
+        "package_manager": "bundler",
+        "test_runner": "RSpec/Minitest",
+        "status": "documented"
+      }
+    ]
+  },
+
+  "databases": {
+    "postgresql": {
+      "type": "relational",
+      "status": "production_deployed",
+      "deployment": "Docker container on extravus-prod",
+      "cli": "psql",
+      "orm_support": ["SQLAlchemy (Python)", "Entity Framework (C#)", "Prisma (JS/TS)", "Hibernate (Java)", "Eloquent (PHP/Laravel)"],
+      "note": "Primary production database for ScholaPro"
+    },
+    "mysql_mariadb": {
+      "type": "relational",
+      "status": "documented",
+      "cli": "mysql",
+      "orm_support": ["SQLAlchemy (Python)", "Entity Framework (C#)", "Prisma (JS/TS)", "Hibernate (Java)", "Eloquent (PHP/Laravel)"]
+    },
+    "sqlite": {
+      "type": "embedded",
+      "status": "available",
+      "cli": "sqlite3",
+      "note": "Available via Python sqlite3 module and system binary",
+      "orm_support": ["SQLAlchemy (Python)", "Prisma (JS/TS)", "Eloquent (PHP/Laravel)"]
+    },
+    "redis": {
+      "type": "key_value",
+      "status": "production_deployed",
+      "deployment": "Docker container on extravus-prod",
+      "cli": "redis-cli",
+      "note": "Used for session caching in ClientFlow"
+    },
+    "mongodb": {
+      "type": "document",
+      "status": "documented",
+      "cli": "mongosh",
+      "note": "Available via Docker container"
+    },
+    "sqlserver": {
+      "type": "relational",
+      "status": "documented",
+      "note": "Available via Docker container"
+    }
+  },
+
+  "infrastructure_tools": {
+    "docker": {
+      "local": {
+        "status": "not_available",
+        "note": "Docker CLI not installed on code-server host"
+      },
+      "remote": {
+        "status": "active",
+        "method": "portainer_api",
+        "endpoint": "https://server1.extravus.com",
+        "auth": "API key via environment"
+      },
+      "production": {
+        "status": "active",
+        "method": "portainer_docker_stack",
+        "endpoint": "extravus-prod (161.153.35.43)",
+        "ssh_key": "~/.ssh/id_rsa_extravus",
+        "stacks": ["clientflow"]
+      },
+      "execution_model": {
+        "tier_a": "Local: Not available (no Docker CLI)",
+        "tier_b": "Remote: Portainer API for dev/test containers",
+        "tier_c": "Production: Portainer Docker Stack → NPM → HTTPS"
+      }
+    },
+    "github_cli": {
+      "binary": "gh",
+      "version": "2.46.0",
+      "path": "/home/coder/bin/gh",
+      "authenticated_as": "multifixconcepts",
+      "credential_helper": "gh auth git-credential",
+      "status": "verified"
+    },
+    "ssh": { "binary": "ssh", "status": "verified", "key": "~/.ssh/id_rsa_extravus" },
+    "curl": { "binary": "curl", "status": "verified" },
+    "jq": { "binary": "_tools/jq", "status": "verified" },
+    "git": { "binary": "git", "status": "verified", "credential_helper": "gh auth git-credential" },
+    "sqlite3": { "binary": "sqlite3", "status": "verified", "note": "via Python sqlite3 module" }
+  },
+
+  "container_tier3_strategy": {
+    "description": "Tier 3 languages are provisioned via Docker containers through Portainer API, not installed on host",
+    "approach": "On-demand container provisioning",
+    "registry_format": {
+      "language": "Haskell",
+      "execution_mode": "container",
+      "image": "haskell:9.6",
+      "compiler": "ghc",
+      "package_manager": "cabal",
+      "test_runner": "cabal test"
+    },
+    "available_images": {
+      "haskell": "haskell:9.6",
+      "elixir": "elixir:1.17",
+      "scala": "scala:3.5",
+      "julia": "julia:1.10",
+      "r": "r-base:4.4",
+      "perl": "perl:5.40",
+      "lua": "lua:5.4",
+      "powershell": "mcr.microsoft.com/powershell:latest"
+    },
+    "provisioning_endpoint": "Portainer API → https://server1.extravus.com"
+  },
+
+  "validation_pipeline": {
+    "description": "Full capability verification for each language: detect → compile → execute → test → lint → format → package",
+    "stages": ["detect", "compile", "execute", "test", "lint", "format", "package"],
+    "scripts": {
+      "polyglot": "_tools/validate-polyglot.sh",
+      "smoke_projects": "_tests/polyglot-smoke-suite.sh",
+      "framework_smoke": "_tests/framework-smoke-suite.sh",
+      "database_integration": "_tests/database-integration-tests.sh",
+      "deployment_verification": "_tests/deployment-verification.sh"
+    },
+    "last_run": "2026-08-25",
+    "polyglot_result": "75 passed, 0 failed, 2 skipped (of 77)",
+    "languages_validated": 13,
+    "frameworks_validated": 0,
+    "databases_validated": 0
+  }
+}

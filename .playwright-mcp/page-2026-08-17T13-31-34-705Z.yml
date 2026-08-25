@@ -1,0 +1,358 @@
+- generic [ref=f19e2]:
+  - contentinfo [ref=f19e3]:
+    - generic [ref=f19e4]:
+      - link "Skip to main content" [ref=f19e5] [cursor=pointer]:
+        - /url: "#body"
+      - link "Menu" [ref=f19e6] [cursor=pointer]:
+        - /url: "#!"
+      - link "Print" [ref=f19e8] [cursor=pointer]:
+        - /url: ""
+      - link "Help" [ref=f19e9] [cursor=pointer]:
+        - /url: "#!"
+      - link "Logout" [ref=f19e10] [cursor=pointer]:
+        - /url: index.php?token=c2203bda7774b743a17cfb00a6d5525f&modfunc=logout
+  - main [ref=f19e12]:
+    - table [ref=f19e13]:
+      - rowgroup [ref=f19e14]:
+        - row [ref=f19e15]:
+          - cell [ref=f19e16]:
+            - heading "Print Invoices" [level=2] [ref=f19e17]
+    - table [ref=f19e20]:
+      - rowgroup [ref=f19e21]:
+        - row [ref=f19e22]:
+          - columnheader [ref=f19e23]:
+            - heading "Find a Student" [level=3] [ref=f19e24]
+      - rowgroup [ref=f19e25]:
+        - row [ref=f19e26]:
+          - cell [ref=f19e27]:
+            - generic [ref=f19e28]:
+              - table [ref=f19e29]:
+                - rowgroup [ref=f19e30]:
+                  - row [ref=f19e31]:
+                    - cell "Last Name" [ref=f19e32]
+                    - cell [ref=f19e34]:
+                      - textbox "Last Name" [active] [ref=f19e35]
+                  - row [ref=f19e36]:
+                    - cell "First Name" [ref=f19e37]
+                    - cell [ref=f19e39]:
+                      - textbox "First Name" [ref=f19e40]
+                  - row [ref=f19e41]:
+                    - cell "RosarioSIS ID" [ref=f19e42]
+                    - cell [ref=f19e44]:
+                      - textbox "RosarioSIS ID" [ref=f19e45]
+                  - row [ref=f19e46]:
+                    - cell "Address" [ref=f19e47]
+                    - cell [ref=f19e49]:
+                      - textbox "Address" [ref=f19e50]
+                  - row [ref=f19e51]:
+                    - cell "Grade Level" [ref=f19e52]
+                    - cell "Not Specified" [ref=f19e54]:
+                      - combobox "Grade Level" [ref=f19e55]:
+                        - option "Not Specified" [selected]
+                        - option "Kindergarten"
+                        - option "1st"
+                        - option "2nd"
+                        - option "3rd"
+                        - option "4th"
+                        - option "5th"
+                        - option "6th"
+                        - option "7th"
+                        - option "8th"
+              - generic [ref=f19e56]:
+                - generic [ref=f19e57] [cursor=pointer]:
+                  - checkbox "Group by Family" [ref=f19e58]
+                  - text: Group by Family
+                - generic [ref=f19e59] [cursor=pointer]:
+                  - checkbox "Include Inactive Students" [ref=f19e60]
+                  - text: Include Inactive Students
+                - button "Submit" [ref=f19e61] [cursor=pointer]
+              - table [ref=f19e62]:
+                - rowgroup [ref=f19e63]:
+                  - row [ref=f19e64]:
+                    - cell "Assigned" [ref=f19e65]
+                    - cell [ref=f19e66]:
+                      - table [ref=f19e67]:
+                        - rowgroup [ref=f19e68]:
+                          - row [ref=f19e69]:
+                            - cell "≥" [ref=f19e70]
+                            - cell "August Month 17 Day 2026 Year Open calendar" [ref=f19e71]:
+                              - generic [ref=f19e72]:
+                                - combobox "Month" [ref=f19e73]:
+                                  - option "N/A"
+                                  - option "January"
+                                  - option "February"
+                                  - option "March"
+                                  - option "April"
+                                  - option "May"
+                                  - option "June"
+                                  - option "July"
+                                  - option "August" [selected]
+                                  - option "September"
+                                  - option "October"
+                                  - option "November"
+                                  - option "December"
+                                - generic [ref=f19e74] [cursor=pointer]: Month
+                                - combobox "Day" [ref=f19e75]:
+                                  - option "N/A"
+                                  - option "1"
+                                  - option "2"
+                                  - option "3"
+                                  - option "4"
+                                  - option "5"
+                                  - option "6"
+                                  - option "7"
+                                  - option "8"
+                                  - option "9"
+                                  - option "10"
+                                  - option "11"
+                                  - option "12"
+                                  - option "13"
+                                  - option "14"
+                                  - option "15"
+                                  - option "16"
+                                  - option "17" [selected]
+                                  - option "18"
+                                  - option "19"
+                                  - option "20"
+                                  - option "21"
+                                  - option "22"
+                                  - option "23"
+                                  - option "24"
+                                  - option "25"
+                                  - option "26"
+                                  - option "27"
+                                  - option "28"
+                                  - option "29"
+                                  - option "30"
+                                  - option "31"
+                                - generic [ref=f19e76] [cursor=pointer]: Day
+                                - combobox "Year" [ref=f19e77]:
+                                  - option "N/A"
+                                  - option "2006"
+                                  - option "2007"
+                                  - option "2008"
+                                  - option "2009"
+                                  - option "2010"
+                                  - option "2011"
+                                  - option "2012"
+                                  - option "2013"
+                                  - option "2014"
+                                  - option "2015"
+                                  - option "2016"
+                                  - option "2017"
+                                  - option "2018"
+                                  - option "2019"
+                                  - option "2020"
+                                  - option "2021"
+                                  - option "2022"
+                                  - option "2023"
+                                  - option "2024"
+                                  - option "2025"
+                                  - option "2026" [selected]
+                                  - option "2027"
+                                  - option "2028"
+                                  - option "2029"
+                                  - option "2030"
+                                  - option "2031"
+                                  - option "2032"
+                                  - option "2033"
+                                  - option "2034"
+                                  - option "2035"
+                                  - option "2036"
+                                  - option "2037"
+                                  - option "2038"
+                                  - option "2039"
+                                  - option "2040"
+                                  - option "2041"
+                                  - option "2042"
+                                  - option "2043"
+                                  - option "2044"
+                                  - option "2045"
+                                  - option "2046"
+                                - generic [ref=f19e78] [cursor=pointer]: Year
+                                - img "Open calendar" [ref=f19e79] [cursor=pointer]
+                          - row [ref=f19e80]:
+                            - cell "≤" [ref=f19e81]
+                            - cell "N/A Month N/A Day N/A Year Open calendar" [ref=f19e82]:
+                              - generic [ref=f19e83]:
+                                - combobox "Month" [ref=f19e84]:
+                                  - option "N/A" [selected]
+                                  - option "January"
+                                  - option "February"
+                                  - option "March"
+                                  - option "April"
+                                  - option "May"
+                                  - option "June"
+                                  - option "July"
+                                  - option "August"
+                                  - option "September"
+                                  - option "October"
+                                  - option "November"
+                                  - option "December"
+                                - generic [ref=f19e85] [cursor=pointer]: Month
+                                - combobox "Day" [ref=f19e86]:
+                                  - option "N/A" [selected]
+                                  - option "1"
+                                  - option "2"
+                                  - option "3"
+                                  - option "4"
+                                  - option "5"
+                                  - option "6"
+                                  - option "7"
+                                  - option "8"
+                                  - option "9"
+                                  - option "10"
+                                  - option "11"
+                                  - option "12"
+                                  - option "13"
+                                  - option "14"
+                                  - option "15"
+                                  - option "16"
+                                  - option "17"
+                                  - option "18"
+                                  - option "19"
+                                  - option "20"
+                                  - option "21"
+                                  - option "22"
+                                  - option "23"
+                                  - option "24"
+                                  - option "25"
+                                  - option "26"
+                                  - option "27"
+                                  - option "28"
+                                  - option "29"
+                                  - option "30"
+                                  - option "31"
+                                - generic [ref=f19e87] [cursor=pointer]: Day
+                                - combobox "Year" [ref=f19e88]:
+                                  - option "N/A" [selected]
+                                  - option "1946"
+                                  - option "1947"
+                                  - option "1948"
+                                  - option "1949"
+                                  - option "1950"
+                                  - option "1951"
+                                  - option "1952"
+                                  - option "1953"
+                                  - option "1954"
+                                  - option "1955"
+                                  - option "1956"
+                                  - option "1957"
+                                  - option "1958"
+                                  - option "1959"
+                                  - option "1960"
+                                  - option "1961"
+                                  - option "1962"
+                                  - option "1963"
+                                  - option "1964"
+                                  - option "1965"
+                                  - option "1966"
+                                  - option "1967"
+                                  - option "1968"
+                                  - option "1969"
+                                  - option "1970"
+                                  - option "1971"
+                                  - option "1972"
+                                  - option "1973"
+                                  - option "1974"
+                                  - option "1975"
+                                  - option "1976"
+                                  - option "1977"
+                                  - option "1978"
+                                  - option "1979"
+                                  - option "1980"
+                                  - option "1981"
+                                  - option "1982"
+                                  - option "1983"
+                                  - option "1984"
+                                  - option "1985"
+                                  - option "1986"
+                                  - option "1987"
+                                  - option "1988"
+                                  - option "1989"
+                                  - option "1990"
+                                  - option "1991"
+                                  - option "1992"
+                                  - option "1993"
+                                  - option "1994"
+                                  - option "1995"
+                                  - option "1996"
+                                  - option "1997"
+                                  - option "1998"
+                                  - option "1999"
+                                  - option "2000"
+                                  - option "2001"
+                                  - option "2002"
+                                  - option "2003"
+                                  - option "2004"
+                                  - option "2005"
+                                  - option "2006"
+                                  - option "2007"
+                                  - option "2008"
+                                  - option "2009"
+                                  - option "2010"
+                                  - option "2011"
+                                  - option "2012"
+                                  - option "2013"
+                                  - option "2014"
+                                  - option "2015"
+                                  - option "2016"
+                                  - option "2017"
+                                  - option "2018"
+                                  - option "2019"
+                                  - option "2020"
+                                  - option "2021"
+                                  - option "2022"
+                                  - option "2023"
+                                  - option "2024"
+                                  - option "2025"
+                                  - option "2026"
+                                  - option "2027"
+                                  - option "2028"
+                                  - option "2029"
+                                  - option "2030"
+                                  - option "2031"
+                                - generic [ref=f19e89] [cursor=pointer]: Year
+                                - img "Open calendar" [ref=f19e90] [cursor=pointer]
+                  - row [ref=f19e91]:
+                    - cell "Due i" [ref=f19e92]:
+                      - generic [ref=f19e93] [cursor=pointer]: Due
+                      - generic [ref=f19e94]: i
+                    - cell [ref=f19e95]:
+                      - checkbox "Due" [ref=f19e97] [cursor=pointer]
+                  - row [ref=f19e98]:
+                    - cell "In two copies" [ref=f19e99]
+                    - cell [ref=f19e101]:
+                      - checkbox "In two copies" [ref=f19e103] [cursor=pointer]
+                  - row [ref=f19e104]:
+                    - cell "Two per page" [ref=f19e105]
+                    - cell [ref=f19e107]:
+                      - checkbox "Two per page" [ref=f19e109] [cursor=pointer]
+                  - row [ref=f19e110]:
+                    - cell "Include Invoice Number" [ref=f19e111]
+                    - cell [ref=f19e113]:
+                      - checkbox "Include Invoice Number" [checked] [ref=f19e115] [cursor=pointer]
+                      - textbox [ref=f19e116]: "1"
+                  - row [ref=f19e117]:
+                    - cell "Legal notice" [ref=f19e118]
+                    - cell [ref=f19e120]:
+                      - textbox "Legal notice" [ref=f19e121]
+                  - row [ref=f19e122]:
+                    - cell "Display Total from selected Fees only" [ref=f19e123]
+                    - cell [ref=f19e125]:
+                      - checkbox "Display Total from selected Fees only" [ref=f19e127] [cursor=pointer]
+                  - row [ref=f19e128]:
+                    - cell "Mailing Labels" [ref=f19e129]
+                    - cell [ref=f19e131]:
+                      - checkbox "Mailing Labels" [ref=f19e132] [cursor=pointer]
+                  - row [ref=f19e133]:
+                    - cell "Balance" [ref=f19e134]
+                    - cell [ref=f19e135]:
+                      - generic [ref=f19e136] [cursor=pointer]:
+                        - text: Between
+                        - spinbutton "Between" [ref=f19e137]
+                      - generic [ref=f19e138] [cursor=pointer]:
+                        - text: "&"
+                        - spinbutton "&" [ref=f19e139]
+              - link "Advanced Search" [ref=f19e140] [cursor=pointer]:
+                - /url: Modules.php?modname=Student_Billing_Premium/Invoices.php&advanced=Y

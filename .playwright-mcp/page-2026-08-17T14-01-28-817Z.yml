@@ -1,0 +1,89 @@
+- generic [ref=f30e2]:
+  - contentinfo [ref=f30e3]:
+    - generic [ref=f30e4]:
+      - link "Skip to main content" [ref=f30e5] [cursor=pointer]:
+        - /url: "#body"
+      - link "Menu" [ref=f30e6] [cursor=pointer]:
+        - /url: "#!"
+      - link "Print" [ref=f30e8] [cursor=pointer]:
+        - /url: ""
+      - link "Help" [ref=f30e9] [cursor=pointer]:
+        - /url: "#!"
+      - link "Logout" [ref=f30e10] [cursor=pointer]:
+        - /url: index.php?token=0c7c09df3ed55f5dc2e195878cadf49b&modfunc=logout
+  - main [ref=f30e12]:
+    - table [ref=f30e13]:
+      - rowgroup [ref=f30e14]:
+        - row [ref=f30e15]:
+          - cell [ref=f30e16]:
+            - heading "Rosario Student Information System" [level=2] [ref=f30e17]
+    - table [ref=f30e19]:
+      - rowgroup [ref=f30e20]:
+        - row [ref=f30e21]:
+          - cell "Good Afternoon, Admin A Administrator." [ref=f30e22]
+    - table [ref=f30e23]:
+      - rowgroup [ref=f30e24]:
+        - row [ref=f30e25]:
+          - cell "Your last login was August 17 2026 12:37:49 PM. You are an Administrator on the system." [ref=f30e26]:
+            - text: Your last login was
+            - generic [ref=f30e27]:
+              - generic [ref=f30e28]: August 17 2026
+              - text: 12:37:49 PM
+            - text: .You are an Administrator on the system.
+    - generic [ref=f30e29]:
+      - paragraph [ref=f30e30]:
+        - img "Warning" [ref=f30e31]
+        - text: Warning
+      - list [ref=f30e32]:
+        - listitem [ref=f30e33]:
+          - text: The school year has ended. It is time to proceed to
+          - link "Rollover" [ref=f30e34] [cursor=pointer]:
+            - /url: Modules.php?modname=School_Setup/Rollover.php
+          - text: .
+        - listitem [ref=f30e35]:
+          - text: Content Security Policy Violations -
+          - link "Reports" [ref=f30e36] [cursor=pointer]:
+            - /url: Modules.php?modname=School_Setup/Configuration.php&tab=plugins&token=0c7c09df3ed55f5dc2e195878cadf49b&modfunc=config&plugin=Content_Security_Policy&month_start=08&day_start=17&year_start=2026
+    - table [ref=f30e38]:
+      - rowgroup [ref=f30e39]:
+        - row [ref=f30e40]:
+          - columnheader [ref=f30e41]:
+            - heading "Dashboard" [level=3] [ref=f30e42]
+      - rowgroup [ref=f30e43]:
+        - row [ref=f30e44]:
+          - cell [ref=f30e45]:
+            - table [ref=f30e46]:
+              - rowgroup [ref=f30e47]:
+                - row [ref=f30e48]:
+                  - cell "School 65 Login records" [ref=f30e49]:
+                    - heading "School" [level=3] [ref=f30e50]
+                    - generic [ref=f30e53]:
+                      - text: "65"
+                      - generic [ref=f30e54]: Login records
+                  - cell "Students 1 Students" [ref=f30e55]:
+                    - heading "Students" [level=3] [ref=f30e56]
+                    - generic [ref=f30e59]:
+                      - text: "1"
+                      - generic [ref=f30e60]: Students
+                  - cell "Users 4 Users" [ref=f30e61]:
+                    - heading "Users" [level=3] [ref=f30e62]
+                    - generic [ref=f30e65]:
+                      - text: "4"
+                      - generic [ref=f30e66]: Users
+                  - cell "Scheduling 0 Courses" [ref=f30e67]:
+                    - heading "Scheduling" [level=3] [ref=f30e68]
+                    - generic [ref=f30e71]:
+                      - text: "0"
+                      - generic [ref=f30e72]: Courses
+                - row [ref=f30e73]:
+                  - cell "Accounting ₦50,000.00 General Balance" [ref=f30e74]:
+                    - heading "Accounting" [level=3] [ref=f30e75]
+                    - generic [ref=f30e78]:
+                      - text: ₦50,000.00
+                      - generic [ref=f30e79]: General Balance
+                  - cell "Student Billing ₦10,000.00CR Balance" [ref=f30e80]:
+                    - heading "Student Billing" [level=3] [ref=f30e81]
+                    - generic [ref=f30e84]:
+                      - text: ₦10,000.00CR
+                      - generic [ref=f30e85]: Balance
+    - paragraph [ref=f30e86]: RosarioSIS version 12.9.2

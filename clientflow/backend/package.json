@@ -1,0 +1,46 @@
+{
+  "name": "clientflow-backend",
+  "version": "1.0.0",
+  "description": "ClientFlow Multi-Tenant SaaS Backend",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.js",
+    "start": "node src/index.js",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:security": "vitest run tests/security",
+    "test:coverage": "vitest run --coverage",
+    "migrate": "npx prisma migrate dev",
+    "migrate:prod": "npx prisma migrate deploy",
+    "seed": "node prisma/seed.js",
+    "studio": "npx prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.4",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.6.0",
+    "prisma": "^5.19.0",
+    "supertest": "^6.3.3",
+    "vitest": "^1.6.0"
+  },
+  "allowScripts": {
+    "@prisma/client@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "esbuild@0.21.5": true,
+    "prisma@5.22.0": true
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}

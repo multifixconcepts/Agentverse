@@ -1,0 +1,84 @@
+- generic [ref=f4e2]:
+  - contentinfo [ref=f4e3]:
+    - generic [ref=f4e4]:
+      - link "Skip to main content" [ref=f4e5] [cursor=pointer]:
+        - /url: "#body"
+      - link "Menu" [ref=f4e6] [cursor=pointer]:
+        - /url: "#!"
+      - link "Print" [ref=f4e8] [cursor=pointer]:
+        - /url: ""
+      - link "Help" [ref=f4e9] [cursor=pointer]:
+        - /url: "#!"
+      - link "Logout" [ref=f4e10] [cursor=pointer]:
+        - /url: index.php?token=c2203bda7774b743a17cfb00a6d5525f&modfunc=logout
+  - main [ref=f4e12]:
+    - table [ref=f4e13]:
+      - rowgroup [ref=f4e14]:
+        - row [ref=f4e15]:
+          - cell [ref=f4e16]:
+            - heading "Rosario Student Information System" [level=2] [ref=f4e17]
+    - table [ref=f4e19]:
+      - rowgroup [ref=f4e20]:
+        - row [ref=f4e21]:
+          - cell "Good Afternoon, Admin A Administrator." [ref=f4e22]
+    - table [ref=f4e23]:
+      - rowgroup [ref=f4e24]:
+        - row [ref=f4e25]:
+          - cell "Your last login was August 17 2026 2:42:37 PM. You are an Administrator on the system." [ref=f4e26]:
+            - text: Your last login was
+            - generic [ref=f4e27]:
+              - generic [ref=f4e28]: August 17 2026
+              - text: 2:42:37 PM
+            - text: .You are an Administrator on the system.
+    - paragraph [ref=f4e30]:
+      - text: "Note:"
+      - link "1 new referral" [ref=f4e31] [cursor=pointer]:
+        - /url: Modules.php?modname=Discipline/Referrals.php&search_modfunc=list&discipline_entry_begin=2026-08-17&discipline_entry_end=2026-08-17
+    - table [ref=f4e34]:
+      - rowgroup [ref=f4e35]:
+        - row [ref=f4e36]:
+          - columnheader [ref=f4e37]:
+            - heading "Dashboard" [level=3] [ref=f4e38]
+      - rowgroup [ref=f4e39]:
+        - row [ref=f4e40]:
+          - cell [ref=f4e41]:
+            - table [ref=f4e42]:
+              - rowgroup [ref=f4e43]:
+                - row [ref=f4e44]:
+                  - cell "School 32 Login records" [ref=f4e45]:
+                    - heading "School" [level=3] [ref=f4e46]
+                    - generic [ref=f4e49]:
+                      - text: "32"
+                      - generic [ref=f4e50]: Login records
+                  - cell "Students 3 Students" [ref=f4e51]:
+                    - heading "Students" [level=3] [ref=f4e52]
+                    - generic [ref=f4e55]:
+                      - text: "3"
+                      - generic [ref=f4e56]: Students
+                  - cell "Users 6 Users" [ref=f4e57]:
+                    - heading "Users" [level=3] [ref=f4e58]
+                    - generic [ref=f4e61]:
+                      - text: "6"
+                      - generic [ref=f4e62]: Users
+                  - cell "Scheduling 2 Courses" [ref=f4e63]:
+                    - heading "Scheduling" [level=3] [ref=f4e64]
+                    - generic [ref=f4e67]:
+                      - text: "2"
+                      - generic [ref=f4e68]: Courses
+                - row [ref=f4e69]:
+                  - cell "Grades 2 Assignments" [ref=f4e70]:
+                    - heading "Grades" [level=3] [ref=f4e71]
+                    - generic [ref=f4e74]:
+                      - text: "2"
+                      - generic [ref=f4e75]: Assignments
+                  - cell "Discipline 1 Referrals" [ref=f4e76]:
+                    - heading "Discipline" [level=3] [ref=f4e77]
+                    - generic [ref=f4e80]:
+                      - text: "1"
+                      - generic [ref=f4e81]: Referrals
+                  - cell "Student Billing $200.00 Balance" [ref=f4e82]:
+                    - heading "Student Billing" [level=3] [ref=f4e83]
+                    - generic [ref=f4e86]:
+                      - text: $200.00
+                      - generic [ref=f4e87]: Balance
+    - paragraph [ref=f4e88]: RosarioSIS version 12.9.2

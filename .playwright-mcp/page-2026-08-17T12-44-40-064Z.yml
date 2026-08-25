@@ -1,0 +1,78 @@
+- main [ref=f3e2]:
+  - table [ref=f3e4]:
+    - rowgroup [ref=f3e5]:
+      - row [ref=f3e6]:
+        - columnheader [ref=f3e7]:
+          - heading "RosarioSIS Login" [level=3] [ref=f3e8]
+    - rowgroup [ref=f3e9]:
+      - row [ref=f3e10]:
+        - cell [ref=f3e11]:
+          - img "Logo" [ref=f3e12]
+          - heading "Rosario Student Information System" [level=4] [ref=f3e13]
+          - generic [ref=f3e14]:
+            - table [ref=f3e15]:
+              - rowgroup [ref=f3e16]:
+                - row [ref=f3e17]:
+                  - cell [ref=f3e18]:
+                    - link [ref=f3e19] [cursor=pointer]:
+                      - /url: index.php?locale=en_US.utf8
+                      - img "English" [ref=f3e20]
+                    - link [ref=f3e21] [cursor=pointer]:
+                      - /url: index.php?locale=es_ES.utf8
+                      - img "Spanish" [ref=f3e22]
+                    - link [ref=f3e23] [cursor=pointer]:
+                      - /url: index.php?locale=fr_FR.utf8
+                      - img "French" [ref=f3e24]
+                    - link [ref=f3e25] [cursor=pointer]:
+                      - /url: index.php?locale=pt_BR.utf8
+                      - img "Portuguese" [ref=f3e26]
+                    - link [ref=f3e27] [cursor=pointer]:
+                      - /url: index.php?locale=ru_RU.utf8
+                      - img "Russian" [ref=f3e28]
+                    - link [ref=f3e29] [cursor=pointer]:
+                      - /url: index.php?locale=uk_UA.utf8
+                      - img "Ukrainian" [ref=f3e30]
+                    - link [ref=f3e31] [cursor=pointer]:
+                      - /url: index.php?locale=it_IT.utf8
+                      - img "Italian" [ref=f3e32]
+                    - link [ref=f3e33] [cursor=pointer]:
+                      - /url: index.php?locale=cs_CZ.utf8
+                      - img "Czech" [ref=f3e34]
+                    - link [ref=f3e35] [cursor=pointer]:
+                      - /url: index.php?locale=de_DE.utf8
+                      - img "German" [ref=f3e36]
+                    - link [ref=f3e37] [cursor=pointer]:
+                      - /url: index.php?locale=ar_AE.utf8
+                      - img "Arabic" [ref=f3e38]
+                    - link [ref=f3e39] [cursor=pointer]:
+                      - /url: index.php?locale=bg_BG.utf8
+                      - img "Bulgarian" [ref=f3e40]
+                    - link [ref=f3e41] [cursor=pointer]:
+                      - /url: index.php?locale=vi_VN.utf8
+                      - img "Vietnamese" [ref=f3e42]
+                    - link [ref=f3e43] [cursor=pointer]:
+                      - /url: index.php?locale=tr_TR.utf8
+                      - img "Turkish" [ref=f3e44]
+                    - link [ref=f3e45] [cursor=pointer]:
+                      - /url: index.php?locale=el_GR.utf8
+                      - img "Greek" [ref=f3e46]
+                    - link [ref=f3e47] [cursor=pointer]:
+                      - /url: index.php?locale=sl_SI.utf8
+                      - img "Slovenian" [ref=f3e48]
+                    - text: Language
+                - row [ref=f3e49]:
+                  - cell [ref=f3e50]:
+                    - generic [ref=f3e51] [cursor=pointer]:
+                      - textbox "Username" [active] [ref=f3e52]
+                      - text: Username
+                - row [ref=f3e53]:
+                  - cell [ref=f3e54]:
+                    - generic [ref=f3e55] [cursor=pointer]:
+                      - textbox "Password" [ref=f3e56]
+                      - text: Password
+                    - link "Password help" [ref=f3e58] [cursor=pointer]:
+                      - /url: PasswordReset.php
+            - paragraph [ref=f3e59]:
+              - button "Login" [ref=f3e60] [cursor=pointer]
+          - group [ref=f3e61]:
+            - generic "About" [ref=f3e62] [cursor=pointer]

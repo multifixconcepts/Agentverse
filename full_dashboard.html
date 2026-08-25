@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐳 Alade Johnson's Docker Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; }
+        
+        .sidebar { position: fixed; left: 0; top: 0; width: 250px; height: 100vh; background: #2c3e50; color: white; overflow-y: auto; z-index: 1000; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid #34495e; }
+        .sidebar-title { font-size: 1.2rem; font-weight: bold; }
+        .nav-menu { list-style: none; }
+        .nav-item { border-bottom: 1px solid #34495e; }
+        .nav-link { display: block; padding: 1rem 1.5rem; color: white; text-decoration: none; transition: background 0.2s; cursor: pointer; }
+        .nav-link:hover, .nav-link.active { background: #3498db; }
+        .nav-icon { margin-right: 0.5rem; }
+        
+        .main-content { margin-left: 250px; min-height: 100vh; }
+        .header { background: white; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-size: 1.5rem; font-weight: bold; color: #2c3e50; }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        
+        .content { padding: 2rem; }
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 4px solid #3498db; }
+        .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .stat-icon { font-size: 2rem; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; color: #2c3e50; }
+        .stat-label { color: #7f8c8d; font-size: 0.9rem; }
+        
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 1.5rem; }
+        .card-header { padding: 1.5rem; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; }
+        .card-title { font-size: 1.2rem; font-weight: bold; color: #2c3e50; }
+        .card-body { padding: 1.5rem; }
+        
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2000; }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; }
+        .modal-header { margin-bottom: 1.5rem; }
+        .modal-title { font-size: 1.5rem; font-weight: bold; color: #2c3e50; }
+        .modal-body { margin-bottom: 1.5rem; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 1rem; }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-control { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
+        
+        .auto-refresh { display: flex; align-items: center; gap: 0.5rem; }
+        .toggle-switch { width: 50px; height: 25px; background: #ccc; border-radius: 25px; position: relative; cursor: pointer; }
+        .toggle-switch.active { background: #3498db; }
+        .toggle-slider { position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; background: white; border-radius: 50%; transition: transform 0.2s; }
+        .toggle-switch.active .toggle-slider { transform: translateX(25px); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.4rem;">AJ</div>
+                <div>
+                    <div style="font-size: 0.9rem; font-weight: bold;">Alade Johnson's</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8;">Dashboard</div>
+                </div>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#containers" class="nav-link" data-page="containers">
+                    <span class="nav-icon">📦</span> Containers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#images" class="nav-link" data-page="images">
+                    <span class="nav-icon">💿</span> Images
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#networks" class="nav-link" data-page="networks">
+                    <span class="nav-icon">🌐</span> Networks
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#volumes" class="nav-link" data-page="volumes">
+                    <span class="nav-icon">💾</span> Volumes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#compose" class="nav-link" data-page="compose">
+                    <span class="nav-icon">🔧</span> Compose
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#monitoring" class="nav-link" data-page="monitoring">
+                    <span class="nav-icon">📈</span> Monitoring
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#settings" class="nav-link" data-page="settings">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="header-title" id="page-title">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.4rem;">AJ</div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #2c3e50;">Alade Johnson's Dashboard</div>
+                        <div style="font-size: 0.9rem; color: #7f8c8d;">Docker Management Platform</div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="auto-refresh">
+                    <span>Auto-refresh</span>
+                    <div class="toggle-switch" id="auto-refresh-toggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+                <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">📦</div>
+                        </div>
+                        <div class="stat-number" id="total-containers">0</div>
+                        <div class="stat-label">Total Containers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">▶️</div>
+                        </div>
+                        <div class="stat-number" id="running-containers">0</div>
+                        <div class="stat-label">Running</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">⏹️</div>
+                        </div>
+                        <div class="stat-number" id="stopped-containers">0</div>
+                        <div class="stat-label">Stopped</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">💿</div>
+                        </div>
+                        <div class="stat-number" id="total-images">0</div>
+                        <div class="stat-label">Images</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Quick Stats</div>
+                    </div>
+                    <div class="card-body">
+                        <p>✅ Dashboard loaded successfully</p>
+                        <p>✅ Navigation working</p>
+                        <p>✅ Click on menu items to explore different sections</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Containers Page -->
+            <div class="page" id="containers">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Containers</div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="showNotification('Container creation dialog', 'info')">➕ New Container</button>
+                            <button class="btn btn-warning" onclick="showNotification('Container pruning', 'info')">🧹 Prune Stopped</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="containers-list">
+                            <p>Loading containers...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images Page -->
+            <div class="page" id="images">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Images</div>
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="showNotification('Image pull dialog', 'info')">⬇️ Pull Image</button>
+                            <button class="btn btn-warning" onclick="showNotification('Image pruning', 'info')">🧹 Prune Unused</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="images-list">
+                            <p>Loading images...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Networks Page -->
+            <div class="page" id="networks">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Networks</div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="showNotification('Network creation dialog', 'info')">➕ Create Network</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="networks-list">
+                            <p>Loading networks...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volumes Page -->
+            <div class="page" id="volumes">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Volumes</div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="showNotification('Volume creation dialog', 'info')">➕ Create Volume</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="volumes-list">
+                            <p>Loading volumes...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compose Page -->
+            <div class="page" id="compose">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Docker Compose</div>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="showNotification('Stack deployment dialog', 'info')">🚀 Deploy Stack</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <textarea id="compose-editor" style="width: 100%; height: 400px; font-family: monospace;" placeholder="version: '3.8'
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - '80:80'"></textarea>
+                        <div class="actions" style="margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="showNotification('Compose validation', 'success')">✅ Validate</button>
+                            <button class="btn btn-success" onclick="showNotification('Compose deployment', 'success')">🚀 Deploy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring Page -->
+            <div class="page" id="monitoring">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Real-time Monitoring</div>
+                    </div>
+                    <div class="card-body">
+                        <p>📊 System monitoring dashboard</p>
+                        <p>📈 Real-time metrics would be displayed here</p>
+                        <p>🔍 Container performance analytics</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settings">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Platform Settings</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Docker Configuration</h3>
+                        <p>Docker Engine: Running</p>
+                        <p>Version: 24.0.7</p>
+                        <p>API Version: 1.43</p>
+                        
+                        <h3 style="margin-top: 2rem;">Dashboard Settings</h3>
+                        <label>
+                            <input type="checkbox" id="dark-mode"> Dark Mode
+                        </label>
+                        <br><br>
+                        <button class="btn btn-primary" onclick="showNotification('Settings saved successfully', 'success')">💾 Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🔐 Login Required</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="username" class="form-control" value="alade">
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password">
+                </div>
+                <div id="login-error" style="color: red; display: none; margin-top: 0.5rem;">
+                    Invalid credentials. Please try again.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="login()">🔓 Login</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuth()) {
+                initializeApp();
+            }
+            
+            // Add Enter key support for login
+            const passwordField = document.getElementById('password');
+            if (passwordField) {
+                passwordField.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        login();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

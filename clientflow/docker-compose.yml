@@ -1,0 +1,74 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: clientflow-nginx
+    ports:
+      - "8088:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - clientflow-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: clientflow-frontend
+    networks:
+      - clientflow-network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: clientflow-backend
+    environment:
+      - DATABASE_URL=postgresql://clientflow:${POSTGRES_PASSWORD:-clientflow_secret}@db:5432/clientflow
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - JWT_EXPIRY=24h
+      - NODE_ENV=production
+      - PORT=3000
+      - CORS_ORIGIN=https://clientflow.edunaija.online,http://localhost:5173
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - clientflow-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  db:
+    image: postgres:16-alpine
+    container_name: clientflow-db
+    environment:
+      - POSTGRES_USER=clientflow
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-clientflow_secret}
+      - POSTGRES_DB=clientflow
+    volumes:
+      - clientflow-db-data:/var/lib/postgresql/data
+    networks:
+      - clientflow-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clientflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+networks:
+  clientflow-network:
+    driver: bridge
+    name: clientflow-network
+
+volumes:
+  clientflow-db-data:
+    name: clientflow-db-data
