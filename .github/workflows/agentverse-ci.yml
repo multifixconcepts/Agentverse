@@ -265,88 +265,122 @@ jobs:
     name: polyglot-validation
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        include:
-          - runtime: node
-            setup: actions/setup-node@v4
-            setup-args: { node-version: '20' }
-            validate: |
+        runtime: [node, typescript, python, go, rust, java, dotnet, c-cpp, ruby, php]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: matrix.runtime == 'node' || matrix.runtime == 'typescript'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        if: matrix.runtime == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Go
+        if: matrix.runtime == 'go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Setup Rust
+        if: matrix.runtime == 'rust'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java
+        if: matrix.runtime == 'java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup .NET
+        if: matrix.runtime == 'dotnet'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup C/C++
+        if: matrix.runtime == 'c-cpp'
+        run: sudo apt-get update && sudo apt-get install -y gcc g++
+
+      - name: Setup Ruby
+        if: matrix.runtime == 'ruby'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Setup PHP
+        if: matrix.runtime == 'php'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Validate (${{ matrix.runtime }})
+        run: |
+          case "${{ matrix.runtime }}" in
+            node)
               node --version
               echo 'console.log("Node OK")' > /tmp/test.js && node /tmp/test.js
-          - runtime: typescript
-            setup: actions/setup-node@v4
-            setup-args: { node-version: '20' }
-            validate: |
+              ;;
+            typescript)
               npm install -g typescript
               tsc --version
               echo 'const msg: string = "TS OK"; console.log(msg);' > /tmp/test.ts
               tsc --outDir /tmp /tmp/test.ts && node /tmp/test.js
-          - runtime: python
-            setup: actions/setup-python@v5
-            setup-args: { python-version: '3.11' }
-            validate: |
+              ;;
+            python)
               python3 --version
               python3 -c "import sqlite3, json, hashlib; print('stdlib OK')"
               python3 -c "print('Python OK')"
-          - runtime: go
-            setup: actions/setup-go@v5
-            setup-args: { go-version: '1.22' }
-            validate: |
+              ;;
+            go)
               go version
               echo 'package main; import "fmt"; func main() { fmt.Println("Go OK") }' > /tmp/test.go
               go run /tmp/test.go
-          - runtime: rust
-            setup: dtolnay/rust-toolchain@stable
-            setup-args: {}
-            validate: |
+              ;;
+            rust)
               rustc --version && cargo --version
               echo 'fn main() { println!("Rust OK"); }' > /tmp/test.rs
               rustc /tmp/test.rs -o /tmp/test && /tmp/test
-          - runtime: java
-            setup: actions/setup-java@v4
-            setup-args: { distribution: 'temurin', java-version: '21' }
-            validate: |
+              ;;
+            java)
               java --version && javac --version
               echo 'public class Test { public static void main(String[] a) { System.out.println("Java OK"); } }' > /tmp/Test.java
               javac /tmp/Test.java -d /tmp && java -cp /tmp Test
-          - runtime: dotnet
-            setup: actions/setup-dotnet@v4
-            setup-args: { dotnet-version: '8.0.x' }
-            validate: |
+              ;;
+            dotnet)
               dotnet --version
               dotnet new console -o /tmp/dotnet-test --force
               cd /tmp/dotnet-test && dotnet run
-          - runtime: c-cpp
-            setup: null
-            setup-args: {}
-            validate: |
+              ;;
+            c-cpp)
               gcc --version && g++ --version
               echo '#include<stdio.h>' > /tmp/test.c && echo 'int main(){printf("C OK\n");return 0;}' >> /tmp/test.c
               gcc /tmp/test.c -o /tmp/test_c && /tmp/test_c
               echo '#include<iostream>' > /tmp/test.cpp && echo 'int main(){std::cout<<"C++ OK"<<std::endl;return 0;}' >> /tmp/test.cpp
               g++ /tmp/test.cpp -o /tmp/test_cpp && /tmp/test_cpp
-          - runtime: ruby
-            setup: ruby/setup-ruby@v1
-            setup-args: { ruby-version: '3.3' }
-            validate: |
+              ;;
+            ruby)
               ruby --version
               ruby -e 'puts "Ruby OK"'
-          - runtime: php
-            setup: shivammathur/setup-php@v2
-            setup-args: { php-version: '8.2', tools: composer:v2 }
-            validate: |
+              ;;
+            php)
               php --version
               php -r 'echo "PHP OK\n";'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup ${{ matrix.runtime }}
-        if: matrix.setup != 'null'
-        uses: ${{ matrix.setup }}
-        with: ${{ matrix.setup-args }}
-
-      - name: Validate ${{ matrix.runtime }}
-        run: ${{ matrix.validate }}
+              ;;
+            *)
+              echo "Unknown runtime: ${{ matrix.runtime }}"
+              exit 1
+              ;;
+          esac
 
   polyglot-toolchain-verify:
     name: polyglot-toolchain-verify
