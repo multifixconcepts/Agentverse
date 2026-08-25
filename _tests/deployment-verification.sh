@@ -4,7 +4,6 @@
 # Usage: bash _tests/deployment-verification.sh
 
 set -e
-export PATH="/home/coder/bin:$PATH"
 
 PASS=0; FAIL=0; SKIP=0; TOTAL=0
 pass() { TOTAL=$((TOTAL+1)); PASS=$((PASS+1)); printf "  ✓ %-25s %s\n" "$1" "$2"; }

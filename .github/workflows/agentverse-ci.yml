@@ -163,7 +163,7 @@ jobs:
       - name: Run Doctor
         run: |
           chmod +x _tools/doctor.sh
-          _tools/doctor.sh 2>&1 | tee /tmp/doctor-output.txt
+          _tools/doctor.sh --ci 2>&1 | tee /tmp/doctor-output.txt
           if grep -q "BLOCKED" /tmp/doctor-output.txt; then
             echo "::error::Doctor check returned BLOCKED"
             exit 1

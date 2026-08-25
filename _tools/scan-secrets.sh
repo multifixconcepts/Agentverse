@@ -6,11 +6,11 @@ set -e
 # Runs the 4 G4 secret patterns from VERIFICATION_CONTRACT.md
 # Outputs JSON with findings.
 
-NODE="/usr/lib/code-server/lib/node"
-PROJECT="/home/coder/project"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
+PROJECT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 if [ $# -eq 0 ]; then
-  echo '{"error":"Usage: bash scan-secrets.sh <directory-or-file> [file2 ...]","example":"bash scan-secrets.sh /home/coder/project/scholapro"}'
+  echo '{"error":"Usage: bash scan-secrets.sh <directory-or-file> [file2 ...]","example":"bash scan-secrets.sh scholapro"}'
   exit 1
 fi
 

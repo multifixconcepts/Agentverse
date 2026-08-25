@@ -4,10 +4,7 @@
 # Usage: bash _tests/polyglot-smoke-suite.sh [language]
 
 set -e
-export PATH="/home/coder/bin:/home/coder/.npm-global/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-export JAVA_HOME="/home/coder/jdk-21.0.3+9"
-export GOPATH="/home/coder/go"
 
 PASS=0; FAIL=0; SKIP=0; TOTAL=0
 pass() { TOTAL=$((TOTAL+1)); PASS=$((PASS+1)); printf "  ✓ %-25s %s\n" "$1" "$2"; }
@@ -61,7 +58,7 @@ smoke_python() {
   echo "Python"
   DIR="/tmp/smoke_py_$$"
   mkdir -p "$DIR" && cd "$DIR"
-  /home/coder/python/bin/python3 -m venv .venv 2>/dev/null
+  python3 -m venv .venv 2>/dev/null
   .venv/bin/pip install pytest ruff black --quiet 2>/dev/null
   cat > app.py << 'EOF'
 def hello(): return "hello"
@@ -82,7 +79,7 @@ EOF
 smoke_go() {
   echo "Go"
   DIR="/tmp/smoke_go_$$"
-  GO="/home/coder/go/bin/go"
+  GO="$(command -v go)"
   mkdir -p "$DIR" && cd "$DIR"
   $GO mod init smoke_go >/dev/null 2>&1
   cat > main.go << 'EOF'
@@ -106,7 +103,7 @@ EOF
 smoke_rust() {
   echo "Rust"
   DIR="/tmp/smoke_rs_$$"
-  CARGO="/home/coder/.cargo/bin/cargo"
+  CARGO="$(command -v cargo)"
   mkdir -p "$DIR/src" && cd "$DIR"
   cat > Cargo.toml << 'EOF'
 [package]
@@ -122,7 +119,7 @@ fn test_hello() { assert_eq!(hello(), "hello"); }
 EOF
   $CARGO build --release 2>/dev/null && pass "compile" "cargo build" || fail "compile" "build failed"
   $CARGO test 2>/dev/null && pass "test" "cargo test" || fail "test" "test failed"
-  /home/coder/.cargo/bin/rustfmt --check src/main.rs 2>/dev/null && pass "format" "rustfmt clean" || skip "format" "rustfmt"
+  rustfmt --check src/main.rs 2>/dev/null && pass "format" "rustfmt clean" || skip "format" "rustfmt"
   cleanup "$DIR"
 }
 
@@ -130,8 +127,8 @@ EOF
 smoke_java() {
   echo "Java"
   DIR="/tmp/smoke_java_$$"
-  JAVA="/home/coder/jdk-21.0.3+9/bin/java"
-  JAVAC="/home/coder/jdk-21.0.3+9/bin/javac"
+  JAVA="$(command -v java)"
+  JAVAC="$(command -v javac)"
   mkdir -p "$DIR" && cd "$DIR"
   cat > Hello.java << 'EOF'
 public class Hello {
@@ -157,7 +154,7 @@ smoke_csharp() {
   echo "C# / .NET"
   cd /tmp
   export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-  DOTNET="/home/coder/.dotnet/dotnet"
+  DOTNET="$(command -v dotnet)"
   DIR="/tmp/smoke_cs_$$"
   rm -rf "$DIR"
   $DOTNET new classlib -o "$DIR" --force >/dev/null 2>&1 && pass "project" "classlib created" || { fail "project" "dotnet new failed"; return; }
@@ -222,8 +219,8 @@ EOF
 # --- Kotlin ---
 smoke_kotlin() {
   echo "Kotlin"
-  KOTLINC="/home/coder/bin/kotlinc"
-  JAVA="/home/coder/jdk-21.0.3+9/bin/java"
+  KOTLINC="$(command -v kotlinc)"
+  JAVA="$(command -v java)"
   DIR="/tmp/smoke_kt_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > Hello.kt << 'EOF'
@@ -238,7 +235,7 @@ EOF
 # --- PHP ---
 smoke_php() {
   echo "PHP"
-  PHP_BIN="/home/coder/bin/php"
+  PHP_BIN="$(command -v php)"
   DIR="/tmp/smoke_php_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > hello.php << 'EOF'
@@ -255,7 +252,7 @@ EOF
 # --- Swift ---
 smoke_swift() {
   echo "Swift"
-  SWIFT="/home/coder/bin/swift"
+  SWIFT="$(command -v swift)"
   DIR="/tmp/smoke_swift_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > main.swift << 'EOF'
@@ -270,7 +267,7 @@ EOF
 # --- Dart ---
 smoke_dart() {
   echo "Dart"
-  DART="/home/coder/bin/dart"
+  DART="$(command -v dart)"
   DIR="/tmp/smoke_dart_$$"
   rm -rf "$DIR"
   mkdir -p "$DIR/bin" && cd "$DIR"

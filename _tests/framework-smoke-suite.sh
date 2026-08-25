@@ -4,7 +4,6 @@
 # Usage: bash _tests/framework-smoke-suite.sh [framework]
 
 set -e
-export PATH="/home/coder/bin:/home/coder/.npm-global/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 PASS=0; FAIL=0; SKIP=0; TOTAL=0
@@ -40,7 +39,7 @@ smoke_fastapi() {
   echo "FastAPI (Python)"
   DIR="/tmp/smoke_fastapi_$$"
   mkdir -p "$DIR" && cd "$DIR"
-  /home/coder/python/bin/python3 -m venv .venv 2>/dev/null
+  python3 -m venv .venv 2>/dev/null
   .venv/bin/pip install fastapi uvicorn httpx pytest --quiet 2>/dev/null && pass "deps" "fastapi installed" || { fail "deps" "fastapi install failed"; rm -rf "$DIR"; return; }
   cat > main.py << 'EOF'
 from fastapi import FastAPI
@@ -66,7 +65,7 @@ smoke_aspnet() {
   echo "ASP.NET (C#)"
   cd /tmp
   export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-  DOTNET="/home/coder/.dotnet/dotnet"
+  DOTNET="$(command -v dotnet)"
   DIR="/tmp/smoke_aspnet_$$"
   rm -rf "$DIR"
   $DOTNET new webapi -o "$DIR" --force --no-openapi 2>/dev/null && pass "project" "webapi created" || { fail "project" "dotnet new failed"; return; }
@@ -78,8 +77,8 @@ smoke_aspnet() {
 # --- Spring Boot (Java) - minimal ---
 smoke_spring() {
   echo "Spring Boot (Java)"
-  JAVA="/home/coder/jdk-21.0.3+9/bin/java"
-  JAVAC="/home/coder/jdk-21.0.3+9/bin/javac"
+  JAVA="$(command -v java)"
+  JAVAC="$(command -v javac)"
   DIR="/tmp/smoke_spring_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > App.java << 'EOF'
@@ -109,8 +108,8 @@ EOF
 smoke_laravel() {
   echo "Laravel (PHP)"
   cd /tmp
-  PHP_BIN="/home/coder/bin/php"
-  COMPOSER="/home/coder/bin/composer"
+  PHP_BIN="$(command -v php)"
+  COMPOSER="$(command -v composer)"
   DIR="/tmp/smoke_laravel_$$"
   rm -rf "$DIR"
   $COMPOSER create-project --prefer-dist laravel/laravel "$DIR" 2>/dev/null && pass "project" "laravel scaffold" || { fail "project" "composer create failed"; return; }
@@ -139,7 +138,7 @@ smoke_django() {
   echo "Django (Python)"
   DIR="/tmp/smoke_django_$$"
   mkdir -p "$DIR" && cd "$DIR"
-  /home/coder/python/bin/python3 -m venv .venv 2>/dev/null
+  python3 -m venv .venv 2>/dev/null
   .venv/bin/pip install django --quiet 2>/dev/null && pass "deps" "django installed" || { fail "deps" "django install failed"; rm -rf "$DIR"; return; }
   .venv/bin/django-admin startproject smokesite . 2>/dev/null && pass "project" "django scaffold" || fail "project" "scaffold failed"
   .venv/bin/python manage.py check 2>/dev/null && pass "check" "django check" || fail "check" "check failed"

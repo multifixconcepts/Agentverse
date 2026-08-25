@@ -6,8 +6,9 @@
 
 set -e
 
-NODE="/usr/lib/code-server/lib/node"
-PROJECT="/home/coder/project"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT="$(cd "$SELF_DIR/.." && pwd)"
 AGENTVERSE="$PROJECT/AGENTVERSE"
 TOOLS="$PROJECT/_tools"
 TEST_DIR=$(mktemp -d)

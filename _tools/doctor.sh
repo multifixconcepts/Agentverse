@@ -2,17 +2,30 @@
 set -e
 
 # doctor.sh — Agentverse environment health check
-# Usage: bash _tools/doctor.sh
+# Usage: bash _tools/doctor.sh [--ci]
+#   --ci  CI-safe mode: skips production infra, uses system PATH
 # Outputs formatted health report.
 
-NODE="/usr/lib/code-server/lib/node"
-PROJECT="/home/coder/project"
+CI_MODE=false
+for arg in "$@"; do
+  case "$arg" in
+    --ci) CI_MODE=true ;;
+  esac
+done
+
+# Resolve project root and node from environment
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT="$(cd "$SELF_DIR/.." && pwd)"
 AGENTVERSE="$PROJECT/AGENTVERSE"
 AGENTS_DIR="$PROJECT/.opencode/agents"
 SKILLS_DIR="$PROJECT/.opencode/skills"
-export PATH="/home/coder/bin:/home/coder/.npm-global/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-export JAVA_HOME="/home/coder/jdk-21.0.3+9"
+
+if [ "$CI_MODE" = false ]; then
+  export PATH="/home/coder/bin:/home/coder/.npm-global/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
+  export JAVA_HOME="/home/coder/jdk-21.0.3+9"
+fi
 
 TOTAL_CHECKS=0
 PASS_COUNT=0
@@ -57,13 +70,17 @@ SOURCE_VERSION=$($NODE -e "
 " 2>/dev/null || echo "NOT_FOUND")
 
 PROD_VERSION="UNKNOWN"
-if docker ps --format '{{.Names}}' 2>/dev/null | grep -q school4; then
-  PROD_VERSION=$(docker exec school4 php -r "require_once '/var/www/html/Warehouse.php'; echo constant('VERSION');" 2>/dev/null || echo "UNKNOWN")
-elif [ -f "$AGENTVERSE/ENVIRONMENT_STATE.json" ]; then
-  PROD_VERSION=$($NODE -e "
-    const s = JSON.parse(require('fs').readFileSync('$AGENTVERSE/ENVIRONMENT_STATE.json','utf8'));
-    process.stdout.write(s.production ? s.production.version : 'UNKNOWN');
-  ")
+if [ "$CI_MODE" = false ]; then
+  if docker ps --format '{{.Names}}' 2>/dev/null | grep -q school4; then
+    PROD_VERSION=$(docker exec school4 php -r "require_once '/var/www/html/Warehouse.php'; echo constant('VERSION');" 2>/dev/null || echo "UNKNOWN")
+  elif [ -f "$AGENTVERSE/ENVIRONMENT_STATE.json" ]; then
+    PROD_VERSION=$($NODE -e "
+      const s = JSON.parse(require('fs').readFileSync('$AGENTVERSE/ENVIRONMENT_STATE.json','utf8'));
+      process.stdout.write(s.production ? s.production.version : 'UNKNOWN');
+    ")
+  fi
+else
+  PROD_VERSION="$SOURCE_VERSION"
 fi
 
 if [ "$SOURCE_VERSION" = "$PROD_VERSION" ]; then
@@ -374,21 +391,37 @@ check_toolchain() {
 }
 
 # Tier 1 runtimes
-check_runtime "Node.js .............." "node --version"
-check_runtime "TypeScript ..........." "tsc --version"
-check_runtime "Python ..............." "/home/coder/python/bin/python3 --version"
-check_runtime "Go ..................." "/home/coder/go/bin/go version"
-check_runtime "Rust ................." "/home/coder/.cargo/bin/rustc --version"
-check_runtime "Java ................." "/home/coder/jdk-21.0.3+9/bin/java --version"
-check_runtime "C#/.NET .............." "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet --version"
+if [ "$CI_MODE" = true ]; then
+  check_runtime "Node.js .............." "node --version"
+  check_runtime "TypeScript ..........." "tsc --version"
+  check_runtime "Python ..............." "python3 --version"
+  check_runtime "Go ..................." "go version"
+  check_runtime "Rust ................." "rustc --version"
+  check_runtime "Java ................." "java --version"
+  check_runtime "C#/.NET .............." "dotnet --version"
+else
+  check_runtime "Node.js .............." "node --version"
+  check_runtime "TypeScript ..........." "tsc --version"
+  check_runtime "Python ..............." "/home/coder/python/bin/python3 --version"
+  check_runtime "Go ..................." "/home/coder/go/bin/go version"
+  check_runtime "Rust ................." "/home/coder/.cargo/bin/rustc --version"
+  check_runtime "Java ................." "/home/coder/jdk-21.0.3+9/bin/java --version"
+  check_runtime "C#/.NET .............." "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet --version"
+fi
 
 # Tier 2 runtimes
 check_runtime "C (gcc) .............." "gcc --version"
 check_runtime "C++ (g++) ............" "g++ --version"
 check_runtime "Ruby ................." "ruby --version"
-check_runtime "Kotlin ..............." "/home/coder/bin/kotlinc -version"
-check_runtime "Swift ................" "/home/coder/bin/swift --version"
-check_runtime "Dart ................." "/home/coder/bin/dart --version"
+if [ "$CI_MODE" = true ]; then
+  check_runtime "Kotlin ..............." "kotlinc -version"
+  check_runtime "Swift ................" "swift --version"
+  check_runtime "Dart ................." "dart --version"
+else
+  check_runtime "Kotlin ..............." "/home/coder/bin/kotlinc -version"
+  check_runtime "Swift ................" "/home/coder/bin/swift --version"
+  check_runtime "Dart ................." "/home/coder/bin/dart --version"
+fi
 
 # Toolchain completeness (formatters, linters, test runners, package managers)
 check_toolchain "eslint .............." "eslint --version"
@@ -398,12 +431,21 @@ check_toolchain "black ..............." "black --version"
 check_toolchain "mypy ................" "mypy --version"
 check_toolchain "pytest .............." "pytest --version"
 check_toolchain "staticcheck ........." "staticcheck --version"
-check_toolchain "clippy .............." "/home/coder/.cargo/bin/clippy --version"
-check_toolchain "rustfmt ............." "/home/coder/.cargo/bin/rustfmt --version"
+if [ "$CI_MODE" = true ]; then
+  check_toolchain "clippy .............." "clippy-driver --version"
+  check_toolchain "rustfmt ............." "rustfmt --version"
+else
+  check_toolchain "clippy .............." "/home/coder/.cargo/bin/clippy --version"
+  check_toolchain "rustfmt ............." "/home/coder/.cargo/bin/rustfmt --version"
+fi
 check_toolchain "rubocop ............." "rubocop --version"
-check_toolchain "composer ............" "/home/coder/bin/composer --version"
+if [ "$CI_MODE" = true ]; then
+  check_toolchain "composer ............" "composer --version"
+else
+  check_toolchain "composer ............" "/home/coder/bin/composer --version"
+fi
 check_toolchain "npm ................." "npm --version"
-check_toolchain "pip ................." "/home/coder/python/bin/pip --version"
+check_toolchain "pip ................." "pip --version"
 check_toolchain "gh .................." "gh --version"
 
 if [ "$RUNTIME_PASS" -eq "$RUNTIME_TOTAL" ]; then
@@ -486,11 +528,18 @@ check_framework() {
 }
 
 check_framework "Express.js ..........." "node -e \"require('express')\" 2>/dev/null || npm ls express 2>/dev/null"
-check_framework "FastAPI .............." "/home/coder/python/bin/python3 -c \"import fastapi\" 2>/dev/null"
-check_framework "Django ..............." "/home/coder/python/bin/python3 -c \"import django\" 2>/dev/null"
-check_framework "ASP.NET .............." "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet --list-sdks 2>/dev/null | grep -q '8'"
-check_framework "Spring (Java) ........" "/home/coder/jdk-21.0.3+9/bin/java -version 2>/dev/null"
-check_framework "Laravel (PHP) ........" "/home/coder/bin/php -r \"echo class_exists('Illuminate\\Support\\ServiceProvider') ? 1 : 0;\" 2>/dev/null || echo '0'"
+if [ "$CI_MODE" = true ]; then
+  check_framework "FastAPI .............." "python3 -c \"import fastapi\" 2>/dev/null"
+  check_framework "Django ..............." "python3 -c \"import django\" 2>/dev/null"
+  check_framework "ASP.NET .............." "dotnet --list-sdks 2>/dev/null | grep -q '8'"
+  check_framework "Spring (Java) ........" "java -version 2>/dev/null"
+else
+  check_framework "FastAPI .............." "/home/coder/python/bin/python3 -c \"import fastapi\" 2>/dev/null"
+  check_framework "Django ..............." "/home/coder/python/bin/python3 -c \"import django\" 2>/dev/null"
+  check_framework "ASP.NET .............." "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet --list-sdks 2>/dev/null | grep -q '8'"
+  check_framework "Spring (Java) ........" "/home/coder/jdk-21.0.3+9/bin/java -version 2>/dev/null"
+fi
+check_framework "Laravel (PHP) ........" "php -r \"echo class_exists('Illuminate\\Support\\ServiceProvider') ? 1 : 0;\" 2>/dev/null || echo '0'"
 
 if [ "$FW_PASS" -eq "$FW_TOTAL" ]; then
   check_pass "Frameworks ..........." "$FW_PASS/$FW_TOTAL frameworks verified"
@@ -504,28 +553,28 @@ echo ""
 echo "Database Engines"
 
 # SQLite
-if command -v sqlite3 >/dev/null 2>&1 || /home/coder/python/bin/python3 -c "import sqlite3" 2>/dev/null; then
+if command -v sqlite3 >/dev/null 2>&1 || python3 -c "import sqlite3" 2>/dev/null; then
   check_pass "SQLite ..............." "available"
 else
   check_warn "SQLite ..............." "not available"
 fi
 
 # PostgreSQL (check via Python)
-if /home/coder/python/bin/python3 -c "import psycopg2" 2>/dev/null; then
+if python3 -c "import psycopg2" 2>/dev/null; then
   check_pass "PostgreSQL (psycopg2)." "driver available"
 else
   check_warn "PostgreSQL (psycopg2)." "driver not installed"
 fi
 
 # Redis (check via Python)
-if /home/coder/python/bin/python3 -c "import redis" 2>/dev/null; then
+if python3 -c "import redis" 2>/dev/null; then
   check_pass "Redis (redis-py) ......" "driver available"
 else
   check_warn "Redis (redis-py) ......" "driver not installed"
 fi
 
 # SQLAlchemy
-if /home/coder/python/bin/python3 -c "import sqlalchemy" 2>/dev/null; then
+if python3 -c "import sqlalchemy" 2>/dev/null; then
   check_pass "SQLAlchemy ............" "available"
 else
   check_warn "SQLAlchemy ............" "not installed"
@@ -536,32 +585,39 @@ echo ""
 # --- 17. Deployment Infrastructure ---
 echo "Deployment Infrastructure"
 
-# Portainer API
-if [ -n "$PORTAINER_API_KEY" ] || [ -f "$AGENTVERSE/PORTAINER_API_KEY" ]; then
-  check_pass "Portainer API key ...." "configured"
+if [ "$CI_MODE" = true ]; then
+  check_warn "Portainer API key ...." "skipped (CI mode)"
+  check_warn "NPM registry ........" "skipped (CI mode)"
+  check_warn "GitHub CLI ..........." "skipped (CI mode)"
+  check_warn "SSH key .............." "skipped (CI mode)"
 else
-  check_warn "Portainer API key ...." "not set locally (production access via extravus-prod)"
-fi
+  # Portainer API
+  if [ -n "$PORTAINER_API_KEY" ] || [ -f "$AGENTVERSE/PORTAINER_API_KEY" ]; then
+    check_pass "Portainer API key ...." "configured"
+  else
+    check_warn "Portainer API key ...." "not set locally (production access via extravus-prod)"
+  fi
 
-# NPM connectivity
-if npm ping >/dev/null 2>&1; then
-  check_pass "NPM registry ........" "reachable"
-else
-  check_warn "NPM registry ........" "not reachable from this host"
-fi
+  # NPM connectivity
+  if npm ping >/dev/null 2>&1; then
+    check_pass "NPM registry ........" "reachable"
+  else
+    check_warn "NPM registry ........" "not reachable from this host"
+  fi
 
-# GitHub CLI
-if gh auth status >/dev/null 2>&1; then
-  check_pass "GitHub CLI ..........." "authenticated"
-else
-  check_warn "GitHub CLI ..........." "not authenticated"
-fi
+  # GitHub CLI
+  if gh auth status >/dev/null 2>&1; then
+    check_pass "GitHub CLI ..........." "authenticated"
+  else
+    check_warn "GitHub CLI ..........." "not authenticated"
+  fi
 
-# SSH key
-if [ -f "$HOME/.ssh/id_rsa_extravus" ]; then
-  check_pass "SSH key .............." "extravus key present"
-else
-  check_warn "SSH key .............." "extravus key not found"
+  # SSH key
+  if [ -f "$HOME/.ssh/id_rsa_extravus" ]; then
+    check_pass "SSH key .............." "extravus key present"
+  else
+    check_warn "SSH key .............." "extravus key not found"
+  fi
 fi
 
 # Smoke test scripts

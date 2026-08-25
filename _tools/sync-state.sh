@@ -5,8 +5,8 @@ set -e
 # Usage: bash _tools/sync-state.sh
 # Recalculates state from actual filesystem and updates CURRENT_STATE.json + ENVIRONMENT_STATE.json
 
-NODE="/usr/lib/code-server/lib/node"
-PROJECT="/home/coder/project"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
+PROJECT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AGENTVERSE="$PROJECT/AGENTVERSE"
 
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")

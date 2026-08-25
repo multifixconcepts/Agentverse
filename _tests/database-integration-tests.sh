@@ -4,7 +4,6 @@
 # Usage: bash _tests/database-integration-tests.sh
 
 set -e
-export PATH="/home/coder/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 PASS=0; FAIL=0; SKIP=0; TOTAL=0
@@ -20,7 +19,7 @@ echo ""
 # --- SQLite ---
 smoke_sqlite() {
   echo "SQLite"
-  PYTHON="/home/coder/python/bin/python3"
+  PYTHON="$(command -v python3)"
   $PYTHON -c "
 import sqlite3, os, tempfile
 db = tempfile.mktemp(suffix='.db')
@@ -40,7 +39,8 @@ print('sqlite_ok')
 # --- PostgreSQL via Portainer API ---
 smoke_postgresql() {
   echo "PostgreSQL (via Portainer)"
-  if [ -f /home/coder/project/AGENTVERSE/PORTAINER_API_KEY ] || [ -n "$PORTAINER_API_KEY" ]; then
+  PROJECT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  if [ -f "$PROJECT/AGENTVERSE/PORTAINER_API_KEY" ] || [ -n "$PORTAINER_API_KEY" ]; then
     skip "PostgreSQL" "Portainer API key available but direct test requires container access"
   else
     skip "PostgreSQL" "Portainer API key not configured locally"
@@ -58,7 +58,7 @@ smoke_redis() {
 # --- Database ORM Compatibility Matrix ---
 smoke_orm_matrix() {
   echo "ORM Compatibility Matrix"
-  PYTHON="/home/coder/python/bin/python3"
+  PYTHON="$(command -v python3)"
 
   # Python SQLAlchemy + SQLite
   $PYTHON -m pip install sqlalchemy -q 2>/dev/null
@@ -81,7 +81,7 @@ print('sqlalchemy_ok')
 " 2>/dev/null && pass "SQLAlchemy" "ORM operations pass" || fail "SQLAlchemy" "ORM failed"
 
   # Go database/sql + SQLite
-  GO="/home/coder/go/bin/go"
+  GO="$(command -v go)"
   DIR="/tmp/smoke_orm_go_$$"
   mkdir -p "$DIR" && cd "$DIR"
   $GO mod init smoke_orm >/dev/null 2>&1

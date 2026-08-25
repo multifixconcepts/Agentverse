@@ -4,10 +4,8 @@
 # Usage: bash _tools/validate-polyglot.sh [language]
 # Tiers: Tier 1 (JS, TS, Python, Go, Rust, Java, C#) Tier 2 (C, C++, PHP, Ruby, Kotlin)
 
-PROJECT="/home/coder/project"
-export PATH="/home/coder/bin:/home/coder/.cargo/bin:/home/coder/go/bin:/home/coder/python/bin:/home/coder/jdk-21.0.3+9/bin:/home/coder/.dotnet:$PATH"
+PROJECT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-export JAVA_HOME="/home/coder/jdk-21.0.3+9"
 
 TOTAL=0
 PASSED=0
@@ -62,7 +60,7 @@ validate_typescript() {
 
 validate_python() {
   echo "Python"
-  PYTHON="/home/coder/python/bin/python3"
+  PYTHON="$(command -v python3)"
   if $PYTHON --version >/dev/null 2>&1; then
     pass "runtime" "$($PYTHON --version)"
   else
@@ -83,7 +81,7 @@ validate_python() {
 
 validate_go() {
   echo "Go"
-  GO="/home/coder/go/bin/go"
+  GO="$(command -v go)"
   if $GO version >/dev/null 2>&1; then
     pass "runtime" "$($GO version | awk '{print $3}')"
   else
@@ -108,8 +106,8 @@ GOEOF
 
 validate_rust() {
   echo "Rust"
-  RUSTC="/home/coder/.cargo/bin/rustc"
-  CARGO="/home/coder/.cargo/bin/cargo"
+  RUSTC="$(command -v rustc)"
+  CARGO="$(command -v cargo)"
   if [ -x "$RUSTC" ] && $RUSTC --version >/dev/null 2>&1; then
     pass "runtime" "$($RUSTC --version 2>/dev/null | awk '{print $2}')"
   else
@@ -131,8 +129,8 @@ RUSTEOF
   RESULT=$(/tmp/test_rust/target/release/test_rust 2>&1)
   if [ "$RESULT" = "hello" ]; then pass "execute" "output correct"; else fail "execute" "$RESULT"; fi
   $CARGO test 2>/dev/null && pass "test" "cargo test passed" || fail "test" "cargo test failed"
-  /home/coder/.cargo/bin/clippy --version >/dev/null 2>&1 && pass "lint" "clippy" || skip "lint" "clippy"
-  /home/coder/.cargo/bin/rustfmt --version >/dev/null 2>&1 && pass "format" "rustfmt" || skip "format" "rustfmt"
+  clippy --version >/dev/null 2>&1 && pass "lint" "clippy" || skip "lint" "clippy"
+  rustfmt --version >/dev/null 2>&1 && pass "format" "rustfmt" || skip "format" "rustfmt"
   $CARGO build --release 2>/dev/null && pass "package" "release built" || fail "package" "package failed"
   rm -rf /tmp/test_rust
   cd "$PROJECT"
@@ -140,8 +138,8 @@ RUSTEOF
 
 validate_java() {
   echo "Java"
-  JAVA="/home/coder/jdk-21.0.3+9/bin/java"
-  JAVAC="/home/coder/jdk-21.0.3+9/bin/javac"
+  JAVA="$(command -v java)"
+  JAVAC="$(command -v javac)"
   if [ -x "$JAVA" ] && $JAVA --version >/dev/null 2>&1; then
     pass "runtime" "$($JAVA --version 2>&1 | head -1 | awk '{print $2}')"
   else
@@ -159,7 +157,7 @@ validate_java() {
 
 validate_csharp() {
   echo "C# / .NET"
-  DOTNET="/home/coder/.dotnet/dotnet"
+  DOTNET="$(command -v dotnet)"
   if $DOTNET --version >/dev/null 2>&1; then
     pass "runtime" "$($DOTNET --version)"
   else
@@ -238,13 +236,13 @@ validate_ruby() {
 
 validate_kotlin() {
   echo "Kotlin"
-  KOTLINC="/home/coder/bin/kotlinc"
+  KOTLINC="$(command -v kotlinc)"
   if [ -x "$KOTLINC" ] && $KOTLINC -version >/dev/null 2>&1; then
     pass "compiler" "$($KOTLINC -version 2>&1 | awk '{print $2}')"
   else
     fail "compiler" "kotlinc not found"; return
   fi
-  JAVA="/home/coder/jdk-21.0.3+9/bin/java"
+  JAVA="$(command -v java)"
   pass "runtime" "$($JAVA --version 2>&1 | head -1 | awk '{print $2}')"
   echo 'fun main() { println("hello") }' > /tmp/test.kt
   $KOTLINC /tmp/test.kt -include-runtime -d /tmp/test.jar 2>/dev/null && pass "compile" "jar built" || fail "compile" "kotlinc failed"

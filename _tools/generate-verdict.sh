@@ -5,8 +5,9 @@ set -e
 # Usage: bash _tools/generate-verdict.sh <TICKET_ID> <GATE_ID>
 # Generates a structured JSON verdict file from actual artifacts.
 
-NODE="/usr/lib/code-server/lib/node"
-PROJECT="/home/coder/project"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT="$(cd "$SELF_DIR/.." && pwd)"
 AGENTVERSE="$PROJECT/AGENTVERSE"
 TICKET_DIR="$AGENTVERSE/tickets"
 
