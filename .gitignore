@@ -44,6 +44,7 @@ tmp_reset_pass.php
 *.sql
 !scholapro/install.sql
 scholapro/config.inc.php
+scholapro_backup_*/
 complete-mcp-config.json
 
 # Polyglot runtimes
