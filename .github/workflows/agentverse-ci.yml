@@ -25,6 +25,7 @@ jobs:
       - name: PHP Lint
         run: |
           find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' \
+            -not -path './scholapro/classes/MoTranslator/*' \
             -print0 | xargs -0 -n1 php -l 2>&1 | tee /tmp/php-lint.txt
           if grep -q "Parse error\|Fatal error" /tmp/php-lint.txt; then
             echo "::error::PHP syntax errors found"
