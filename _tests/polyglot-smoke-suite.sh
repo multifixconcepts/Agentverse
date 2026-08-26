@@ -13,6 +13,15 @@ skip() { TOTAL=$((TOTAL+1)); SKIP=$((SKIP+1)); printf "  ○ %-25s %s\n" "$1" "$
 
 cleanup() { rm -rf "$1" 2>/dev/null; }
 
+require_tool() {
+  local bin; bin="$(command -v "$1" 2>/dev/null)" || true
+  if [ -z "$bin" ]; then
+    skip "runtime" "$1 not installed"
+    return 1
+  fi
+  echo "$bin"
+}
+
 echo "=============================================="
 echo "AGENTVERSE POLYGLOT SMOKE PROJECT SUITE"
 echo "=============================================="
@@ -21,6 +30,8 @@ echo ""
 # --- JavaScript ---
 smoke_javascript() {
   echo "JavaScript"
+  require_tool node || return 0
+  require_tool npm || return 0
   DIR="/tmp/smoke_js_$$"
   mkdir -p "$DIR" && cd "$DIR"
   npm init -y >/dev/null 2>&1 && pass "project" "npm init"
@@ -36,6 +47,8 @@ smoke_javascript() {
 # --- TypeScript ---
 smoke_typescript() {
   echo "TypeScript"
+  require_tool tsc || return 0
+  require_tool node || return 0
   cd /tmp
   DIR="/tmp/smoke_ts_$$"
   mkdir -p "$DIR" && cd "$DIR"
@@ -56,6 +69,7 @@ EOF
 # --- Python ---
 smoke_python() {
   echo "Python"
+  require_tool python3 || return 0
   DIR="/tmp/smoke_py_$$"
   mkdir -p "$DIR" && cd "$DIR"
   python3 -m venv .venv 2>/dev/null
@@ -78,8 +92,8 @@ EOF
 # --- Go ---
 smoke_go() {
   echo "Go"
+  GO="$(require_tool go)" || return 0
   DIR="/tmp/smoke_go_$$"
-  GO="$(command -v go)"
   mkdir -p "$DIR" && cd "$DIR"
   $GO mod init smoke_go >/dev/null 2>&1
   cat > main.go << 'EOF'
@@ -102,8 +116,8 @@ EOF
 # --- Rust ---
 smoke_rust() {
   echo "Rust"
+  CARGO="$(require_tool cargo)" || return 0
   DIR="/tmp/smoke_rs_$$"
-  CARGO="$(command -v cargo)"
   mkdir -p "$DIR/src" && cd "$DIR"
   cat > Cargo.toml << 'EOF'
 [package]
@@ -126,9 +140,9 @@ EOF
 # --- Java ---
 smoke_java() {
   echo "Java"
+  JAVA="$(require_tool java)" || return 0
+  JAVAC="$(require_tool javac)" || return 0
   DIR="/tmp/smoke_java_$$"
-  JAVA="$(command -v java)"
-  JAVAC="$(command -v javac)"
   mkdir -p "$DIR" && cd "$DIR"
   cat > Hello.java << 'EOF'
 public class Hello {
@@ -154,7 +168,7 @@ smoke_csharp() {
   echo "C# / .NET"
   cd /tmp
   export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-  DOTNET="$(command -v dotnet)"
+  DOTNET="$(require_tool dotnet)" || return 0
   DIR="/tmp/smoke_cs_$$"
   rm -rf "$DIR"
   $DOTNET new classlib -o "$DIR" --force >/dev/null 2>&1 && pass "project" "classlib created" || { fail "project" "dotnet new failed"; return; }
@@ -170,6 +184,7 @@ EOF
 # --- C ---
 smoke_c() {
   echo "C"
+  require_tool gcc || return 0
   DIR="/tmp/smoke_c_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > main.c << 'EOF'
@@ -187,6 +202,7 @@ EOF
 # --- C++ ---
 smoke_cpp() {
   echo "C++"
+  require_tool g++ || return 0
   DIR="/tmp/smoke_cpp_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > main.cpp << 'EOF'
@@ -204,6 +220,7 @@ EOF
 # --- Ruby ---
 smoke_ruby() {
   echo "Ruby"
+  require_tool ruby || return 0
   DIR="/tmp/smoke_rb_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > hello.rb << 'EOF'
@@ -219,8 +236,8 @@ EOF
 # --- Kotlin ---
 smoke_kotlin() {
   echo "Kotlin"
-  KOTLINC="$(command -v kotlinc)"
-  JAVA="$(command -v java)"
+  KOTLINC="$(require_tool kotlinc)" || return 0
+  JAVA="$(require_tool java)" || return 0
   DIR="/tmp/smoke_kt_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > Hello.kt << 'EOF'
@@ -235,7 +252,7 @@ EOF
 # --- PHP ---
 smoke_php() {
   echo "PHP"
-  PHP_BIN="$(command -v php)"
+  PHP_BIN="$(require_tool php)" || return 0
   DIR="/tmp/smoke_php_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > hello.php << 'EOF'
@@ -252,7 +269,7 @@ EOF
 # --- Swift ---
 smoke_swift() {
   echo "Swift"
-  SWIFT="$(command -v swift)"
+  SWIFT="$(require_tool swift)" || return 0
   DIR="/tmp/smoke_swift_$$"
   mkdir -p "$DIR" && cd "$DIR"
   cat > main.swift << 'EOF'
@@ -267,7 +284,7 @@ EOF
 # --- Dart ---
 smoke_dart() {
   echo "Dart"
-  DART="$(command -v dart)"
+  DART="$(require_tool dart)" || return 0
   DIR="/tmp/smoke_dart_$$"
   rm -rf "$DIR"
   mkdir -p "$DIR/bin" && cd "$DIR"

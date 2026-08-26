@@ -501,6 +501,32 @@ jobs:
         with:
           php-version: '8.2'
 
+      - name: Setup Kotlin
+        if: matrix.runtime == 'kotlin'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install Kotlin
+        if: matrix.runtime == 'kotlin'
+        run: |
+          curl -sSL https://github.com/JetBrains/kotlin/releases/download/v2.0.21/kotlin-compiler-2.0.21.zip -o /tmp/kotlin.zip
+          unzip -q /tmp/kotlin.zip -d /opt
+          echo "/opt/kotlinc/bin" >> $GITHUB_PATH
+
+      - name: Setup Swift
+        if: matrix.runtime == 'swift'
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '5.9'
+
+      - name: Setup Dart
+        if: matrix.runtime == 'dart'
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
       - name: Run Smoke Test (${{ matrix.runtime }})
         run: |
           chmod +x _tests/polyglot-smoke-suite.sh
@@ -540,39 +566,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-
-      - name: Setup PHP
-        if: matrix.runtime == 'php'
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Setup Kotlin
-        if: matrix.runtime == 'kotlin'
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Install Kotlin
-        if: matrix.runtime == 'kotlin'
-        run: |
-          curl -sSL https://github.com/JetBrains/kotlin/releases/download/v2.0.21/kotlin-compiler-2.0.21.zip -o /tmp/kotlin.zip
-          unzip -q /tmp/kotlin.zip -d /opt
-          echo "/opt/kotlinc/bin" >> $GITHUB_PATH
-
-      - name: Setup Swift
-        if: matrix.runtime == 'swift'
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: '5.9'
-
-      - name: Setup Dart
-        if: matrix.runtime == 'dart'
-        uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
-          tools: composer:v2
 
       - name: Run Framework Smoke (${{ matrix.framework }})
         run: |
