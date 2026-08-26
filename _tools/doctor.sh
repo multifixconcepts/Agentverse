@@ -273,6 +273,8 @@ if [ -f "$AGENTVERSE/agentverse.db" ]; then
 
   if [ "$TODAY_LOGS" -gt 0 ]; then
     check_pass "Coverage ............." "$TODAY_LOGS logs for $TODAY"
+  elif [ "$CI_MODE" = true ]; then
+    check_warn "Coverage ............." "no logs for $TODAY (expected in CI)"
   else
     check_fail "Coverage ............." "no logs for $TODAY"
   fi
