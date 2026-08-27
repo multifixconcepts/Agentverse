@@ -6,8 +6,9 @@
 # Inspects actual ticket state data. Fails closed on any uncertainty.
 # Exit codes: 0 = ALLOW, 1 = DENY
 
-NODE="/usr/lib/code-server/lib/node"
-PROJECT="/home/coder/project"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT="$(cd "$SELF_DIR/.." && pwd)"
 AGENTVERSE="$PROJECT/AGENTVERSE"
 TICKET_DIR="$AGENTVERSE/tickets"
 

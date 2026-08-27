@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  scholapro-app:
+    build:
+      context: ../scholapro
+      dockerfile: ../scholapro-docker/Dockerfile
+    container_name: scholapro-app
+    restart: unless-stopped
+    ports:
+      - "8085:80"
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    volumes:
+      - ../scholapro:/var/www/html
+    networks:
+      - scholapro-network
+    depends_on:
+      - scholapro-db
+
+  scholapro-db:
+    image: mariadb:latest
+    container_name: scholapro-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: scholapro_db
+      MYSQL_USER: scholapro_admin
+      MYSQL_PASSWORD: scholapro_secure_pass
+      MYSQL_ROOT_PASSWORD: scholapro_root_pass
+    volumes:
+      - scholapro_db_data:/var/lib/mysql
+      - ../scholapro_database_backup.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - scholapro-network
+
+volumes:
+  scholapro_db_data:
+
+networks:
+  scholapro-network:
+    driver: bridge

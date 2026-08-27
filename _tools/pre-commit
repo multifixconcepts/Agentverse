@@ -1,0 +1,84 @@
+#!/bin/bash
+# pre-commit hook — Secret scan before commit
+# Installs: cp _tools/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+set -e
+
+PROJECT="$(git rev-parse --show-toplevel)"
+SCAN_SCRIPT="$PROJECT/_tools/scan-secrets.sh"
+NODE="/usr/lib/code-server/lib/node"
+
+# Get staged files (only .php, .js, .py, .sh, .yml, .yaml, .json, .env, .sql, .html, .css)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(php|js|py|sh|yml|yaml|json|env|sql|html|css)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  exit 0
+fi
+
+echo "Pre-commit: Scanning staged files for secrets..."
+
+# Run the scan on staged files
+RESULT=$(echo "$STAGED_FILES" | xargs "$NODE" -e "
+const fs = require('fs');
+const path = require('path');
+
+const targets = process.argv.slice(1);
+const findings = [];
+
+const EXTENSIONS = new Set(['.php', '.js', '.py', '.sh', '.conf', '.yml', '.yaml', '.env', '.json', '.sql', '.html', '.css']);
+const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'backup']);
+
+function isExcluded(context) {
+  const lower = context.toLowerCase();
+  if (/(example|placeholder|change\.this|your[_-]here|xxx|todo|<.*>)/.test(lower)) return true;
+  if (/(sha256|md5|hash|checksum|[a-f0-9]{32,}|begin)/.test(lower)) return true;
+  return true;  // skip test/doc patterns
+}
+
+for (const target of targets) {
+  try {
+    const content = fs.readFileSync(target, 'utf8');
+    const lines = content.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // GitHub PAT
+      if (/ghp_[A-Za-z0-9]{36}/.test(line)) {
+        findings.push({ file: target, line: i+1, pattern: 'GitHub PAT' });
+      }
+      // Portainer token
+      if (/ptr_[A-Za-z0-9+/]{20,}/.test(line)) {
+        findings.push({ file: target, line: i+1, pattern: 'Portainer token' });
+      }
+      // AWS key
+      if (/AKIA[A-Z0-9]{16}/.test(line)) {
+        findings.push({ file: target, line: i+1, pattern: 'AWS key' });
+      }
+      // Private key
+      if (/-----BEGIN (RSA |EC )?PRIVATE KEY-----/.test(line)) {
+        findings.push({ file: target, line: i+1, pattern: 'Private key' });
+      }
+      // Hardcoded passwords (not in examples/tests)
+      if (/(password|passwd|pwd)\s*[:=]\s*['\"][^'\"]{5,}['\"]/i.test(line) && !isExcluded(line)) {
+        findings.push({ file: target, line: i+1, pattern: 'Hardcoded password' });
+      }
+    }
+  } catch(e) {}
+}
+
+process.stdout.write(JSON.stringify(findings));
+" 2>/dev/null || echo "[]")
+
+COUNT=$(echo "$RESULT" | /home/coder/project/_tools/jq '. | length' 2>/dev/null || echo "0")
+
+if [ "$COUNT" -gt 0 ]; then
+  echo ""
+  echo "❌ SECRETS DETECTED IN STAGED FILES:"
+  echo "$RESULT" | /home/coder/project/_tools/jq -r '.[] | "  \(.file):\(.line) — \(.pattern)"' 2>/dev/null
+  echo ""
+  echo "Commit blocked. Remove secrets before committing."
+  echo "To bypass: git commit --no-verify"
+  exit 1
+fi
+
+echo "Pre-commit: No secrets found. ✓"
+exit 0

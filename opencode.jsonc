@@ -1,0 +1,90 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTVERSE/AGENTVERSE.md", "AGENTVERSE/COHESION_MATRIX.md"],
+  "skills": {
+    "paths": [".opencode/skills"]
+  },
+  "permission": {
+    "edit": "allow",
+    "bash": {
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git branch*": "allow",
+      "git remote -v": "allow",
+      "git show*": "allow",
+      "*": "ask"
+    },
+    "external_directory": {
+      "~/.ssh/**": "deny",
+      "~/.config/opencode/**": "ask",
+      "/home/coder/project/AGENTVERSE/**": "allow",
+      "*": "ask"
+    }
+  },
+  "snapshot": true,
+  "compaction": {
+    "auto": true,
+    "tail_turns": 15
+  },
+  "tool_output": {
+    "max_lines": 250,
+    "max_bytes": 8192
+  },
+  "mcp": {
+    "sqlite": {
+      "type": "local",
+      "command": [
+        "/usr/lib/code-server/lib/node",
+        "/home/coder/project/.mcp/sqlite-server.js",
+        "/home/coder/project/AGENTVERSE/agentverse.db"
+      ],
+      "environment": {
+        "AGENTVERSE_DB": "/home/coder/project/AGENTVERSE/agentverse.db"
+      }
+    },
+    "filesystem": {
+      "type": "local",
+      "command": [
+        "/usr/lib/code-server/lib/node",
+        "/home/coder/project/.mcp/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js",
+        "/home/coder/project"
+      ]
+    },
+    "memory": {
+      "type": "local",
+      "command": [
+        "/usr/lib/code-server/lib/node",
+        "/home/coder/project/.mcp/node_modules/@modelcontextprotocol/server-memory/dist/index.js"
+      ],
+      "environment": {
+        "MEMORY_FILE_PATH": "/home/coder/project/.memory/memory.json"
+      }
+    },
+    "git": {
+      "type": "local",
+      "command": ["/usr/lib/code-server/lib/node", "/home/coder/project/git-server.js"],
+      "environment": {
+        "NODE_PATH": "/home/coder/project/.mcp/node_modules"
+      }
+    },
+    "curl": {
+      "type": "local",
+      "command": ["/usr/lib/code-server/lib/node", "/home/coder/project/curl-server.js"],
+      "environment": {
+        "NODE_PATH": "/home/coder/project/.mcp/node_modules"
+      }
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["/usr/lib/code-server/lib/node", "/home/coder/project/.mcp/node_modules/@playwright/mcp/cli.js"],
+      "environment": {
+        "PLAYWRIGHT_BROWSERS_PATH": "/home/coder/.cache/ms-playwright"
+      }
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": ["/usr/lib/code-server/lib/node", "/home/coder/project/.mcp/node_modules/@modelcontextprotocol/server-sequential-thinking/dist/index.js"]
+    }
+  }
+}

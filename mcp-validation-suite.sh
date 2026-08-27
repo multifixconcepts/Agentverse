@@ -21,7 +21,7 @@ echo "
 'Q, get the git diff for the latest changes in the project.'
 
 🌐 CURL SERVER:
-'Q, use the curl server to check the health of our API at https://api.extravus.com/health.'
+'Q, use the curl server to check the health of our API at https://clientflow.edunaija.online/health.'
 'Q, make a GET request to our school management API to test connectivity.'
 'Q, fetch the status page from our main website using the curl server.'
 

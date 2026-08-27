@@ -1,5 +1,5 @@
 <?php
 function badFunction() {
-    echo "hello"  // missing semicolon
+    echo "hello";  // semicolon restored
 }
 ?>

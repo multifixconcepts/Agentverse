@@ -5,10 +5,11 @@ set -e
 # Usage: bash _tools/verify-gate.sh <TICKET_ID> [GATE_ID]
 # Reads the ticket file, extracts acceptance criteria, and attempts machine verification.
 
-NODE="/usr/lib/code-server/lib/node"
-PROJECT="/home/coder/project"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT="$(cd "$SELF_DIR/.." && pwd)"
 TICKET_DIR="$PROJECT/AGENTVERSE/tickets"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$SELF_DIR"
 
 TICKET_ID="${1:-}"
 GATE_ID="${2:-G5}"

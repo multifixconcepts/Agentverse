@@ -23,7 +23,7 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            if (username === 'alade' && password === 'johnson123') {
+            if (username === '<REDACTED>' && password === '<REDACTED>') {
                 sessionStorage.setItem('dockerAuth', 'authenticated');
                 document.getElementById('login-modal').classList.remove('active');
                 loadAllData();
@@ -474,7 +474,7 @@ services:
                 <div id="login-error" style="display: none; background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem;">Invalid username or password</div>
                 <button class="btn btn-primary" onclick="login()" style="width: 100%;">🔐 Login</button>
                 <div style="margin-top: 1rem; text-align: center; color: #6c757d; font-size: 0.9rem;">
-                    Demo credentials: <strong>alade</strong> / <strong>johnson123</strong>
+                    Demo credentials: <strong><REDACTED></strong> / <strong><REDACTED></strong>
                 </div>
             </div>
         </div>
@@ -533,7 +533,7 @@ services:
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            if (username === 'alade' && password === 'johnson123') {
+            if (username === '<REDACTED>' && password === '<REDACTED>') {
                 sessionStorage.setItem('dockerAuth', 'authenticated');
                 document.getElementById('login-modal').classList.remove('active');
                 initializeApp();

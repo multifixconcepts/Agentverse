@@ -1,6 +1,8 @@
 # Dependencies
 node_modules/
 vendor/
+__pycache__/
+*.pyc
 
 # Binaries
 _tools/jq
@@ -32,7 +34,36 @@ build/
 # Test artifacts
 /tmp/
 *.coverage
+.playwright-mcp/
 
 # PHP
 *.phar
 composer.lock
+
+# Security — never commit
+tmp_reset_pass.php
+*.sql
+!scholapro/install.sql
+scholapro/config.inc.php
+scholapro_backup_*/
+complete-mcp-config.json
+
+# Polyglot runtimes
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+target/
+Cargo.lock
+go.sum
+*.class
+*.jar
+bin/
+obj/
+
+# Secrets & credentials
+*secret*
+*token*
+*credential*
+!AGENTVERSE/*

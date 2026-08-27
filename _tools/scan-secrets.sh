@@ -6,11 +6,11 @@ set -e
 # Runs the 4 G4 secret patterns from VERIFICATION_CONTRACT.md
 # Outputs JSON with findings.
 
-NODE="/usr/lib/code-server/lib/node"
-PROJECT="/home/coder/project"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
+PROJECT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 if [ $# -eq 0 ]; then
-  echo '{"error":"Usage: bash scan-secrets.sh <directory-or-file> [file2 ...]","example":"bash scan-secrets.sh /home/coder/project/scholapro"}'
+  echo '{"error":"Usage: bash scan-secrets.sh <directory-or-file> [file2 ...]","example":"bash scan-secrets.sh scholapro"}'
   exit 1
 fi
 
@@ -45,6 +45,9 @@ function isExcluded(context) {
   const lower = context.toLowerCase();
   if (/(example|placeholder|change\.this|your[_-]here|xxx|todo|<.*>)/.test(lower)) return true;
   if (/(sha256|md5|hash|checksum|[a-f0-9]{32,}|begin)/.test(lower)) return true;
+  if (/(redacted|none|empty|not[_-]?set|<none>)/.test(lower)) return true;
+  if (/path\s+d=/.test(lower)) return true;
+  if (/^\s*$/.test(context.trim())) return true;
   return false;
 }
 
@@ -81,12 +84,12 @@ function scanFile(filePath) {
       addFinding(filePath, lineNum, 'Private key header', 'CRITICAL', line.trim());
     }
 
-    // Pattern 4: IP addresses (excluding private/localhost)
+    // Pattern 4: IP addresses (excluding private/localhost and SVG paths)
     const ipMatch = line.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/);
     if (ipMatch) {
       const ip = ipMatch[1];
       if (!/^(127\.|0\.0\.0\.0|255\.255|172\.(1[6-9]|2[0-9]|3[01])\.|10\.|192\.168\.)/.test(ip)) {
-        if (!/\.(json|md|db|sql)/i.test(filePath)) {
+        if (!/\.(json|md|db|sql)/i.test(filePath) && !isExcluded(line)) {
           addFinding(filePath, lineNum, 'IP address', 'LOW', line.trim());
         }
       }

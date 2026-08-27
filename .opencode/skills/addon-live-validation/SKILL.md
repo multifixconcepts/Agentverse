@@ -11,7 +11,7 @@ Purpose: after any module is activated on live school4, prove it renders AND is 
 
 - Host: `ssh -o BatchMode=yes extravus-prod` (161.153.35.43).
 - Containers: `school4` (php:8.1-apache, volume `school4_school4_data` → `/var/www/html`), `db-school4` (mariadb).
-- DB: `docker exec db-school4 mariadb -uadmin -pschool4_admin_pass -h127.0.0.1 school4_db`.
+- DB: `docker exec db-school4 mariadb -uadmin -pREDACTED_DB_PASSWORD -h127.0.0.1 school4_db`.
 - Admin session: cookie jar `/tmp/opencode/adm.cookies` (regenerate per task: GET index.php then POST USERNAME/PASSWORD, expect 302).
 
 ## Guardrail checklist (run in order)

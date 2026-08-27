@@ -5,8 +5,10 @@
 
 set -e
 
-# Use code-server's node
-NODE="/usr/lib/code-server/lib/node"
+# Resolve project root and node from environment
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT="$(cd "$SELF_DIR/.." && pwd)"
+NODE="$(command -v node 2>/dev/null || echo 'node')"
 
 PASS=0
 FAIL=0

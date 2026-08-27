@@ -9,7 +9,7 @@ class N8NClient {
     this.baseUrl = process.env.N8N_URL || 'http://localhost:5678';
     this.apiKey = process.env.N8N_API_KEY;
     this.username = process.env.N8N_USERNAME || 'extravus';
-    this.password = process.env.N8N_PASSWORD || 'Mafioso0147?';
+    this.password = process.env.N8N_PASSWORD || 'REDACTED_N8N_PASSWORD';
   }
 
   async makeRequest(endpoint, options = {}) {
