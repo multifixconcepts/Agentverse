@@ -13,7 +13,7 @@ Source of truth: KB-0004 (deployment drift), KB-0008 (module ops fix), SCHOL-004
 - Containers: `school4` (php:8.1-apache, volume `school4_school4_data` → `/var/www/html`, port 8084:80) and `db-school4` (mariadb).
 - Site: https://school4.edunaija.online — stock RosarioSIS **12.4.2** (config VERSION/TITLE), NOT the scholapro fork.
 - DB: `docker exec db-school4 mariadb -uadmin -pREDACTED_DB_PASSWORD -h127.0.0.1 school4_db -N -e "..."`.
-- Admin login: `admin` / `Mafioso0147` (hash re-synced 2026-08-14; original hash backed up host `/tmp/admin.hash.orig`).
+- Admin login: `admin` / `<REDACTED_ADMIN_PASSWORD>` (password supplied at deployment time, not stored in this file; hash re-synced 2026-08-14; original hash backed up host `/tmp/admin.hash.orig`).
 - This machine (code-server / opencode host): node only at `/usr/lib/code-server/lib/node` (not on PATH); npm CLI at `/home/coder/.npm-global/lib/node_modules/npm/bin/npm-cli.js` (run with the node path).
 
 ## Module management (verified 2026-08-14)

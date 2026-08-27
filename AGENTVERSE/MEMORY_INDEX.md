@@ -61,7 +61,7 @@ Entry format in this file:
 
 ### 2026-08-14 — school4 module ops fix (SCHOL-004)
 - [2026-08-14] **SCHOL-004 RESOLVED (live):** custom-module delete on school4 failed because module files were uid-1000-owned → `AddonDelTree` dry-run (`is_writable()` per file, Addon.fnc.php:109) → `Files not eraseable.` while config key still cleared. Fix: `chown -R www-data:www-data /var/www/html/modules/Student_Billing_Premium`; validated fail→success via live UI (throwaway module). Module left deactivated (`b:0`); backup `/tmp/sbp-module-backup.tar.gz`. Activate/deactivate were never broken (state persists; only redirect missing — 200 not 302, affects shipped equally). — platform-division-council → knowledge-curator (KB-0008)
-- [2026-08-14] school4 admin auth: DB hash didn't match any password → re-synced `staff.PASSWORD`(STAFF_ID=1) to `encrypt_password('Mafioso0147')`, FAILED_LOGIN reset; original hash `/tmp/admin.hash.orig` (host, restorable). Login verified `302 → misc/Portal.php`. "Password not working" = stale browser session. — summoner
+- [2026-08-14] school4 admin auth: DB hash didn't match any password → re-synced `staff.PASSWORD`(STAFF_ID=1) to `encrypt_password('[REDACTED]')`, FAILED_LOGIN reset; original hash `/tmp/admin.hash.orig` (host, restorable). Login verified `302 → misc/Portal.php`. "Password not working" = stale browser session. — summoner
 
 ### 2026-08-14 — Dev-environment extensions & tooling (KB-0009)
 - [2026-08-14] Installed 15 free code-server extensions (PHP intelephense, eslint, prettier, TS-next, git-graph, gitlens, markdown-all-in-one, docker, errorlens, spell-checker, rainbow-csv, sqltools+mysql, rest-client). — toolsmith

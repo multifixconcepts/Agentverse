@@ -258,7 +258,7 @@ def run_server():
     print("🚀 Docker Web UI Server")
     print("=" * 40)
     print(f"✅ Server running on port {PORT}")
-    print(f"✅ Access via: https://vscode.extravus.com/proxy/8888/")
+    print(f"✅ Access via: https://vscode.edunaija.online/proxy/8888/")
     print("=" * 40)
     
     try:

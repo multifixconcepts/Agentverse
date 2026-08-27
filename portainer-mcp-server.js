@@ -5,7 +5,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import fetch from 'node-fetch';
 
-const PORTAINER_URL = process.env.PORTAINER_URL || 'https://server1.extravus.com';
+const PORTAINER_URL = process.env.PORTAINER_URL || 'http://127.0.0.1:9443';
 const PORTAINER_TOKEN = process.env.PORTAINER_TOKEN;
 
 class PortainerMCPServer {

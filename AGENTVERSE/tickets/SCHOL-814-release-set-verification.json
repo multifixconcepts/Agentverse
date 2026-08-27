@@ -1,21 +1,41 @@
 {
-  "timestamp": "2026-08-23T01:55:25Z",
+  "timestamp": "2026-08-27T14:32:17Z",
   "release_set": [
-    "SCHOL-816"
+    "SCHOL-106",
+    "SCHOL-107",
+    "SCHOL-109"
   ],
-  "total": 1,
+  "total": 3,
   "blockers": 0,
-  "verdict": "DENY",
-  "exit_code": 1,
+  "verdict": "ALLOW",
+  "exit_code": 0,
   "results": [
     {
-      "id": "SCHOL-816",
+      "id": "SCHOL-106",
       "exists": true,
-      "status": "SOME_WEIRD_STATUS",
+      "status": "RELEASED",
       "has_verdict": false,
       "verdict_result": "",
-      "eligible": false,
-      "reason": "Ambiguous status: SOME_WEIRD_STATUS"
+      "eligible": true,
+      "reason": "Already released"
+    },
+    {
+      "id": "SCHOL-107",
+      "exists": true,
+      "status": "RELEASED",
+      "has_verdict": false,
+      "verdict_result": "",
+      "eligible": true,
+      "reason": "Already released"
+    },
+    {
+      "id": "SCHOL-109",
+      "exists": true,
+      "status": "RELEASED",
+      "has_verdict": true,
+      "verdict_result": "PASS",
+      "eligible": true,
+      "reason": "Already released"
     }
   ]
 }

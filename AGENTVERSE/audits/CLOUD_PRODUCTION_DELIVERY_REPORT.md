@@ -4,7 +4,9 @@
 **Date:** 2026-08-24  
 **Target:** ClientFlow Multi-Tenant SaaS  
 **Domain:** https://clientflow.edunaija.online  
-**Verdict:** CAPABLE
+**Verdict:** CAPABLE  
+
+> **Scope note:** This report is a **ClientFlow deployment record** produced as an AgentVerse capability demonstration. It documents how AgentVerse orchestrated the build and deployment of the ClientFlow target project to `clientflow.edunaija.online`. The infrastructure described (Node.js, PostgreSQL, Nginx, Docker) belongs to ClientFlow, **not** to AgentVerse itself, which is a local OpenCode-centered engineering framework with no deployed service of its own.
 
 ---
 
@@ -101,11 +103,13 @@ The single "failure" (S10 tenant isolation) was a false negative caused by the r
 ## Credentials (for verification)
 
 - **App URL:** https://clientflow.edunaija.online
-- **Test user:** admin@acme.com / password123
-- **Staff user:** staff@acme.com / password123
-- **NPM admin:** multifixconcepts@gmail.com / clientflow2026
+- **Test user:** admin@acme.com / <REDACTED>
+- **Staff user:** staff@acme.com / <REDACTED>
+- **NPM admin:** multifixconcepts@gmail.com / <REDACTED>
 - **Server:** extravus-prod (161.153.35.43)
-- **PostgreSQL:** clientflow / clientflow_secret
+- **PostgreSQL:** clientflow / <REDACTED>
+
+> **Note:** All credentials above have been redacted from this public report. Values are supplied via environment variables at deployment time.
 
 ---
 

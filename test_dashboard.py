@@ -115,7 +115,7 @@ class DashboardValidator:
         print("- API: Functional")
         print("- Pages: Loaded")
         print("- Mock Data: Available")
-        print("- Authentication: Required (login: alade/johnson123)")
+        print("- Authentication: Required (login: <REDACTED>/<REDACTED>)")
         
         return True
 

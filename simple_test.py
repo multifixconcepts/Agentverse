@@ -73,8 +73,8 @@ def test_dashboard():
         print("- ✅ All dashboard pages")
         
         print("\n🔐 Login credentials:")
-        print("- Username: alade")
-        print("- Password: johnson123")
+        print("- Username: <REDACTED>")
+        print("- Password: <REDACTED>")
         
         print("\n🌐 Dashboard URL: http://localhost:8888")
         

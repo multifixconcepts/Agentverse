@@ -68,7 +68,7 @@
       "description": "Execution on remote dev/test infrastructure via SSH or Portainer",
       "capabilities": ["compile", "test", "build", "containerize"],
       "tools": "Portainer API, SSH (extravus-prod), Docker containers",
-      "endpoint": "https://server1.extravus.com",
+      "endpoint": "via env PORTAINER_URL (default http://127.0.0.1:9443)",
       "status": "active"
     },
     "tier_c_production": {
@@ -456,7 +456,7 @@
       "remote": {
         "status": "active",
         "method": "portainer_api",
-        "endpoint": "https://server1.extravus.com",
+        "endpoint": "via env PORTAINER_URL (default http://127.0.0.1:9443)",
         "auth": "API key via environment"
       },
       "production": {
@@ -508,7 +508,7 @@
       "lua": "lua:5.4",
       "powershell": "mcr.microsoft.com/powershell:latest"
     },
-    "provisioning_endpoint": "Portainer API → https://server1.extravus.com"
+    "provisioning_endpoint": "Portainer API → via env PORTAINER_URL (default http://127.0.0.1:9443)"
   },
 
   "validation_pipeline": {

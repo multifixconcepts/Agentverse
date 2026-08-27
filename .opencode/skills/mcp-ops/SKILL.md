@@ -16,8 +16,8 @@ Recovered MCP infrastructure (source: git HEAD `complete-mcp-config.json`, local
 | sqlite | `simple-sqlite-mcp.js` | sqlite queries |
 | git | `git-server.js` | git operations |
 | curl | `curl-server.js` | HTTP fetches (env `HTTP_TIMEOUT`, `MAX_RESPONSE_SIZE`) |
-| portainer | `portainer-mcp-server.js` | Portainer (server1.extravus.com) — token from env, never commit |
-| n8n | `n8n-server.js` | n8n (school2.extravus.com:8083) — credentials from env |
+| portainer | `portainer-mcp-server.js` | Portainer — URL via env `PORTAINER_URL` (default `http://127.0.0.1:9443`), token from env, never commit |
+| n8n | `n8n-server.js` | n8n — URL via env `N8N_URL` (default `http://localhost:5678`), credentials from env |
 | secure-command | `secure-command-server.js` | gated shell commands |
 
 ## Operating rules

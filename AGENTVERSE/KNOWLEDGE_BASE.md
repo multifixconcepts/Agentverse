@@ -52,7 +52,7 @@ No PHPUnit/test framework present in `scholapro`. Verification methods available
 - **Root cause (activate/deactivate):** no real failure — state persists (`b:1`/`b:0` in config `MODULES`); the page just doesn't redirect (200, not 302) because `_reloadMenu()` echoes `<script>ajaxLink('Side.php');</script>` before `RedirectURL()`'s `header()` (headers already sent). Affects shipped modules equally (verified on `Resources`).
 - **Fix (live, validated):** `chown -R www-data:www-data /var/www/html/modules/Student_Billing_Premium` (module backup host `/tmp/sbp-module-backup.tar.gz`); module left deactivated so Activate + Delete both render; delete then succeeds (folder gone).
 - **Convention to adopt:** uploaded/extracted modules must be owned by `www-data` or they can't be deleted.
-- **Admin auth note:** stored hash didn't match any password → re-synced `staff.PASSWORD` to `encrypt_password('Mafioso0147')` (original hash at `/tmp/admin.hash.orig`, restorable). Login verified 302→Portal; earlier "password not working" was a stale browser session.
+- **Admin auth note:** stored hash didn't match any password → re-synced `staff.PASSWORD` to `encrypt_password('[REDACTED]')` (original hash at `/tmp/admin.hash.orig`, restorable). Login verified 302→Portal; earlier "password not working" was a stale browser session.
 
 ### KB-0010 — school4: module install SQL idempotency + always-visible Delete (RESOLVED 2026-08-14)
 **Ticket:** SCHOL-005 · Type: bug/UX (module manager) · Priority: high · Status: **RESOLVED / fixed live + fork** — ledger `AGENTVERSE/tickets/SCHOL-005.md`

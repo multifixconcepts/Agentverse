@@ -26,7 +26,7 @@
       "command": "/usr/bin/node",
       "args": ["/home/coder/project/portainer-mcp-server.js"],
       "env": {
-        "PORTAINER_URL": "https://server1.extravus.com",
+        "PORTAINER_URL": "http://127.0.0.1:9443",
         "PORTAINER_TOKEN": "REDACTED_PORTAINER_TOKEN="
       }
     },
@@ -56,7 +56,7 @@
       "command": "/usr/bin/node",
       "args": ["/home/coder/project/n8n-server.js"],
       "env": {
-        "N8N_URL": "http://school2.extravus.com:8083",
+        "N8N_URL": "http://localhost:5678",
         "N8N_USERNAME": "extravus",
         "N8N_PASSWORD": "REDACTED_N8N_PASSWORD"
       }

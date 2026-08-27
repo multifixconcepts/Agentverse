@@ -199,7 +199,7 @@ class EndToEndValidator:
         print(f"\n🌐 DASHBOARD READY FOR USE")
         print(f"{'='*40}")
         print(f"📱 URL: http://localhost:8888")
-        print(f"🔐 Login: alade / johnson123")
+        print(f"🔐 Login: <REDACTED> / <REDACTED>")
         print(f"")
         print(f"✨ FEATURES WORKING:")
         print(f"   • User Authentication")

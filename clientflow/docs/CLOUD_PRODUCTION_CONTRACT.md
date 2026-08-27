@@ -1,8 +1,12 @@
-# AGENTVERSE Cloud Production Contract
+# ClientFlow Cloud Production Contract
 
 **Version:** 2.0.2
 **Effective Date:** 2026-08-24
 **Owner:** Platform Division
+
+> **Scope claim:** This document describes the **ClientFlow** target-project infrastructure (Node.js backend API, PostgreSQL, Nginx, Docker) as deployed to `edunaija.online`. It does **not** describe AgentVerse itself.
+>
+> AgentVerse is a local multi-agent engineering and orchestration framework that runs inside OpenCode. It is not a deployed SaaS/service and has no hostname, browser UI, or server stack of its own. ClientFlow, ScholarPro, and other systems are **target projects** that AgentVerse can develop, test, and deploy; their infrastructure is documented separately here and under `clientflow/docs/`.
 
 ---
 

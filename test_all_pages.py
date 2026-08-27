@@ -85,8 +85,8 @@ def main():
     
     if passed == total:
         print("\n🎉 ALL PAGES WORKING WITH REAL CONTENT!")
-        print("\n🚀 URL: https://vscode.extravus.com/proxy/8888/")
-        print("👤 Login: alade / johnson123")
+        print("\n🚀 URL: https://vscode.edunaija.online/proxy/8888/")
+        print("👤 Login: <REDACTED> / <REDACTED>")
     else:
         print(f"\n⚠️  {total-passed} pages still showing placeholder content")
         print("\n🔧 SOLUTION NEEDED:")

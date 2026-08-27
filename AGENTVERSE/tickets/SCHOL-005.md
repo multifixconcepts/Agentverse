@@ -23,7 +23,7 @@ User (report after SCHOL-004): re-activating the re-uploaded "Student Billing Pr
 4. **Repo fork synced:** identical changes applied to `scholapro/modules/School_Setup/includes/Modules.inc.php` (diff vs live = only the "ScholaPro"/"RosarioSIS" branding comment).
 
 ## Validation (live, curl UI session)
-- Login admin/Mafioso0147 → Modules list: uninstalled module shows **Activate + Delete**; active shows **Deactivate + Delete**.
+- Login admin/[REDACTED_ADMIN_PASSWORD] → Modules list: uninstalled module shows **Activate + Delete**; active shows **Deactivate + Delete**.
 - Activate (confirm POST) → 200, `ajaxLink('Side.php')` + `XRedirectUrl` emitted, **no "DB Execute Failed"**; Side.php now lists module (5 hits).
 - Deactivate (confirm POST) → Side.php drops module (0 hits); list shows Activate + Delete.
 - Re-activate → no 1050; menu back.

@@ -25,16 +25,21 @@ If you discover a security vulnerability, please report it responsibly:
 ## Scope
 
 ### In Scope
-- AgentVerse control plane
-- ScholaPro application code
-- CI/CD pipeline
-- Authentication/authorization
-- Data handling
+- AgentVerse framework and control plane (`.opencode/`, `AGENTVERSE/`, `_tools/`, `_tests/`)
+- CI/CD pipeline and GitHub Actions configuration
+- Any target-project code in this repository that is not a vendored/upstream dependency (e.g. `clientflow/`, AgentVerse-owned additions)
 
 ### Out of Scope
-- Third-party dependencies (report upstream)
+- Upstream / vendored third-party code (e.g. `scholapro/` upstream RosarioSIS, `node_modules`) — report upstream
+- Changes you can reproduce on local infrastructure you do not own
 - Social engineering attacks
 - Physical attacks
+
+## Credential handling
+
+- This repository is **public**. Never commit secrets, API keys, tokens, passwords, or connection strings.
+- Sensitive values must be supplied via environment variables at deployment time, never hardcoded.
+- The `secret-scan` CI job enforces this on every pull request.
 
 ## Security Best Practices
 

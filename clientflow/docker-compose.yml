@@ -28,8 +28,8 @@ services:
       dockerfile: Dockerfile
     container_name: clientflow-backend
     environment:
-      - DATABASE_URL=postgresql://clientflow:${POSTGRES_PASSWORD:-clientflow_secret}@db:5432/clientflow
-      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - DATABASE_URL=postgresql://clientflow:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD via deployment env}@db:5432/clientflow
+      - JWT_SECRET=${JWT_SECRET:?Set JWT_SECRET via deployment env}
       - JWT_EXPIRY=24h
       - NODE_ENV=production
       - PORT=3000
@@ -51,7 +51,7 @@ services:
     container_name: clientflow-db
     environment:
       - POSTGRES_USER=clientflow
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-clientflow_secret}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD via deployment env}
       - POSTGRES_DB=clientflow
     volumes:
       - clientflow-db-data:/var/lib/postgresql/data

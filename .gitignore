@@ -34,6 +34,7 @@ build/
 # Test artifacts
 /tmp/
 *.coverage
+.playwright-mcp/
 
 # PHP
 *.phar

@@ -21,7 +21,7 @@ smoke_portainer() {
   if [ -n "$PORTAINER_API_KEY" ]; then
     HTTP_CODE=$(curl -sk -o /dev/null -w "%{http_code}" \
       -H "X-API-Key: $PORTAINER_API_KEY" \
-      "https://server1.extravus.com/api/endpoints" 2>/dev/null || echo "000")
+      "${PORTAINER_URL:-http://127.0.0.1:9443}/api/endpoints" 2>/dev/null || echo "000")
     if [ "$HTTP_CODE" = "200" ]; then
       pass "API" "Portainer API reachable"
     else
@@ -38,7 +38,7 @@ smoke_docker_stack() {
   if [ -n "$PORTAINER_API_KEY" ]; then
     STACKS=$(curl -sk \
       -H "X-API-Key: $PORTAINER_API_KEY" \
-      "https://server1.extravus.com/api/stacks" 2>/dev/null | python3 -c "
+      "${PORTAINER_URL:-http://127.0.0.1:9443}/api/stacks" 2>/dev/null | python3 -c "
 import sys, json
 try:
     stacks = json.load(sys.stdin)
