@@ -1,41 +1,284 @@
 {
-  "timestamp": "2026-08-27T14:32:17Z",
+  "timestamp": "2026-08-28T12:59:29Z",
   "release_set": [
+    "SCHOL-001",
+    "SCHOL-007",
+    "SCHOL-008",
+    "SCHOL-010",
+    "SCHOL-011",
+    "SCHOL-099",
+    "SCHOL-100",
+    "SCHOL-101",
+    "SCHOL-102",
+    "SCHOL-103",
+    "SCHOL-104",
     "SCHOL-106",
     "SCHOL-107",
     "SCHOL-109"
   ],
-  "total": 3,
-  "blockers": 0,
-  "verdict": "ALLOW",
-  "exit_code": 0,
+  "total": 14,
+  "blockers": 13,
+  "verdict": "DENY",
+  "exit_code": 1,
+  "dispositions_applied": [
+    {
+      "id": "SCHOL-109",
+      "gate": "5",
+      "original_verdict": "FAIL",
+      "disposition": "HISTORICAL_ENVIRONMENTAL"
+    }
+  ],
+  "default_verdict_gating": "DENY on any FAIL / NOT_VERIFIED / malformed / ambiguous / missing(unless --allow-missing-verdicts)",
   "results": [
+    {
+      "id": "SCHOL-001",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-007",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-008",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-010",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-011",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-099",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-100",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-101",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-102",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-103",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
+    {
+      "id": "SCHOL-104",
+      "exists": true,
+      "status": "RELEASED",
+      "eligible": true,
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
+    },
     {
       "id": "SCHOL-106",
       "exists": true,
       "status": "RELEASED",
-      "has_verdict": false,
-      "verdict_result": "",
       "eligible": true,
-      "reason": "Already released"
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
     },
     {
       "id": "SCHOL-107",
       "exists": true,
       "status": "RELEASED",
-      "has_verdict": false,
-      "verdict_result": "",
       "eligible": true,
-      "reason": "Already released"
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "verdict_files": [],
+      "verdicts": []
     },
     {
       "id": "SCHOL-109",
       "exists": true,
       "status": "RELEASED",
-      "has_verdict": true,
-      "verdict_result": "PASS",
       "eligible": true,
-      "reason": "Already released"
+      "reason": "Already released",
+      "verdict_files": [
+        "SCHOL-109-G0.verdict.json",
+        "SCHOL-109-G5.verdict.json"
+      ],
+      "verdicts": [
+        {
+          "gate": "0",
+          "verdict": "PASS",
+          "status": "VERIFIED",
+          "classification": "PASS",
+          "dispositioned": false
+        },
+        {
+          "gate": "5",
+          "verdict": "FAIL",
+          "status": "NOT_VERIFIED",
+          "classification": "DISPOSITIONED",
+          "dispositioned": true
+        }
+      ]
+    }
+  ],
+  "blocker_details": [
+    {
+      "id": "SCHOL-001",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-007",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-008",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-010",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-011",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-099",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-100",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-101",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-102",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-103",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-104",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-106",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "SCHOL-107",
+      "status": "RELEASED",
+      "reason": "Already released (missing required verdict evidence -> DENY)",
+      "blockers": [
+        "MISSING_VERDICT_EVIDENCE"
+      ]
     }
   ]
 }

@@ -15,7 +15,7 @@ When information conflicts between sources, the following hierarchy determines w
 | 2 | **Verified architectural state** | `AGENTVERSE/AGENTVERSE.md` | Organization structure, delegation model, gate chain |
 | 3 | **Verified cohesion rules** | `AGENTVERSE/COHESION_MATRIX.md` | Gate ownership, RACI, collaboration pairs |
 | 4 | **Verified project knowledge** | `AGENTVERSE/KNOWLEDGE_BASE.md` | Validated decisions, issue records, lessons learned |
-| 5 | **Approved memory** | `AGENTVERSE/MEMORY_INDEX.md` + `.memory/memory.json` | Operational facts, deployment state |
+| 5 | **Approved memory** | `AGENTVERSE/MEMORY_INDEX.md` + `.memory/memory.json` | Operational facts, deployment state *— MEMORY_INDEX is NON-AUTHORITATIVE for live ticket status (may be stale; see SCHOL-108); canonical status comes from the ticket files* |
 | 6 | **Agent registry** | `AGENTVERSE/AGENT_REGISTRY.json` | Agent identities, roles, permissions |
 | 7 | **Agent assumptions** | Agent prompt / contract | What the agent believes to be true |
 | 8 | **Conversational context** | Current chat session | What was said in this conversation |
@@ -52,6 +52,15 @@ When two sources of equal rank contradict each other, escalate to the owning cou
 - Agent vs Agent → division council decides
 - Division vs Division → Summoner decides
 - Architecture vs Feature → chief-architect decides (unless user overrides)
+
+### Rule 8: Canonical ticket status overrides derived claims
+For **live ticket status**, the canonical source is the ticket file under
+`AGENTVERSE/tickets/` (matched by `SCHOL-<digits>.md`). A contradictory
+assertion in `MEMORY_INDEX.md`, `REQUIREMENT_LEDGER.json`,
+`CONTRACT_REGISTRY.json`, or `CURRENT_STATE.json` is a **derived/stale claim**
+and loses. `CURRENT_STATE.json` is regenerated from the ticket files and
+should be re-derived via `_tools/sync-state.sh` on any conflict.
+Registries marked `HISTORICAL_UNVERIFIED` are never authoritative.
 
 ## When to apply
 

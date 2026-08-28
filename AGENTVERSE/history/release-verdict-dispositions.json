@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "class": "RELEASE_VERDICT_DISPOSITION",
+  "description": "Explicit, auditable dispositions for historical release verdicts. An entry does NOT convert a FAIL/NOT_VERIFIED verdict into PASS. It only documents why a specific historical failure does not represent an implementation failure, so the default blocking behavior is not silently bypassed. Default remains blocking for any verdict without a disposition.",
+  "applies_to": "release eligibility verification only (_tools/verify-release-set.sh)",
+  "entries": [
+    {
+      "ticket": "SCHOL-109",
+      "gate": "G5",
+      "verdict_file": "SCHOL-109-G5.verdict.json",
+      "original_verdict": "FAIL",
+      "original_status": "NOT_VERIFIED",
+      "disposition": "HISTORICAL_ENVIRONMENTAL",
+      "rationale": "The historical SCHOL-109 G5 FAIL was caused solely by the PHP executable being unavailable in the verification environment: all three 'php -l' checks failed with '/bin/sh: 1: php: not found'. The only non-PHP dependent check in the same verdict (Production HTTP 200) MET, and the ticket's structural gate G0 PASSED. The underlying implementation is present (the ListOutput($functions→group) fix is recorded in SCHOL-109). This disposition does NOT convert the FAIL to PASS; it only documents that the historical failure did not represent an implementation defect.",
+      "scope": "Limited strictly to SCHOL-109 gate G5 historical verdict. Applies to release-eligibility verification only and does not retroactively change the historical verdict file.",
+      "default_remains_blocking": true,
+      "effective_behavior": "For release-eligibility verification, SCHOL-109's historical G5 FAIL is recorded as DISPOSITIONED (visible in verification output) rather than as an unresolvable blocker. It is not presented as a current successful verification.",
+      "authorized_by": "REMEDIATION PHASE 2 — Changeset A (release verdict gating)",
+      "dated": "2026-08-28"
+    }
+  ]
+}

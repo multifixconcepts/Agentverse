@@ -1,6 +1,6 @@
 {
-  "version": "2.0",
-  "last_checked": "2026-08-23T01:51:59Z",
+  "schema_version": "2.0",
+  "last_checked": "2026-08-28T12:49:59Z",
   "source": {
     "path": "/home/coder/project/scholapro",
     "version": "12.9.2",

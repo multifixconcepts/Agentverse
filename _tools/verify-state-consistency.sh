@@ -63,6 +63,70 @@ python_json_tool() {
     python3 -m json.tool "$1" >/dev/null 2>&1
 }
 
+# Portable JSON resolution. Prefers jq on PATH (present on GitHub Actions
+# ubuntu-latest runners), then python3/python on PATH, then the documented
+# local python interpreter. Emits "" if none are available.
+resolve_json_tool() {
+    if command -v jq &>/dev/null; then
+        echo "jq"
+    elif command -v python3 &>/dev/null; then
+        echo "python3"
+    elif command -v python &>/dev/null; then
+        echo "python"
+    elif [ -x /home/coder/python/bin/python3.11 ]; then
+        echo "/home/coder/python/bin/python3.11"
+    else
+        echo ""
+    fi
+}
+
+# json_extract -r '<jq-filter>' '<file>'
+# Emits the value(s) of the (fixed, known) jq filters this script uses.
+# Returns non-zero when no JSON tool is available or the file cannot be read,
+# so a missing dependency is an explicit failure, not silent success.
+json_extract() {
+    local flag="$1" filter="$2" file="$3" tool
+    tool="$(resolve_json_tool)"
+    if [ -z "$tool" ]; then
+        echo "json_extract: no JSON tool (jq/python3) available to query $file" >&2
+        return 1
+    fi
+    if [ "$tool" = "jq" ]; then
+        jq "$flag" "$filter" "$file" 2>/dev/null
+        return $?
+    fi
+    "$tool" - "$filter" "$file" 2>/dev/null <<'PYEOF'
+import sys, json
+def emit(v):
+    if isinstance(v, bool):
+        sys.stdout.write('true' if v else 'false')
+    elif isinstance(v, str):
+        sys.stdout.write(v)
+    else:
+        sys.stdout.write(json.dumps(v, separators=(',', ':')))
+filter_s = sys.argv[1]
+path = sys.argv[2]
+with open(path) as f:
+    d = json.load(f)
+def run(f, d):
+    if f == '.total_agents // empty':
+        v = d.get('total_agents')
+        if v is not None: emit(v)
+    elif f == '.agents | length':
+        emit(len(d['agents']))
+    elif f == '.sha256_hashes // {} | to_entries[] | [.key, .value] | @tsv':
+        for k, v in d.get('sha256_hashes', {}).items():
+            sys.stdout.write(k + '\t' + str(v) + '\n')
+    elif f in ('.version // empty', '.ticket_count // empty', '.tool_count // empty'):
+        key = f.split('.')[1].split(' ')[0]
+        v = d.get(key)
+        if v is not None: emit(v)
+    else:
+        raise RuntimeError('unhandled filter: ' + f)
+run(filter_s, d)
+PYEOF
+}
+
 compute_sha256() {
     if command -v sha256sum &>/dev/null; then
         sha256sum "$1" | awk '{print $1}'
@@ -104,8 +168,14 @@ check_agent_count() {
     fi
 
     local declared_total actual_total
-    declared_total=$('/home/coder/project/_tools/jq' -r '.total_agents // empty' "$AGENT_REGISTRY" 2>/dev/null || echo "")
-    actual_total=$('/home/coder/project/_tools/jq' -r '.agents | length' "$AGENT_REGISTRY" 2>/dev/null || echo "")
+    if ! declared_total=$(json_extract -r '.total_agents // empty' "$AGENT_REGISTRY"); then
+        check_fail "agent_count" "no JSON tool (jq/python3) available to read AGENT_REGISTRY.json"
+        return
+    fi
+    if ! actual_total=$(json_extract -r '.agents | length' "$AGENT_REGISTRY"); then
+        check_fail "agent_count" "no JSON tool (jq/python3) available to read AGENT_REGISTRY.json"
+        return
+    fi
 
     if [[ -z "$declared_total" || -z "$actual_total" ]]; then
         check_warn "agent_count" "AGENT_REGISTRY.json missing total_agents or agents"
@@ -214,7 +284,7 @@ check_org_checksums() {
             check_fail "org_checksum_mismatch" "Hash mismatch for $relative_path: expected $expected_hash, got $actual_hash"
             ((failures++)) || true
         fi
-    done < <('/home/coder/project/_tools/jq' -r '.sha256_hashes // {} | to_entries[] | [.key, .value] | @tsv' "$ORG_CHECKSUM" 2>/dev/null || true)
+    done < <(json_extract -r '.sha256_hashes // {} | to_entries[] | [.key, .value] | @tsv' "$ORG_CHECKSUM" 2>/dev/null)
 
     if [[ "$failures" -gt 0 ]]; then
         : # failures already emitted as org_checksum_mismatch
@@ -234,9 +304,18 @@ check_org_checksum_metadata() {
     fi
 
     local version ticket_count tool_count
-    version=$('/home/coder/project/_tools/jq' -r '.version // empty' "$ORG_CHECKSUM" 2>/dev/null || echo "")
-    ticket_count=$('/home/coder/project/_tools/jq' -r '.ticket_count // empty' "$ORG_CHECKSUM" 2>/dev/null || echo "")
-    tool_count=$('/home/coder/project/_tools/jq' -r '.tool_count // empty' "$ORG_CHECKSUM" 2>/dev/null || echo "")
+    if ! version=$(json_extract -r '.version // empty' "$ORG_CHECKSUM"); then
+        check_fail "org_checksum_metadata" "no JSON tool (jq/python3) available to read ORG_CHECKSUM.json"
+        return
+    fi
+    if ! ticket_count=$(json_extract -r '.ticket_count // empty' "$ORG_CHECKSUM"); then
+        check_fail "org_checksum_metadata" "no JSON tool (jq/python3) available to read ORG_CHECKSUM.json"
+        return
+    fi
+    if ! tool_count=$(json_extract -r '.tool_count // empty' "$ORG_CHECKSUM"); then
+        check_fail "org_checksum_metadata" "no JSON tool (jq/python3) available to read ORG_CHECKSUM.json"
+        return
+    fi
 
     local expected_version
     expected_version=$(cat "$PROJECT_ROOT/VERSION" 2>/dev/null | tr -d '[:space:]' || echo "")
@@ -308,6 +387,14 @@ main() {
     fi
 
     echo "}"
+
+    # B1: propagate semantic correctness through the exit code. A FAIL verdict
+    # must never be reported with a zero (success) exit code.
+    if $all_pass; then
+        exit 0
+    else
+        exit 1
+    fi
 }
 
 main

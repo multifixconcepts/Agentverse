@@ -55,16 +55,28 @@ TICKET_DATA=$($NODE -e "
   const verificationBlocked = [];
   const openNext = [];
 
+  const KNOWN = ['RELEASED','IN_PROGRESS','DELEGATED','VERIFICATION_BLOCKED','OPEN','CLOSED','RESOLVED'];
+  function normalizeStatus(raw) {
+    const s = raw.trim();
+    if (!s) return '';
+    const upper = s.toUpperCase();
+    for (const k of ['IN PROGRESS','VERIFICATION BLOCKED','VERIFICATION_BLOCKED']) {
+      if (upper.startsWith(k)) return k === 'IN PROGRESS' ? 'IN_PROGRESS' : 'VERIFICATION_BLOCKED';
+    }
+    const first = upper.split(/[\s(—:]/)[0];
+    return KNOWN.includes(first) ? first : first;
+  }
+
   for (const f of files) {
     const content = fs.readFileSync(dir + '/' + f, 'utf8');
-    const statusMatch = content.match(/^\*\*Status:\*\*\s*(.+)$/m);
-    const status = statusMatch ? statusMatch[1].trim() : '';
+    const statusMatch = content.match(/^-?\s*\*\*Status:\*\*\s*(.+)$/m);
+    const status = statusMatch ? normalizeStatus(statusMatch[1]) : '';
     const id = 'SCHOL-' + f.match(/SCHOL-(\d+)/)[1];
     if (status === 'RELEASED') released.push(id);
     else if (status === 'IN_PROGRESS') inProgress.push(id);
     else if (status === 'DELEGATED') delegated.push(id);
     else if (status === 'VERIFICATION_BLOCKED') verificationBlocked.push(id);
-    else if (status.startsWith('OPEN')) openNext.push(id);
+    else if (status === 'OPEN') openNext.push(id);
   }
 
   process.stdout.write(JSON.stringify({
@@ -122,7 +134,7 @@ fi
 # --- Write new CURRENT_STATE ---
 $NODE -e "
   const newState = {
-    version: '2.0',
+    schema_version: '2.0',
     last_verified: '$TIMESTAMP',
     last_verifier: 'sync-state',
     project: 'scholapro',
@@ -195,7 +207,7 @@ if [ -f "$ENV_STATE" ]; then
 
   $NODE -e "
     const newState = {
-      version: '2.0',
+      schema_version: '2.0',
       last_checked: '$TIMESTAMP',
       source: {
         path: '$PROJECT/scholapro',

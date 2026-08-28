@@ -27,8 +27,13 @@ jobs:
           find . -name '*.php' -not -path './vendor/*' -not -path './node_modules/*' \
             -not -path './scholapro/classes/MoTranslator/*' \
             -print0 | xargs -0 -n1 php -l 2>&1 | tee /tmp/php-lint.txt
+          rc=${PIPESTATUS[1]}
           if grep -q "Parse error\|Fatal error" /tmp/php-lint.txt; then
             echo "::error::PHP syntax errors found"
+            exit 1
+          fi
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::PHP lint failed (exit $rc)"
             exit 1
           fi
 
@@ -135,11 +140,12 @@ jobs:
       - name: Verify Release Set
         run: |
           chmod +x _tools/verify-release-set.sh
-          RESULT=$(_tools/verify-release-set.sh --all-released 2>&1)
-          echo "$RESULT" | tee /tmp/release-set-results.txt
-          VERDICT=$(echo "$RESULT" | python3 -c "import sys, json; print(json.load(sys.stdin).get('verdict', 'DENY'))" 2>/dev/null || echo "DENY")
-          if [ "$VERDICT" != "ALLOW" ]; then
-            echo "::error::Release set verification failed"
+          bash _tools/verify-release-set.sh --all-released 2>&1 | tee /tmp/release-set-results.txt
+          # Honor the script's real exit code (0=ALLOW, 1=DENY) rather than
+          # only grepping the printed verdict string.
+          rc=${PIPESTATUS[0]}
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Release set verification failed (exit $rc)"
             exit 1
           fi
 
@@ -164,9 +170,12 @@ jobs:
       - name: Run Doctor
         run: |
           chmod +x _tools/doctor.sh
-          _tools/doctor.sh --ci 2>&1 | tee /tmp/doctor-output.txt
-          if grep -q "BLOCKED" /tmp/doctor-output.txt; then
-            echo "::error::Doctor check returned BLOCKED"
+          bash _tools/doctor.sh --ci 2>&1 | tee /tmp/doctor-output.txt
+          # Honor the doctor's real exit code (BLOCKED/DEGRADED -> exit 1)
+          # instead of only grepping for the "BLOCKED" string.
+          rc=${PIPESTATUS[0]}
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Doctor check failed (exit $rc)"
             exit 1
           fi
 
@@ -249,10 +258,18 @@ jobs:
         run: |
           if [ -f _tools/verify-state-consistency.sh ]; then
             chmod +x _tools/verify-state-consistency.sh
-            _tools/verify-state-consistency.sh 2>&1 | tee /tmp/consistency-results.txt
+            bash _tools/verify-state-consistency.sh 2>&1 | tee /tmp/consistency-results.txt
+            # Propagate the verifier's real exit code (0=PASS, 1=FAIL).
+            # The pipe through tee must not mask it.
+            rc=${PIPESTATUS[0]}
+            if [ "$rc" -ne 0 ]; then
+              echo "::error::State consistency verification failed (exit $rc)"
+              exit 1
+            fi
           else
-            echo "verify-state-consistency.sh not found, skipping"
-            echo "SKIPPED" > /tmp/consistency-results.txt
+            echo "::error::verify-state-consistency.sh not found"
+            echo "FAILED_MISSING_VERIFIER" > /tmp/consistency-results.txt
+            exit 1
           fi
 
       - name: Upload Results

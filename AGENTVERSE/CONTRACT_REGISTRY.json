@@ -70,7 +70,13 @@
       "backward_compatible": true,
       "change_reason": "MID_TASK_REQUIREMENT_CHANGE — added optional grade_level filter",
       "verified_date": "2026-08-19",
-      "verified_by": "SCHOL-110-G5"
+      "verified_by": "SCHOL-110-G5",
+      "disposition": {
+        "status": "HISTORICAL_UNVERIFIED",
+        "classified": "2026-08-28",
+        "reason": "Fabricated/unbacked chain. scholapro/lib/student_utils.php does not exist; no getStudentCount implementation anywhere in repo; no SCHOL-110.md; no SCHOL-110-G5 verdict file. See AGENTVERSE/history/SCHOL-110-disposition.md.",
+        "not_authoritative": true
+      }
     }
   ],
   "module_contracts": [
