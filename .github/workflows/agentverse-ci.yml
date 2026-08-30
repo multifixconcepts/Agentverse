@@ -280,7 +280,7 @@ jobs:
 
       - name: Setup Python
         if: matrix.runtime == 'python'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -395,7 +395,7 @@ jobs:
           node-version: '20'
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -458,7 +458,7 @@ jobs:
 
       - name: Setup Python
         if: matrix.runtime == 'python'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -550,7 +550,7 @@ jobs:
 
       - name: Setup Python
         if: contains(matrix.framework, 'fastapi') || contains(matrix.framework, 'django')
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
